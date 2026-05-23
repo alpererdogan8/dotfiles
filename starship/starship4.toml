@@ -1,0 +1,316 @@
+# success_symbol = "[⚔](bold #7fbbb3)"
+# error_symbol = "[☠](bold #e67e80)"
+# vimcmd_symbol = "[🛡](bold #7fbbb3)"
+
+# SET 4: Fantasy
+# success_symbol = "[󱐋](bold #7fbbb3)"
+# error_symbol = "[👻](bold #e67e80)"
+# vimcmd_symbol = "[󱡟](bold #7fbbb3)"
+
+# SET 5: Minimal
+# success_symbol = "[⌖](bold #7fbbb3)"
+# error_symbol = "[⚰](bold #e67e80)"
+# vimcmd_symbol = "[⛨](bold #7fbbb3)"
+
+# STYLE 11: Double Arrow »
+# success_symbol = "[»](bold #a7c080)"
+# error_symbol = "[»](bold #e67e80)"
+# vimcmd_symbol = "[«](bold #a7c080)"
+
+# STYLE 12: Pointer →
+# success_symbol = "[→](bold #a7c080)"
+# error_symbol = "[→](bold #e67e80)"
+# vimcmd_symbol = "[←](bold #a7c080)"
+
+# =============================================================================
+# DIRECTORY
+# =============================================================================
+
+[directory]
+style = "bold #d3c6aa"
+format = "[$path]($style) "
+truncation_length = 3
+# truncation_symbol = "../"
+truncate_to_repo = false
+home_symbol = "~"
+read_only = " "
+read_only_style = "bold #e67e80"
+
+[directory.substitutions]
+"Documents" = "󰈙"
+"Downloads" = ""
+"Music" = ""
+"Pictures" = ""
+"Videos" = ""
+"Desktop" = ""
+".config" = ""
+"workspace" = ""
+"projects" = ""
+
+# =============================================================================
+# GIT - Image 2 Style: on  main [!]
+# =============================================================================
+
+[git_branch]
+symbol = " "
+style = "bold #a7c080"
+format = "[on](bold #7a8478) [$symbol$branch]($style)"
+truncation_length = 20
+
+[git_status]
+style = "bold #e67e80"
+format = '([$all_status$ahead_behind]($style))'
+conflicted = "[!]"
+ahead = "[⇡${count}]"
+behind = "[⇣${count}]"
+diverged = "[⇡${ahead_count}⇣${behind_count}]"
+up_to_date = ""
+untracked = "[?${count}]"
+stashed = ""
+modified = "[*${count}]"
+staged = "[+${count}]"
+renamed = "[»${count}]"
+deleted = "[✘${count}]"
+
+# =============================================================================
+# LANGUAGES - Image 2 Style: via  v22.22.0
+# =============================================================================
+
+[nodejs]
+symbol = ""
+style = "bold #a7c080"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["js", "mjs", "cjs", "ts", "tsx", "mts", "cts"]
+detect_files = ["package.json", ".node-version", ".nvmrc", "yarn.lock", "package-lock.json"]
+detect_folders = ["node_modules"]
+
+[python]
+symbol = ""
+style = "bold #dbbc7f"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["py", "pyw", "ipynb"]
+detect_files = ["requirements.txt", "pyproject.toml", "Pipfile", "setup.py", "poetry.lock"]
+detect_folders = [".venv", "venv"]
+
+[rust]
+symbol = ""
+style = "bold #e69875"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml", "Cargo.lock"]
+
+[golang]
+symbol = ""
+style = "bold #83c092"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum"]
+
+[lua]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["lua"]
+detect_files = [".lua-version"]
+
+[java]
+symbol = ""
+style = "bold #e67e80"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["java", "class", "jar"]
+detect_files = ["pom.xml", "build.gradle"]
+
+[kotlin]
+symbol = ""
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["kt", "kts"]
+detect_files = ["build.gradle.kts"]
+
+[ruby]
+symbol = ""
+style = "bold #e67e80"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["rb"]
+detect_files = ["Gemfile", ".ruby-version"]
+
+[php]
+symbol = ""
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["php"]
+detect_files = ["composer.json"]
+
+[c]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["c", "h"]
+
+[cpp]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["cpp", "hpp", "cc"]
+detect_files = ["CMakeLists.txt"]
+
+[dotnet]
+symbol = "󰪮"
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["cs", "csproj"]
+detect_files = ["*.sln"]
+
+[swift]
+symbol = ""
+style = "bold #e69875"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["swift"]
+detect_files = ["Package.swift"]
+
+[zig]
+symbol = ""
+style = "bold #e69875"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["zig"]
+detect_files = ["build.zig"]
+
+[haskell]
+symbol = ""
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["hs", "lhs"]
+detect_files = ["stack.yaml"]
+
+[elixir]
+symbol = ""
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["ex", "exs"]
+detect_files = ["mix.exs"]
+
+[scala]
+symbol = ""
+style = "bold #e67e80"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["scala"]
+detect_files = ["build.sbt"]
+
+[dart]
+symbol = ""
+style = "bold #83c092"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["dart"]
+detect_files = ["pubspec.yaml"]
+
+[julia]
+symbol = ""
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["jl"]
+detect_files = ["Project.toml"]
+
+[bun]
+symbol = "🍞"
+style = "bold #dbbc7f"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_files = ["bun.lockb"]
+
+[deno]
+symbol = "🦕"
+style = "bold #83c092"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_files = ["deno.json"]
+
+[elm]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["elm"]
+detect_files = ["elm.json"]
+
+[gleam]
+symbol = "󰦥"
+style = "bold #d699b6"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["gleam"]
+detect_files = ["gleam.toml"]
+
+[ocaml]
+symbol = ""
+style = "bold #e69875"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["ml", "mli"]
+detect_files = ["dune"]
+
+[perl]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["pl", "pm"]
+detect_files = ["Makefile.PL"]
+
+[nim]
+symbol = "👑"
+style = "bold #dbbc7f"
+format = "[via](bold #7a8478) [$symbol]($style)[ v$version](bold #d3c6aa) "
+detect_extensions = ["nim"]
+detect_files = ["*.nimble"]
+
+# =============================================================================
+# INFRASTRUCTURE & CLOUD
+# =============================================================================
+
+[docker_context]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style) "
+detect_files = ["Dockerfile", "docker-compose.yml"]
+
+[kubernetes]
+symbol = "☸"
+style = "bold #7fbbb3"
+format = "[via](bold #7a8478) [$symbol]($style) "
+disabled = false
+
+[aws]
+symbol = ""
+style = "bold #dbbc7f"
+format = "[via](bold #7a8478) [$symbol]($style) "
+disabled = false
+
+# =============================================================================
+# DISABLED
+# =============================================================================
+
+[time]
+disabled = true
+
+[fill]
+disabled = true
+
+[cmd_duration]
+disabled = true
+
+[jobs]
+disabled = true
+
+[status]
+disabled = true
+
+[container]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[conda]
+disabled = true
+
+[sudo]
+disabled = true
+
+# Everforest Colors:
+#   #d3c6aa - fg0 | #e67e80 - red | #e69875 - orange | #dbbc7f - yellow
+#   #a7c080 - green | #83c092 - aqua | #7fbbb3 - blue | #d699b6 - purple | #7a8478 - grey
+

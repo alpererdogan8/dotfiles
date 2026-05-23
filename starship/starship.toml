@@ -1,0 +1,163 @@
+command_timeout = 1000
+add_newline = true
+
+[battery]
+disabled = false
+
+[package]
+disabled = false
+
+# palette = "everforest"
+
+[palettes.everforest]
+red    = "#e67e80"
+orange = "#e69875"
+yellow = "#dbbc7f"
+green  = "#a7c080"
+aqua   = "#83c092"
+blue   = "#7fbbb3"
+purple = "#d699b6"
+grey   = "#7a8478"
+fg     = "#d3c6aa"
+
+# =============================================================================
+# FORMAT - Clean Minimal Style
+# =============================================================================
+# format = """$directory$git_branch$git_status
+# $time$character"""
+#
+# =============================================================================
+# PROMPT CHARACTER - 12 Alternatives with Everforest Colors
+# =============================================================================
+
+[character]
+# STYLE 1: Simple > (Default) - Everforest Green/Red
+# success_symbol = "[>](bold green)"
+# error_symbol = "[>](bold red)"
+# vimcmd_symbol = "[<](bold green)"
+
+# STYLE 2: Chevron ❯
+# success_symbol = "[❯](bold green)"
+# error_symbol = "[❯](bold red)"
+# vimcmd_symbol = "[❮](bold green)"
+
+# STYLE 3: Arrow ➜
+# success_symbol = "[➜](bold green)"
+# error_symbol = "[➜](bold red)"
+# vimcmd_symbol = "[➜](bold yellow)"
+
+# STYLE 4: Chevron (Nerd Font) 
+# success_symbol = "[](bold green)"
+# error_symbol = "[](bold red)"
+# vimcmd_symbol = "[](bold green)"
+
+# STYLE 5: Diamond ◆
+# success_symbol = "[◆](bold aqua)"
+# error_symbol = "[◆](bold red)"
+# vimcmd_symbol = "[◇](bold aqua)"
+
+# STYLE 6: Powerline 
+# success_symbol = "[](bold green)"
+# error_symbol = "[](bold red)"
+# vimcmd_symbol = "[](bold green)"
+
+# STYLE 7: Bullet •
+# success_symbol = "[•](bold green)"
+# error_symbol = "[•](bold red)"
+# vimcmd_symbol = "[◦](bold green)"
+
+# STYLE 8: Star ✦
+# success_symbol = "[✦](bold yellow)"
+# error_symbol = "[✦](bold red)"
+# vimcmd_symbol = "[✧](bold yellow)"
+
+# STYLE 9: Small Chevron ›
+success_symbol = "[›](bold green)"
+error_symbol = "[›](bold red)"
+vimcmd_symbol = "[‹](bold #fffffff)"
+
+# STYLE 10: Sword/Shield/Skull - Everforest
+# SET 1: Nerd Font
+# success_symbol = "[󰓥](bold blue)"
+# error_symbol = "[󰮭](bold red)"
+# vimcmd_symbol = "[󰧶](bold blue)"
+
+# SET 2: Standard Unicode
+# success_symbol = "[🗡](bold blue)"
+# error_symbol = "[💀](bold red)"
+# vimcmd_symbol = "[🛡](bold blue)"
+
+# SET 3: Crossed Swords
+# success_symbol = "[󰓥](bold blue)"
+# error_symbol = "[☠](bold red)"
+# vimcmd_symbol = "[🛡](bold blue)"
+
+# SET 4: Fantasy
+# success_symbol = "[󱐋](bold blue)"
+# error_symbol = "[👻](bold red)"
+# vimcmd_symbol = "[󱡟](bold blue)"
+
+# SET 5: Minimal
+# success_symbol = "[⌖](bold blue)"
+# error_symbol = "[⚰](bold red)"
+# vimcmd_symbol = "[⛨](bold blue)"
+
+# STYLE 11: Double Arrow »
+# success_symbol = "[»](bold green)"
+# error_symbol = "[»](bold red)"
+# vimcmd_symbol = "[«](bold #fffffff)"
+
+# STYLE 12: Pointer →
+# success_symbol = "[→](bold green)"
+# error_symbol = "[→](bold red)"
+# vimcmd_symbol = "[←](bold green)"
+
+# =============================================================================
+# INFRASTRUCTURE & CLOUD
+# =============================================================================
+
+[docker_context]
+format = 'via [$symbol$context]($style) '
+symbol = "🐳 "
+style = "bold blue"
+only_with_files = true
+detect_files = ['compose.yml', 'compose.yaml', 'docker-compose.yml', 'docker-compose.yaml', 'Dockerfile','dockerfile','DOCKERFILE']
+disabled = false
+
+
+
+[kubernetes]
+symbol = "☸"
+style = "bold blue"
+disabled = false
+
+[aws]
+symbol = ""
+style = "bold yellow"
+
+# =============================================================================
+# TIME
+# =============================================================================
+
+[time]
+disabled = true
+format = "[$time]($style) "
+style = "bold grey"
+time_format = "%H:%M"
+
+# =============================================================================
+# EXPLICITLY ENABLED (disabled by default in Starship)
+# =============================================================================
+
+[status]
+disabled = true
+
+[container]
+disabled = false
+
+[sudo]
+disabled = false
+
+# Everforest Colors:
+#   #d3c6aa - fg0 | #e67e80 - red | #e69875 - orange | #dbbc7f - yellow
+#   #a7c080 - green | #83c092 - aqua | #7fbbb3 - blue | #d699b6 - purple | #7a8478 - grey

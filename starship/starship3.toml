@@ -1,0 +1,388 @@
+add_newline = true
+
+[battery]
+disabled = true
+
+[package]
+disabled = false
+
+# =============================================================================
+# FORMAT - Clean Minimal Style
+# =============================================================================
+format = """$directory$git_branch$git_status
+$time$character"""
+
+# =============================================================================
+# PROMPT CHARACTER - 12 Alternatives with Everforest Colors
+# =============================================================================
+
+[character]
+# STYLE 1: Simple > (Default) - Everforest Green/Red
+success_symbol = "[>](bold #a7c080)"
+error_symbol = "[>](bold #e67e80)"
+vimcmd_symbol = "[<](bold #a7c080)"
+
+# STYLE 2: Chevron ❯
+# success_symbol = "[❯](bold #a7c080)"
+# error_symbol = "[❯](bold #e67e80)"
+# vimcmd_symbol = "[❮](bold #a7c080)"
+
+# STYLE 3: Arrow ➜
+# success_symbol = "[➜](bold #a7c080)"
+# error_symbol = "[➜](bold #e67e80)"
+# vimcmd_symbol = "[➜](bold #dbbc7f)"
+
+# STYLE 4: Chevron (Nerd Font) 
+# success_symbol = "[](bold #a7c080)"
+# error_symbol = "[](bold #e67e80)"
+# vimcmd_symbol = "[](bold #a7c080)"
+
+# STYLE 5: Diamond ◆
+# success_symbol = "[◆](bold #83c092)"
+# error_symbol = "[◆](bold #e67e80)"
+# vimcmd_symbol = "[◇](bold #83c092)"
+
+# STYLE 6: Powerline 
+# success_symbol = "[](bold #a7c080)"
+# error_symbol = "[](bold #e67e80)"
+# vimcmd_symbol = "[](bold #a7c080)"
+
+# STYLE 7: Bullet •
+# success_symbol = "[•](bold #a7c080)"
+# error_symbol = "[•](bold #e67e80)"
+# vimcmd_symbol = "[◦](bold #a7c080)"
+
+# STYLE 8: Star ✦
+# success_symbol = "[✦](bold #dbbc7f)"
+# error_symbol = "[✦](bold #e67e80)"
+# vimcmd_symbol = "[✧](bold #dbbc7f)"
+
+# STYLE 9: Small Chevron ›
+# success_symbol = "[›](bold #a7c080)"
+# error_symbol = "[›](bold #e67e80)"
+# vimcmd_symbol = "[‹](bold #a7c080)"
+
+# STYLE 10: Sword/Shield/Skull - Everforest
+# SET 1: Nerd Font
+# success_symbol = "[󰓥](bold #7fbbb3)"
+# error_symbol = "[󰮭](bold #e67e80)"
+# vimcmd_symbol = "[󰧶](bold #7fbbb3)"
+
+# SET 2: Standard Unicode
+# success_symbol = "[🗡](bold #7fbbb3)"
+# error_symbol = "[💀](bold #e67e80)"
+# vimcmd_symbol = "[🛡](bold #7fbbb3)"
+
+# SET 3: Crossed Swords
+# success_symbol = "[⚔](bold #7fbbb3)"
+# error_symbol = "[☠](bold #e67e80)"
+# vimcmd_symbol = "[🛡](bold #7fbbb3)"
+
+# SET 4: Fantasy
+# success_symbol = "[󱐋](bold #7fbbb3)"
+# error_symbol = "[👻](bold #e67e80)"
+# vimcmd_symbol = "[󱡟](bold #7fbbb3)"
+
+# SET 5: Minimal
+# success_symbol = "[⌖](bold #7fbbb3)"
+# error_symbol = "[⚰](bold #e67e80)"
+# vimcmd_symbol = "[⛨](bold #7fbbb3)"
+
+# STYLE 11: Double Arrow »
+# success_symbol = "[»](bold #a7c080)"
+# error_symbol = "[»](bold #e67e80)"
+# vimcmd_symbol = "[«](bold #a7c080)"
+
+# STYLE 12: Pointer →
+# success_symbol = "[→](bold #a7c080)"
+# error_symbol = "[→](bold #e67e80)"
+# vimcmd_symbol = "[←](bold #a7c080)"
+
+# =============================================================================
+# DIRECTORY - Minimal & Colorful (No icons in names)
+# =============================================================================
+
+
+# [directory]
+# style = "bold #d3c6aa"
+# format = "[$path]($style) "
+# truncation_length = 2
+# truncation_symbol = "…/"
+# truncate_to_repo = false
+# home_symbol = "~"
+# read_only = " "
+# read_only_style = "bold #e67e80"
+
+
+# # Empty substitutions - no icons in directory names
+# [directory.substitutions]
+
+
+
+
+# =============================================================================
+# GIT BRANCH - Clean with icon
+# =============================================================================
+
+[git_branch]
+symbol = ""
+style = "bold #a7c080"
+format = "[$branch]($style)"
+truncation_length = 20
+
+[git_commit]
+commit_hash_length = 7
+style = "bold #83c092"
+format = "[$hash]($style)"
+only_detached = true
+
+# =============================================================================
+# GIT STATUS - Clean with icons when needed
+# =============================================================================
+
+[git_status]
+style = "bold #e67e80"
+format = '[$all_status$ahead_behind]($style) '
+conflicted = " conflict"
+ahead = " +${count}"
+behind = " -${count}"
+diverged = " ±${ahead_count}"
+up_to_date = ""
+untracked = " ?${count}"
+stashed = ""
+modified = " ~${count}"
+staged = " +${count}"
+renamed = " »${count}"
+deleted = " ✘${count}"
+
+# =============================================================================
+# LANGUAGES - Icon Only
+# =============================================================================
+
+[python]
+symbol = ""
+style = "bold #dbbc7f"
+format = "[$symbol]($style) "
+detect_extensions = ["py", "pyw", "ipynb"]
+detect_files = ["requirements.txt", "pyproject.toml", "Pipfile"]
+detect_folders = [".venv", "venv"]
+
+[nodejs]
+symbol = ""
+style = "bold #a7c080"
+format = "[$symbol]($style) "
+detect_extensions = ["js", "mjs", "ts", "tsx"]
+detect_files = ["package.json"]
+detect_folders = ["node_modules"]
+
+[rust]
+symbol = ""
+style = "bold #e69875"
+format = "[$symbol]($style) "
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
+
+[golang]
+symbol = ""
+style = "bold #83c092"
+format = "[$symbol]($style) "
+detect_extensions = ["go"]
+detect_files = ["go.mod"]
+
+[lua]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_extensions = ["lua"]
+
+[java]
+symbol = ""
+style = "bold #e67e80"
+format = "[$symbol]($style) "
+detect_extensions = ["java"]
+detect_files = ["pom.xml"]
+
+[kotlin]
+symbol = ""
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["kt"]
+
+[ruby]
+symbol = ""
+style = "bold #e67e80"
+format = "[$symbol]($style) "
+detect_extensions = ["rb"]
+detect_files = ["Gemfile"]
+
+[php]
+symbol = ""
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["php"]
+
+[c]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_extensions = ["c"]
+
+[cpp]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_extensions = ["cpp"]
+
+[dotnet]
+symbol = "󰪮"
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["cs"]
+
+[swift]
+symbol = ""
+style = "bold #e69875"
+format = "[$symbol]($style) "
+detect_extensions = ["swift"]
+
+[zig]
+symbol = ""
+style = "bold #e69875"
+format = "[$symbol]($style) "
+detect_extensions = ["zig"]
+
+[haskell]
+symbol = ""
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["hs"]
+
+[elixir]
+symbol = ""
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["ex"]
+
+[scala]
+symbol = ""
+style = "bold #e67e80"
+format = "[$symbol]($style) "
+detect_extensions = ["scala"]
+
+[dart]
+symbol = ""
+style = "bold #83c092"
+format = "[$symbol]($style) "
+detect_extensions = ["dart"]
+
+[julia]
+symbol = ""
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["jl"]
+
+[bun]
+symbol = "🍞"
+style = "bold #dbbc7f"
+format = "[$symbol]($style) "
+detect_files = ["bun.lockb"]
+
+[deno]
+symbol = "🦕"
+style = "bold #83c092"
+format = "[$symbol]($style) "
+detect_files = ["deno.json"]
+
+[elm]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_extensions = ["elm"]
+
+[gleam]
+symbol = "󰦥"
+style = "bold #d699b6"
+format = "[$symbol]($style) "
+detect_extensions = ["gleam"]
+
+[ocaml]
+symbol = ""
+style = "bold #e69875"
+format = "[$symbol]($style) "
+detect_extensions = ["ml"]
+
+[perl]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_extensions = ["pl"]
+
+[nim]
+symbol = "👑"
+style = "bold #dbbc7f"
+format = "[$symbol]($style) "
+detect_extensions = ["nim"]
+
+# =============================================================================
+# INFRASTRUCTURE & CLOUD
+# =============================================================================
+
+[docker_context]
+symbol = ""
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+detect_files = ["Dockerfile"]
+
+[kubernetes]
+symbol = "☸"
+style = "bold #7fbbb3"
+format = "[$symbol]($style) "
+disabled = false
+
+[aws]
+symbol = ""
+style = "bold #dbbc7f"
+format = "[$symbol]($style) "
+disabled = false
+
+# =============================================================================
+# TIME
+# =============================================================================
+
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "bold #7a8478"
+time_format = "%H:%M"
+
+# =============================================================================
+# DISABLED
+# =============================================================================
+
+[fill]
+disabled = true
+
+[cmd_duration]
+disabled = true
+
+[jobs]
+disabled = true
+
+[status]
+disabled = true
+
+[container]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[conda]
+disabled = true
+
+[sudo]
+disabled = true
+
+# Everforest Colors:
+#   #d3c6aa - fg0 | #e67e80 - red | #e69875 - orange | #dbbc7f - yellow
+#   #a7c080 - green | #83c092 - aqua | #7fbbb3 - blue | #d699b6 - purple | #7a8478 - grey

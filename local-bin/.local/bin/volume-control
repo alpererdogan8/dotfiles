@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Toggle Mute
+pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+# Send signal to Waybar to refresh the pulseaudio module
+# This assumes your Waybar pulseaudio module is listening to signal 1
+pkill -RTMIN+1 waybar
+
+# Optional: Refresh SwayNC UI
+swaync-client -R && swaync-client -rs

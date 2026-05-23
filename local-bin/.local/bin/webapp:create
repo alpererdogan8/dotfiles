@@ -1,0 +1,144 @@
+#!/bin/bash
+
+APP_NAME="$1"
+APP_URL="$2"
+
+if [ -z "$APP_NAME" ] || [ -z "$APP_URL" ]; then
+  echo "Usage: webapp:create \"Name\" \"URL\""
+  exit 1
+fi
+
+BIN_DIR="$HOME/.local/bin"
+DESKTOP_DIR="$HOME/.local/share/applications"
+ICON_DIR="$HOME/.local/share/icons"
+
+mkdir -p "$BIN_DIR" "$DESKTOP_DIR" "$ICON_DIR"
+
+SAFE_NAME=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
+DOMAIN=$(echo "$APP_URL" | awk -F/ '{print $3}')
+ICON_FILE="$ICON_DIR/$SAFE_NAME.png"
+
+curl -s -L -A "Mozilla/5.0" "https://www.google.com/s2/favicons?domain=${DOMAIN}&sz=128" -o "$ICON_FILE"
+
+if [ ! -s "$ICON_FILE" ]; then
+  ICON_PATH="web-browser"
+else
+  ICON_PATH="$ICON_FILE"
+fi
+
+# --- Detect default browser ---
+DEFAULT_DESKTOP=$(xdg-mime query default x-scheme-handler/https 2>/dev/null)
+DEFAULT_BROWSER=""
+SEARCH_PATHS=("$HOME/.local/share/applications" "/usr/share/applications" "/usr/local/share/applications")
+
+for p in "${SEARCH_PATHS[@]}"; do
+  if [ -f "$p/$DEFAULT_DESKTOP" ]; then
+    DEFAULT_BROWSER=$(grep "^Exec=" "$p/$DEFAULT_DESKTOP" | head -n 1 |
+      sed 's/^Exec=//;s/%.*//;s/"//g' | awk '{print $1}')
+    break
+  fi
+done
+
+# --- Detect installed browsers dynamically ---
+FOUND_BROWSERS=()
+
+for dir in "${SEARCH_PATHS[@]}"; do
+  [ -d "$dir" ] || continue
+  for desktop_file in "$dir"/*.desktop; do
+    [ -f "$desktop_file" ] || continue
+
+    grep -q "Categories=.*WebBrowser" "$desktop_file" 2>/dev/null || continue
+
+    bin=$(grep "^Exec=" "$desktop_file" | head -n1 |
+      sed 's/^Exec=//;s/ *%[^ ]*//g;s/"//g' |
+      awk '{print $1}')
+
+    [ -n "$bin" ] && command -v "$bin" &>/dev/null || continue
+
+    already=false
+    for b in "${FOUND_BROWSERS[@]}"; do
+      [[ "$b" == "$bin" ]] && already=true && break
+    done
+    $already || FOUND_BROWSERS+=("$bin")
+  done
+done
+
+# If default browser is not in the list, prepend it
+if [ -n "$DEFAULT_BROWSER" ]; then
+  already=false
+  for b in "${FOUND_BROWSERS[@]}"; do
+    [[ "$b" == "$DEFAULT_BROWSER" ]] && already=true && break
+  done
+  $already || FOUND_BROWSERS=("$DEFAULT_BROWSER" "${FOUND_BROWSERS[@]}")
+fi
+
+# --- Browser selection ---
+if [ ${#FOUND_BROWSERS[@]} -eq 0 ]; then
+  echo "No browsers found. Falling back to xdg-open."
+  BROWSER_BIN="xdg-open"
+else
+  echo ""
+  echo "Select browser:"
+  printf "  1) Default (%s)\n" "$DEFAULT_BROWSER"
+
+  other_index=2
+  for b in "${FOUND_BROWSERS[@]}"; do
+    [[ "$b" == "$DEFAULT_BROWSER" ]] && continue
+    printf "  %d) %s\n" "$other_index" "$b"
+    other_index=$((other_index + 1))
+  done
+
+  echo ""
+  read -rp "Choice [1]: " choice
+  choice=${choice:-1}
+
+  if [ "$choice" -eq 1 ]; then
+    BROWSER_BIN="$DEFAULT_BROWSER"
+  else
+    others=()
+    for b in "${FOUND_BROWSERS[@]}"; do
+      [[ "$b" == "$DEFAULT_BROWSER" ]] && continue
+      others+=("$b")
+    done
+
+    idx=$((choice - 2))
+    if [ "$idx" -lt 0 ] || [ "$idx" -ge "${#others[@]}" ]; then
+      echo "Invalid choice, using default."
+      BROWSER_BIN="$DEFAULT_BROWSER"
+    else
+      BROWSER_BIN="${others[$idx]}"
+    fi
+  fi
+fi
+
+# --- Create launcher script ---
+LAUNCHER_PATH="$BIN_DIR/$APP_NAME"
+
+if [[ "$BROWSER_BIN" == *"firefox"* ]]; then
+  printf "#!/bin/bash\nnohup \"%s\" --new-window \"%s\" \"\$@\" >/dev/null 2>&1 &\n" \
+    "$BROWSER_BIN" "$APP_URL" >"$LAUNCHER_PATH"
+else
+  printf "#!/bin/bash\nnohup \"%s\" --app=\"%s\" --ozone-platform=wayland \"\$@\" >/dev/null 2>&1 &\n" \
+    "$BROWSER_BIN" "$APP_URL" >"$LAUNCHER_PATH"
+fi
+
+chmod +x "$LAUNCHER_PATH"
+
+# --- Create .desktop entry ---
+cat >"$DESKTOP_DIR/$SAFE_NAME.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=$APP_NAME
+Exec="$LAUNCHER_PATH"
+Icon=$ICON_PATH
+Terminal=false
+StartupWMClass=$DOMAIN
+Categories=Network;WebBrowser;
+EOF
+
+chmod +x "$DESKTOP_DIR/$SAFE_NAME.desktop"
+update-desktop-database "$DESKTOP_DIR" 2>/dev/null
+
+echo ""
+echo "✅ Created: $APP_NAME"
+echo "🌐 Browser: $BROWSER_BIN"

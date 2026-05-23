@@ -1,0 +1,111 @@
+{
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "ignore-gtk-theme": true,
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "top",
+  "control-center-layer": "top",
+  "layer-shell": true,
+  "cssPriority": "highest",
+  "control-center-exclusive-zone": false,
+  "control-center-margin-top": 10,
+  "control-center-margin-bottom": 10,
+  "control-center-margin-right": 10,
+  "control-center-margin-left": 0,
+  "notification-2fa-action": true,
+  "notification-inline-replies": true,
+  "notification-icon-size": 48,
+  "notification-body-image-height": 80,
+  "notification-body-image-width": 150,
+  "timeout": 5,
+  "timeout-low": 2,
+  "timeout-critical": 0,
+  "fit-to-screen": true,
+  "control-center-width": 400,
+  "control-center-height": 650,
+  "notification-window-width": 500,
+  "keyboard-shortcuts": true,
+  "image-visibility": "when-available",
+  "transition-time": 0,
+  "hide-on-clear": false,
+  "hide-on-action": true,
+  "script-fail-notify": true,
+  "max-notifications": 10,
+  "widgets": ["title", "notifications", "mpris", "volume", "backlight", "buttons-grid"],
+
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "󰆴"
+    },
+    "mpris": {
+      "image-size": 48,
+      "image-radius": 8,
+      "blur": false
+    },
+    "volume": {
+      "label": "󰕾",
+      "show-per-app": false,
+      "show-app-icon": true,
+      "collapse-button-label": "",
+      "animation-type": "slide_down",
+      "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+",
+      "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-"
+    },
+    "backlight": {
+      "label": "󰃟"
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰖩",
+          "command": "sh -c '$HOME/.config/swaync/scripts/wifi.sh'"
+        },
+        {
+          "label": "󰂯",
+          "command": "sh -c '$HOME/.config/swaync/scripts/bluetooth.sh'"
+        },
+        {
+          "label": "󰕾",
+          "command": "sh -c 'if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; else wpctl set-mute @DEFAULT_AUDIO_SINK@ 1; fi'",
+          "update-command": "sh -c 'wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q MUTED && echo false || echo true'",
+          "type": "toggle"
+        },
+        {
+          "label": "󰍬",
+          "command": "sh -c 'if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0; else wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1; fi'",
+          "update-command": "sh -c 'wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q MUTED && echo false || echo true'",
+          "type": "toggle"
+        },
+        {
+          "label": "⦸",
+          "command": "sh -c 'if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then swaync-client -dn; else swaync-client -df; fi'",
+          "update-command": "swaync-client -D",
+          "type": "toggle"
+        },
+        {
+          "label": " ",
+          "command": "sh -c '$HOME/.local/bin/auto-cpufreq.sh open'",
+          "type": "normal"
+        },
+        {
+          "label": "󰹑",
+          "command": "sh -c 'swaync-client -cp && sleep 0.5 && $HOME/.local/bin/hyprshot -m region --clipboard-only --silent'"
+        },
+        {
+          "label": "󰛼",
+          "command": "vicinae toggle"
+        },
+        {
+          "label": "󰍺 ",
+          "command": "sh -c '$HOME/.config/swaync/scripts/monitor_layout.sh'"
+        },
+        {
+          "label": "󰐥",
+          "command": "sh -c '$HOME/.config/swaync/scripts/powermenu.sh'"
+        }
+      ]
+    }
+  }
+}

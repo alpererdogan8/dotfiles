@@ -1,0 +1,15 @@
+tmux/plugins/
+.gitconfig.local
+zsh/zsh/configs/zsh_history
+zsh/zsh/configs/.zcompdump
+
+vscode/.config/Code/User/workspaceStorage/
+vscode/.config/Code/User/workspaceStorage/
+vscode/.config/Code/User/globalStorage/
+vscode/.config/Code/User/History/
+vscode/.config/Code/User/logs/
+vscode/.vscode/extensions/
+vscode/.config/Code/CachedData/
+vscode/.config/Code/Cache/
+vscode/.config/Code/CachedExtensions/
+vscode/.config/Code/Crashpad/

@@ -1,0 +1,19 @@
+export SSH_AUTH_SOCK="$HOME/.bitwarden-ssh-agent.sock"
+export TERMINAL=ghostty
+
+export QT_QPA_PLATFORMTHEME=qt6ct
+
+
+export LIBVA_DRIVER_NAME=iHD
+export GBM_BACKEND=drm-intel
+export __GLX_VENDOR_LIBRARY_NAME=mesa
+
+export WLR_DRM_DEVICES=/dev/dri/card1
+
+
+export CLUTTER_DEFAULT_FPS=120
+export __GL_MAX_FRAMES_BETWEEN_PRESENT=1
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export MOZ_ENABLE_WAYLAND=1
+
+export GTK_THEME=WhiteSur-Dark-solid:dark
