@@ -3,7 +3,10 @@ export EDITOR=nvim
 export VISUAL=nvim
 export TERMINAL=ghostty
 
-export GOPATH=$HOME/go
-export PATH=$PATH:$(go env GOPATH)/bin
+export GOPATH="$HOME/go"
+export PATH="$PATH:$GOPATH/bin"
+
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 export STARSHIP_CACHE=~/.starship/cache
+
+export NVM_DIR="$HOME/.config/nvm"

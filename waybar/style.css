@@ -1,173 +1,169 @@
-/* ═══════════════════════════════════════════
-   WAYBAR — MINIMAL DARK / Inter
-   ═══════════════════════════════════════════ */
+/* ── Color Palette ────────────────────────────────────────────────── */
+@define-color bg #000000;
+@define-color fg #ffffff;
+@define-color fg-muted rgba(174, 174, 174, 1);
+@define-color col-warning rgba(255, 196, 90, 0.90);
+@define-color col-critical rgba(255, 85, 85, 0.95);
+@define-color col-charging rgba(140, 210, 140, 0.90);
+@define-color col-plugged rgba(100, 180, 255, 0.95);
+@define-color col-blink #f53c3c;
+@define-color col-attention #eb4d4b;
 
+/* ── Base ─────────────────────────────────────────────────────────── */
 * {
-  border: none;
-  border-radius: 0;
-  font-family: "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  min-height: 0;
+    font-family: 'JetBrainsMono Nerd Font Propo';
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    box-shadow: none;
+    background-color: @bg;
 }
 
 window#waybar {
-  background-color: #0a0a0a;
-  color: #e8e8e8;
+    background-color: @bg;
+    color: @fg;
+    transition-property: background-color;
+    transition-duration: .5s;
 }
 
-window#waybar.hidden { opacity: 0.15; }
-
-.modules-left  { padding-left:  6px; }
-.modules-right { padding-right: 6px; }
-
-/* ══════════════════════════════════════════════
-   WORKSPACES
-   ══════════════════════════════════════════════ */
-#workspaces {
-  background-color: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 2px;
-  margin: 2px 0;
-  padding: 2px 2px;
+window#waybar.hidden {
+    opacity: 0.2;
 }
 
-#workspaces button {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.28);
-  border: none;
-  border-radius: 2px;
-  padding: 0 2px;
-  margin: 0 1px;
-  min-width: 18px;
-  font-size: 11px;
-  font-weight: 400;
+window#waybar.empty {
+    background-color: transparent;
 }
 
-#workspaces button:hover      { background: rgba(255,255,255,0.06); color: #e8e8e8; }
-#workspaces button.active     { background: rgba(255,255,255,0.10); color: #ffffff; font-weight: 400; }
-#workspaces button.visible    { color: rgba(255,255,255,0.55); }
-#workspaces button.urgent     { background: #ffffff; color: #0a0a0a; }
-#workspaces button.empty      { color: rgba(255,255,255,0.13); }
-#workspaces button.persistent { color: rgba(255,255,255,0.32); }
-
-/* ══════════════════════════════════════════════
-   CLOCK
-   ══════════════════════════════════════════════ */
-#custom-clock {
-  background-color: #111111;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 7px;
-  padding: 2px 12px;
-  margin: 3px 0;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.4px;
-}
-
-#custom-clock:hover { background-color: #1c1c1c; }
-
-/* ══════════════════════════════════════════════
-   MODULE TRANSITIONS
-   ══════════════════════════════════════════════ */
-#custom-clock,
-#network,
-#custom-power,
-#custom-bluetooth,
-#cpu,
-#memory,
-#custom-temperature,
-#battery,
-#custom-swaync-open-button {
-  transition: background-color 120ms ease, color 120ms ease;
-}
-
-/* ══════════════════════════════════════════════
-   RIGHT STRIP
-   ══════════════════════════════════════════════ */
-#network,
-#custom-power,
-#cpu,
-#memory,
-#custom-temperature,
-#battery,
-#custom-bluetooth,
-#custom-swaync-open-button {
-  background-color: #111111;
-  color: #e8e8e8;
-  padding: 2px 8px;
-  margin: 3px 0;
-  border-top:    1px solid rgba(255, 255, 255, 0.07);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  font-size: 11px;
-  font-weight: 400;
-}
-
-#network {
-  border-left: 1px solid rgba(255, 255, 255, 0.07);
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  margin: 4px 0;
-  padding: 0 10px;
-}
-
-#custom-swaync-open-button {
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
-  margin-right: 4px;
-  padding-right: 10px;
-}
-
-#network:hover,
-#custom-power:hover,
-#custom-bluetooth:hover,
-#cpu:hover,
-#memory:hover,
-#custom-temperature:hover,
-#battery:hover,
-#custom-swaync-open-button:hover {
-  background-color: #1c1c1c;
-  color: #ffffff;
-}
-
-#custom-bluetooth.bt-off {
-    color: rgba(255, 255, 255, 0.25);
-}
-
-#custom-bluetooth.bt-on {
-    color: rgba(255, 255, 255, 0.65);
-}
-
-#custom-bluetooth.bt-connected {
-    color: #e8e8e8;
-}
-
-
-#battery.warning                  { color: rgba(255, 196, 90,  0.90); }
-#battery.critical:not(.charging)  { color: rgba(255, 85,  85,  0.95); }
-#battery.charging,
-#battery.plugged                  { color: rgba(140, 210, 140, 0.90); }
-
-#custom-temperature.critical {
-  color: rgba(255, 85, 85, 0.95);
-}
-
-/* ══════════════════════════════════════════════
-   TOOLTIP
-   ══════════════════════════════════════════════ */
+/* ── Tooltip ──────────────────────────────────────────────────────── */
 tooltip {
-  font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  background-color: #0d0d0d;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: #e8e8e8;
+    padding: 2px;
 }
 
-tooltip label {
-  color: #e8e8e8;
+/* ── Buttons ──────────────────────────────────────────────────────── */
+button {
+    border: none;
+    border-radius: 0;
+}
+
+/* ── Workspaces ───────────────────────────────────────────────────── */
+#workspaces button {
+    all: initial;
+    padding: 0 6px;
+    margin: 0 2px;
+    min-width: 10px;
+}
+
+#workspaces button.empty {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+    background-color: @bg;
+    box-shadow: inset 0 -3px @bg;
+}
+
+#workspaces button.focused,
+#workspaces button.empty {
+    color: @fg-muted;
+}
+
+#workspaces button.urgent {
+    background-color: @bg;
+}
+
+/* ── Module Layout ────────────────────────────────────────────────── */
+.modules-left {
+    margin-left: 8px;
+}
+
+.modules-right {
+    margin-right: 8px;
+}
+
+#clock,
+#temperature,
+#network,
+#bluetooth,
+#cpu,
+#memory,
+#battery,
+#pulseaudio,
+#custom-power,
+#power-profiles-daemon,
+#custom-swaync-open-button {
+    padding: 0 9px;
+    color: @fg;
+}
+
+#custom-temperature {
+    padding: 0;
+}
+
+#cpu,
+#bluetooth,
+#battery,
+#pulseaudio {
+    font-size: 15px;
+}
+
+/* ── Tray ─────────────────────────────────────────────────────────── */
+#tray {
+    background-color: @bg;
+    padding: 0 9px;
+}
+
+#tray>.passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @col-attention;
+}
+
+/* ── Battery ──────────────────────────────────────────────────────── */
+#battery.warning:not(.charging) {
+    color: @col-warning;
+}
+
+#battery.critical:not(.charging) {
+    color: @col-critical;
+}
+
+#battery.charging {
+    color: @col-charging;
+}
+
+#battery.plugged {
+    color: @col-plugged;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}
+
+#battery.critical:not(.charging) {
+    background-color: @col-blink;
+    color: @fg;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* ── Temperature ──────────────────────────────────────────────────── */
+#custom-temperature.critical {
+    color: @col-critical;
+}
+
+/* ── Idle Inhibitor ───────────────────────────────────────────────── */
+#idle_inhibitor {
+    background-color: #2d3436;
 }

@@ -3,7 +3,7 @@
     "source.organizeImports": "explicit",
   },
   "editor.colorDecorators": true,
-  "editor.fontFamily": "Ioskeley Mono",
+  "editor.fontFamily": "IoskeleyMono Nerd Font Medium",
   "editor.fontLigatures": true,
   "editor.codeLensFontFamily": "Ioskeley Mono",
   "editor.tabSize": 2,
@@ -17,14 +17,12 @@
   "editor.cursorBlinking": "phase",
   "editor.smoothScrolling": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.cursorSmoothCaretAnimation": "explicit",
   "git.ignoreMissingGitWarning": true,
-
   "vscode_custom_css.imports": [
     "file:///C:/Users/{your username}/.vscode/extensions/thecodemonkey.synthwave-x-fluoromachine-epic-animations-1.4.13/synthwave-x-fluoromachine.css",
     "file:///C:/Users/{your username}/.vscode/extensions/thecodemonkey.synthwave-x-fluoromachine-epic-animations-1.4.13/epic-80s-transitions.css",
   ],
-
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
@@ -46,13 +44,12 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.css-language-features",
   },
   "editor.tabCompletion": "onlySnippets",
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features",
   },
-
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
   "js/ts.implicitProjectConfig.module": "ES2022",
@@ -61,7 +58,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.json-language-features",
   },
   "editor.accessibilitySupport": "off",
   "workbench.productIconTheme": "macos-modern",
@@ -81,10 +78,19 @@
   "gulp.autoDetect": "on",
   "editor.wordWrapColumn": 120,
   "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "cx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
   ],
-  "tailwindCSS.classFunctions": ["cva", "cx"],
+  "tailwindCSS.classFunctions": [
+    "cva",
+    "cx"
+  ],
   "tailwindCSS.emmetCompletions": true,
   "synthwave84.brightness": 1,
   "liveServer.settings.donotShowInfoMsg": true,
@@ -99,7 +105,6 @@
   "[markdown]": {
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
   },
-
   "editor.language.colorizedBracketPairs": [],
   "editor.inlineSuggest.showToolbar": "always",
   "aws.codeWhisperer.shareCodeWhispererContentWithAWS": false,
@@ -174,7 +179,10 @@
       "icon": "terminal-powershell",
     },
     "Command Prompt": {
-      "path": ["${env:windir}\\Sysnative\\cmd.exe", "${env:windir}\\System32\\cmd.exe"],
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
       "args": [],
       "icon": "terminal-cmd",
     },
@@ -231,12 +239,14 @@
     "codeWhispererNewWelcomeMessage": true,
   },
   "files.autoSave": "afterDelay",
-  "workbench.settings.applyToAllProfiles": ["editor.fontFamily", "editor.quickSuggestions"],
+  "workbench.settings.applyToAllProfiles": [
+    "editor.fontFamily",
+    "editor.quickSuggestions"
+  ],
   "editor.useTabStops": false,
   "workbench.editor.highlightModifiedTabs": true,
   "diffEditor.maxComputationTime": 0,
   "editor.unicodeHighlight.ambiguousCharacters": false,
-  "workbench.colorTheme": "Kintsugi Dark Flared",
   "editor.quickSuggestions": {
     "comments": "on",
     "strings": "on",

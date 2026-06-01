@@ -59,7 +59,7 @@
     "buttons-grid": {
       "actions": [
         {
-          "label": "󰖩",
+          "label": "",
           "command": "sh -c '$HOME/.config/swaync/scripts/wifi.sh'"
         },
         {
@@ -79,15 +79,14 @@
           "type": "toggle"
         },
         {
-          "label": "⦸",
+          "label": "󰜺",
           "command": "sh -c 'if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then swaync-client -dn; else swaync-client -df; fi'",
           "update-command": "swaync-client -D",
           "type": "toggle"
         },
         {
-          "label": " ",
-          "command": "sh -c '$HOME/.local/bin/auto-cpufreq.sh open'",
-          "type": "normal"
+          "label": "󱐋",
+          "command": "sh -c '$HOME/.config/swaync/scripts/power_profile.sh'"
         },
         {
           "label": "󰹑",
@@ -98,11 +97,11 @@
           "command": "vicinae toggle"
         },
         {
-          "label": "󰍺 ",
+          "label": "󰍺",
           "command": "sh -c '$HOME/.config/swaync/scripts/monitor_layout.sh'"
         },
         {
-          "label": "󰐥",
+          "label": "",
           "command": "sh -c '$HOME/.config/swaync/scripts/powermenu.sh'"
         }
       ]

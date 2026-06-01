@@ -1,109 +1,240 @@
+// -*- mode: jsonc -*-
 {
-  "layer": "top",
-  "position": "top",
-  "height": 1,
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["custom/clock"],
-  "modules-right": [
-    "network",
-    "custom/power",
-    // "custom/bluetooth",
-    "cpu",
-    "memory",
-    "custom/temperature",
-    "battery",
-    "custom/swaync-open-button",
-  ],
-  // "custom/bluetooth": {
-  //   "exec": "$HOME/.config/rofi/bt-status.sh",
-  //   "return-type": "json",
-  //   "interval": 10,
-  //   "signal": 9,
-  //   "on-click": "bash $HOME/.config/rofi/toggle_bluetooth.sh",
-  //   "tooltip": true,
-  // },
-  "hyprland/workspaces": {
-    "disable-scroll": true,
-    "all-outputs": false,
-    "warp-on-scroll": false,
-    "format": "{id}",
-    "on-click": "hyprctl dispatch 'hl.dsp.exec_raw(\"workspace {id}\")'",
-    "ignore-window-groups": true,
-    "persistent-workspaces": {
-      "*": 0,
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+    "spacing": 0,
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin": 0,
+    "modules-left": [
+        "hyprland/workspaces",
+        "custom/media"
+    ],
+    // ── Workspaces ───────────────────────────────────────────────────────
+    "hyprland/workspaces": {
+        "active-only": true,
+        "all-outputs": false,
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
+            "active": "󱓻",
+            "default": "●",
+            "urgent": "<span foreground='#ff0000'>󱓻</span>",
+        },
+        "persistent-workspaces": {
+            "HDMI-1-A": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "eDP-1": [
+                7,
+                8,
+                9,
+                10
+            ]
+        },
+        "sort-by-number": true
     },
-  },
-  "custom/clock": {
-    "exec": "sh -c '$HOME/.config/waybar/scripts/clock_focus.sh'",
-    "return-type": "json",
-    "tooltip": true,
-  },
-  "network": {
-    "tooltip": true,
-    "format": "{icon}",
-    "format-ethernet": "󰈀",
-    "format-wifi": "{icon} {ipaddr}",
-    "format-disconnected": "󰤮",
-    "tooltip-format-wifi": "{essid}  ·  {signalStrength}%\n{ipaddr}",
-    "tooltip-format-ethernet": "{ifname}  ·  {ipaddr}",
-    "tooltip-format-disconnected": "Bağlantı yok",
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-  },
-  "custom/power": {
-    "format": "{}",
-    "exec": "sleep 3 && sh -c '$HOME/.local/bin/auto-cpufreq.sh'",
-    "on-click": "sh -c '$HOME/.local/bin/auto-cpufreq.sh open'",
-    "return-type": "json",
-    "signal": 8,
-    "interval": "once",
-    "tooltip": true,
-  },
-  "cpu": {
-    "format": "󰍛 {usage}%",
-    "tooltip": true,
-    "tooltip-format": "CPU  {usage}%\nKullanıcı {user}%  ·  Sistem {system}%",
-  },
-  "memory": {
-    "format": "󰘚 {percentage}%",
-    "tooltip": true,
-    "tooltip-format": "RAM  {used:0.1f} / {total:0.1f} GiB",
-  },
-  "custom/temperature": {
-    "exec": "sh -c '$HOME/.config/waybar/scripts/avg_temp.sh'",
-    "return-type": "json",
-    "interval": 5,
-    "tooltip": true,
-  },
-  "battery": {
-    "states": {
-      "warning": 30,
-      "critical": 15,
+    "modules-center": [
+        "custom/clock",
+    ],
+    // ── Clock ───────────────────────────────────────────────────────
+    "custom/clock": {
+        "exec": "sh -c '$HOME/.config/waybar/scripts/clock_focus.sh'",
+        "return-type": "json",
+        "tooltip": true,
     },
-    "format": "{icon} {capacity}%",
-    "format-charging": "󰂄 {capacity}%",
-    "format-plugged": "󰚥 {capacity}%",
-    "tooltip-format": "{timeTo}\n{power:.1f} W",
-    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "tooltip": true,
-  },
-  "custom/swaync-open-button": {
-    "format": "{icon}",
-    "format-icons": {
-      "notification": "<span foreground='#ff6b6b'>󰂚</span>",
-      "none": "󰂚",
-      "dnd-notification": "<span foreground='#ff6b6b'>󰂛</span>",
-      "dnd-none": "󰂛",
-      "inhibited-notification": "<span foreground='#ff6b6b'>󰂚</span>",
-      "inhibited-none": "󰂚",
-      "dnd-inhibited-notification": "<span foreground='#ff6b6b'>󰂛</span>",
-      "dnd-inhibited-none": "󰂛",
+    "modules-right": [
+        "group/tray",
+        "cpu",
+        "power-profiles-daemon",
+        "bluetooth",
+        "pulseaudio",
+        "network",
+        "battery",
+        "custom/swaync-open-button",
+    ],
+    // ── Tray Group ───────────────────────────────────────────────────────
+    "group/tray": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 350,
+            "transition-left-to-right": true,
+            "click-to-reveal": false,
+            "start-expanded": false,
+        },
+        "modules": [
+            "custom/wrap",
+            "tray",
+            "custom/temperature",
+            "memory",
+        ]
     },
-    "return-type": "json",
-    "exec-if": "which swaync-client",
-    "exec": "swaync-client -swb",
-    "tooltip": true,
-    "on-click": "swaync-client -t -sw",
-    "on-click-right": "swaync-client -d -sw",
-    "escape": true,
-  },
+    "custom/wrap": {
+        "format": "",
+        "tooltip-format": "Hardware group"
+    },
+    "tray": {
+        "spacing": 10,
+    },
+    // ── CPU ───────────────────────────────────────────────────────
+    "cpu": {
+        "interval": 5,
+        "format": "󰍛",
+        "max-length": 10,
+        "on-click": "bash -c \"$TERMINAL --title=btop-float -e btop\"",
+        "tooltip": true
+    },
+    "memory": {
+        "interval": 30,
+        "format": " {}%"
+    },
+    // ── CPU Frequency ───────────────────────────────────────────────────────
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "tooltip": true,
+        "format-icons": {
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
+        }
+    },
+    "custom/temperature": {
+        "exec": "sh -c '$HOME/.config/waybar/scripts/avg_temp.sh'",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+    },
+    // ── Bluetooth ───────────────────────────────────────────────────────
+    "bluetooth": {
+        "format": "",
+        "format-off": "󰂲",
+        "format-disabled": "󰂲",
+        "format-connected": "󰂱",
+        "format-no-controller": "",
+        "tooltip-format": "Devices connected: {num_connections}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bluetui\""
+    },
+    // ── Audio ───────────────────────────────────────────────────────
+    "pulseaudio": {
+        "format": "{icon}",
+        "format-bluetooth": "{icon}",
+        "format-muted": "󰝟",
+        "tooltip-format": "Volume: {volume}%",
+        "tooltip-format-bluetooth": "Bluetooth Volume {volume}%",
+        "format-icons": {
+            "headphone": "",
+            "headset": "",
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
+        },
+        "scroll-step": 1,
+        "on-click": "bash -c \"$TERMINAL --title=btop-float -e wiremix\"",
+        "ignored-sinks": [
+            "Easy Effects Sink"
+        ]
+    },
+    // ── Network ───────────────────────────────────────────────────────
+    "network": {
+        "tooltip": true,
+        "format": "{icon}",
+        "format-ethernet": "󰈀",
+        "format-wifi": "{icon}",
+        "format-disconnected": "󰤮",
+        "tooltip-format-wifi": "{essid}  ·  {signalStrength}%\n{ipaddr}",
+        "tooltip-format-ethernet": "{ifname}  ·  {ipaddr}",
+        "tooltip-format-disconnected": "No Connection",
+        "format-icons": [
+            "󰤯",
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ],
+        "max-length": 50
+    },
+    // ── Battery ───────────────────────────────────────────────────────
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-discharging": "{icon}",
+        "format-charging": "{icon}",
+        "format-plugged": "",
+        "format-icons": {
+            "charging": [
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋"
+            ],
+            "default": [
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " "
+            ]
+        },
+        "format-full": "",
+        "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+        "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+        "interval": 5,
+        "states": {
+            "warning": 20,
+            "critical": 10
+        }
+    },
+    // ── Notifications ───────────────────────────────────────────────────────
+    "custom/swaync-open-button": {
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='#ff6b6b'>󰂚</span>",
+            "none": "󰂚",
+            "dnd-notification": "<span foreground='#ff6b6b'>󰂛</span>",
+            "dnd-none": "󰂛",
+            "inhibited-notification": "<span foreground='#ff6b6b'>󰂚</span>",
+            "inhibited-none": "󰂚",
+            "dnd-inhibited-notification": "<span foreground='#ff6b6b'>󰂛</span>",
+            "dnd-inhibited-none": "󰂛",
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "tooltip": true,
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true,
+    },
 }

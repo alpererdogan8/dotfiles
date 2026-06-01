@@ -111,8 +111,8 @@
   border-radius: 0;
 }
 
-.notification-action > button,
-.control-center .notification .notification-action > button {
+.notification-action>button,
+.control-center .notification .notification-action>button {
   color: @text-color;
   border-radius: 0;
   box-shadow: none;
@@ -121,7 +121,7 @@
   padding: 6px 0;
 }
 
-.control-center .notification .notification-action > button:hover {
+.control-center .notification .notification-action>button:hover {
   background-color: @gray-dark-hover;
   color: @cc-bg;
   box-shadow: none;
@@ -139,7 +139,7 @@
   background: transparent;
 }
 
-.control-center .notification-group-buttons > button {
+.control-center .notification-group-buttons>button {
   background: @gray-accent;
   color: @text-color;
   border: none;
@@ -152,7 +152,7 @@
   box-shadow: none;
 }
 
-.control-center .notification-group-buttons > button:hover {
+.control-center .notification-group-buttons>button:hover {
   background: @gray-dark-hover;
   color: @text-color;
   box-shadow: none;
@@ -258,7 +258,7 @@
   border: transparent;
 }
 
-.widget-title > button {
+.widget-title>button {
   font-size: 1.1rem;
   padding: 4px 8px;
   color: @text-color;
@@ -268,7 +268,7 @@
   border: transparent;
 }
 
-.widget-title > button:hover {
+.widget-title>button:hover {
   background: @red-base;
   color: @text-color;
 }
@@ -281,23 +281,23 @@
   border-radius: 0;
 }
 
-.widget-dnd > switch {
+.widget-dnd>switch {
   background: @gray-accent;
   border-radius: 0;
 }
 
-.widget-dnd > switch:checked {
+.widget-dnd>switch:checked {
   background: @red-base;
   border: 1px solid @red-base;
 }
 
-.widget-dnd > switch slider {
+.widget-dnd>switch slider {
   border-radius: 0;
   border: transparent;
 }
 
 /* Widget Label */
-.widget-label > label {
+.widget-label>label {
   font-size: 1rem;
   color: @text-color;
   border-radius: 0;
@@ -315,7 +315,7 @@
   border-bottom-right-radius: 12px;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild {
+.widget-buttons-grid>flowbox>flowboxchild {
   background: transparent;
   box-shadow: none;
   outline: none;
@@ -323,15 +323,16 @@
   border-radius: 6px;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild:hover,
-.widget-buttons-grid > flowbox > flowboxchild:selected,
-.widget-buttons-grid > flowbox > flowboxchild:focus {
+.widget-buttons-grid>flowbox>flowboxchild:hover,
+.widget-buttons-grid>flowbox>flowboxchild:selected,
+.widget-buttons-grid>flowbox>flowboxchild:focus {
   background: transparent;
   box-shadow: none;
   outline: none;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button {
+.widget-buttons-grid>flowbox>flowboxchild>button {
+
   min-height: 8px;
   min-width: 30px;
   background: @cc-bg;
@@ -344,17 +345,18 @@
   text-shadow: none;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button label {
+.widget-buttons-grid>flowbox>flowboxchild>button label {
+  font-family: "JetBrainsMono Nerd Font Propo";
   text-shadow: none;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+.widget-buttons-grid>flowbox>flowboxchild>button:hover {
   background-color: rgba(255, 255, 255, 0.15);
   box-shadow: none;
   text-shadow: none;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button:checked {
+.widget-buttons-grid>flowbox>flowboxchild>button:checked {
   background: rgb(168, 168, 168);
   color: @cc-bg;
   border: 0;
@@ -362,7 +364,7 @@
   text-shadow: none;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button:checked:hover {
+.widget-buttons-grid>flowbox>flowboxchild>button:checked:hover {
   background: rgb(215, 215, 215);
   color: @cc-bg;
   box-shadow: none;

@@ -1,10 +1,10 @@
 [general]
 import = [
-    "~/.config/alacritty/themes/everforest-dark.toml"
+    "~/.config/alacritty/themes/sunset-drive.toml"
 ]
 
 [window]
-opacity = 1
+opacity = 0.98
 dynamic_title = true
 
 [window.padding]
@@ -15,11 +15,11 @@ y = 8
 size = 12.0
 
 [font.normal]
-family = "Ioskeley Mono"
-style = "Bold"
+family = "Ioskeley Mono Nerd Font"
+style = "SemiBold"
 
 [font.bold]
-family = "Ioskeley Mono"
+family = "Ioskeley Mono Nerd Font"
 style = "ExtraBold"
 
 [font.offset]
@@ -31,3 +31,20 @@ style = { shape = "Block", blinking = "Always" }
 
 [selection]
 save_to_clipboard = true
+
+# [hints]
+# [[hints.enabled]]
+# command = "xdg-open"
+# hyperlinks = true
+# post_processing = true
+# mouse.enabled = true
+#
+
+[env]
+TERM = "alacritty"
+
+[bell]
+animation = "EaseOutExpo"
+duration = 150
+color = "#3e3e4b"
+command = { program = "pw-play", args = ["/usr/share/sounds/freedesktop/stereo/dialog-warning.oga"] }

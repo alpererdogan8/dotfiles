@@ -1,222 +1,88 @@
 #!/bin/bash
 
-BINARY="/usr/local/bin/auto-cpufreq"
-CONFIG_FILE="$HOME/.config/swaync/config.json"
-MY_COMMAND="$HOME/.local/bin/auto-cpufreq.sh next"
+# ── Color definitions ───────────────────────────────────────────
+RED='\033[0;31m'
+YEL='\033[1;33m'
+GRN='\033[0;32m'
+CYN='\033[0;36m'
+BLD='\033[1m'
+RST='\033[0m'
 
-STATE_CACHE="/tmp/auto-cpufreq-state.cache"
-WAYBAR_CACHE="/tmp/auto-cpufreq-waybar.json"
+CPU0="/sys/devices/system/cpu/cpu0/cpufreq"
 
-ICON_POWERSAVE=$''
-ICON_BALANCED=$' '
-ICON_PERFORMANCE=$''
-ICON_TURBO=$'+'
+# ── EPP (Energy Performance Preference) ─────────────────────────
+epp=$(cat "$CPU0/energy_performance_preference" 2>/dev/null || echo "N/A")
 
-set_epp() {
-  local value="$1"
+# ── Governor ────────────────────────────────────────────────────
+gov=$(cat "$CPU0/scaling_governor" 2>/dev/null || echo "N/A")
 
-  for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
-    echo "$value" | sudo tee "$cpu" >/dev/null
-  done
-}
-
-get_state() {
-  if [[ -f "$STATE_CACHE" ]] && (($(date +%s) - $(stat -c %Y "$STATE_CACHE") < 2)); then
-    cat "$STATE_CACHE"
-  else
-    local s
-    s=$(sudo $BINARY --get-state 2>/dev/null | xargs)
-    echo "$s" >"$STATE_CACHE"
-    echo "$s"
-  fi
-}
-
-update_ui() {
-  local icon="$1"
-  local class="$2"
-  local label="$3"
-
-  echo "{\"text\": \"$icon\", \"class\": \"$class\", \"tooltip\": \"Mode: $label\"}" >"$WAYBAR_CACHE"
-
-  pkill -RTMIN+8 waybar &
-
-  notify-send \
-    -h int:transient:1 \
-    -h string:x-canonical-private-synchronous:power \
-    -t 2000 \
-    -r 9999 \
-    -u normal \
-    "Power Mode" "$label" &
-
-  {
-    TMP_FILE=$(mktemp)
-
-    jq --arg icon "$icon" --arg cmd "$MY_COMMAND" \
-      '(.["widget-config"]["buttons-grid"].actions[] | select(.command == $cmd) | .label) |= $icon' \
-      "$CONFIG_FILE" >"$TMP_FILE" && mv "$TMP_FILE" "$CONFIG_FILE"
-
-    swaync-client -R
-  } &
-}
-
-apply_mode() {
-  local mode="$1"
-
-  if [[ "$mode" == "powersave" ]]; then
-
-    sudo $BINARY --force powersave
-    sudo $BINARY --turbo never
-
-    set_epp "power"
-
-  elif [[ "$mode" == "balanced" ]]; then
-
-    sudo $BINARY --force powersave
-    sudo $BINARY --turbo never
-
-    set_epp "balance_power"
-
-  elif [[ "$mode" == "performance" ]]; then
-
-    sudo $BINARY --force performance
-    sudo $BINARY --turbo auto
-
-    set_epp "balance_performance"
-
-  elif [[ "$mode" == "turbo" ]]; then
-
-    sudo $BINARY --force performance
-    sudo $BINARY --turbo always
-
-    set_epp "performance"
-
-  fi
-
-  echo "$mode" >"$STATE_CACHE"
-
-  pkill -RTMIN+8 waybar
-}
-
-open_rofi() {
-  local STATE
-  STATE=$(get_state)
-
-  local CURRENT_MARK=" "
-
-  local PS_MARK=""
-  local BA_MARK=""
-  local PE_MARK=""
-  local TU_MARK=""
-
-  if [[ "$STATE" == "powersave" ]]; then
-    PS_MARK="$CURRENT_MARK"
-
-  elif [[ "$STATE" == "balanced" ]]; then
-    BA_MARK="$CURRENT_MARK"
-
-  elif [[ "$STATE" == "performance" ]]; then
-    PE_MARK="$CURRENT_MARK"
-
-  elif [[ "$STATE" == "turbo" ]]; then
-    TU_MARK="$CURRENT_MARK"
-  fi
-
-  CHOICE=$(printf "%s  Powersave%s\n%s  Balanced%s\n%s  Performance%s\n%s  Turbo%s" \
-    "$ICON_POWERSAVE" "$PS_MARK" \
-    "$ICON_BALANCED" "$BA_MARK" \
-    "$ICON_PERFORMANCE" "$PE_MARK" \
-    "$ICON_TURBO" "$TU_MARK" |
-    rofi -dmenu -i -p "⚡ Power Mode" -theme ~/.config/rofi/config.rasi)
-
-  [[ -z "$CHOICE" ]] && exit 0
-
-  local NEW_MODE
-  local NEW_ICON
-  local NEW_LABEL
-  local NEW_CLASS
-
-  if [[ "$CHOICE" == *"Powersave"* ]]; then
-
-    NEW_MODE="powersave"
-    NEW_ICON="$ICON_POWERSAVE"
-    NEW_LABEL="Powersave"
-    NEW_CLASS="powersave"
-
-  elif [[ "$CHOICE" == *"Balanced"* ]]; then
-
-    NEW_MODE="balanced"
-    NEW_ICON="$ICON_BALANCED"
-    NEW_LABEL="Balanced"
-    NEW_CLASS="balanced"
-
-  elif [[ "$CHOICE" == *"Performance"* ]]; then
-
-    NEW_MODE="performance"
-    NEW_ICON="$ICON_PERFORMANCE"
-    NEW_LABEL="Performance"
-    NEW_CLASS="performance"
-
-  elif [[ "$CHOICE" == *"Turbo"* ]]; then
-
-    NEW_MODE="turbo"
-    NEW_ICON="$ICON_TURBO"
-    NEW_LABEL="Turbo"
-    NEW_CLASS="turbo"
-
-  else
-    exit 0
-  fi
-
-  echo "$NEW_MODE" >"$STATE_CACHE"
-
-  update_ui "$NEW_ICON" "$NEW_CLASS" "$NEW_LABEL"
-
-  {
-    apply_mode "$NEW_MODE"
-  } &
-}
-
-if [[ "$1" == "open" ]]; then
-  open_rofi
-  exit 0
+# ── Turbo Boost ─────────────────────────────────────────────────
+if [[ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]]; then
+  no_turbo=$(cat /sys/devices/system/cpu/intel_pstate/no_turbo)
+  turbo=$([[ "$no_turbo" == "0" ]] && echo "On" || echo "Off")
+elif [[ -f /sys/devices/system/cpu/cpufreq/boost ]]; then
+  boost=$(cat /sys/devices/system/cpu/cpufreq/boost)
+  turbo=$([[ "$boost" == "1" ]] && echo "On" || echo "Off")
+else
+  turbo="N/A"
 fi
 
-if [[ -f "$WAYBAR_CACHE" ]]; then
+# ── Cached mode ──────────────────────────────────────────────────
+cache_state=$(cat /tmp/auto-cpufreq-state.cache 2>/dev/null || echo "—")
 
-  cat "$WAYBAR_CACHE"
+# ── Header ───────────────────────────────────────────────────────
+echo -e "\n${BLD}${CYN}══════════════════════════════${RST}"
+echo -e "${BLD}  CPU Power Status${RST}"
+echo -e "${BLD}${CYN}══════════════════════════════${RST}"
 
-  {
-    REAL_STATE=$(sudo $BINARY --get-state 2>/dev/null | xargs)
-    echo "$REAL_STATE" >"$STATE_CACHE"
-  } &
+printf "  %-18s %s\n" "Mode (cached):"  "$cache_state"
+printf "  %-18s %s\n" "Governor:"       "$gov"
+printf "  %-18s %s\n" "EPP:"            "$epp"
+printf "  %-18s %s\n" "Turbo Boost:"    "$turbo"
 
-  exit 0
-fi
+# ── Min / Max / Current frequency ───────────────────────────────
+min_khz=$(cat "$CPU0/scaling_min_freq" 2>/dev/null)
+max_khz=$(cat "$CPU0/scaling_max_freq" 2>/dev/null)
 
-STATE=$(get_state)
+[[ -n "$min_khz" ]] && printf "  %-18s %s MHz\n" "Min Frequency:" "$((min_khz / 1000))"
+[[ -n "$max_khz" ]] && printf "  %-18s %s MHz\n" "Max Frequency:" "$((max_khz / 1000))"
 
-ICON="$ICON_BALANCED"
-CLASS="balanced"
-TOOLTIP="Balanced"
+# ── Per-core frequencies ─────────────────────────────────────────
+echo -e "${CYN}──────────────────────────────${RST}"
+echo -e "  ${BLD}Per-core frequencies:${RST}"
 
-if [[ "$STATE" == "powersave" ]]; then
+for freq_file in /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; do
+  core=$(echo "$freq_file" | grep -oP 'cpu\d+')
+  freq_mhz=$(( $(cat "$freq_file") / 1000 ))
 
-  ICON="$ICON_POWERSAVE"
-  CLASS="powersave"
-  TOOLTIP="Powersave"
+  if   (( freq_mhz >= 3000 )); then color=$RED
+  elif (( freq_mhz >= 1800 )); then color=$YEL
+  else                               color=$GRN
+  fi
 
-elif [[ "$STATE" == "performance" ]]; then
+  printf "    %-8s ${color}%4d MHz${RST}\n" "$core:" "$freq_mhz"
+done
 
-  ICON="$ICON_PERFORMANCE"
-  CLASS="performance"
-  TOOLTIP="Performance"
+# ── Temperatures ─────────────────────────────────────────────────
+echo -e "${CYN}──────────────────────────────${RST}"
+echo -e "  ${BLD}Temperatures:${RST}"
 
-elif [[ "$STATE" == "turbo" ]]; then
+found_temp=false
+for zone in /sys/class/thermal/thermal_zone*/; do
+  type=$(cat "$zone/type" 2>/dev/null)
+  temp=$(cat "$zone/temp" 2>/dev/null)
+  [[ -z "$temp" ]] && continue
 
-  ICON="$ICON_TURBO"
-  CLASS="turbo"
-  TOOLTIP="Turbo"
+  temp_c=$(( temp / 1000 ))
+  [[ "$type" =~ ^(x86_pkg|cpu|CPU|acpitz|coretemp) ]] || continue
 
-fi
+  (( temp_c >= 80 )) && color=$RED || \
+  (( temp_c >= 60 )) && color=$YEL || color=$GRN
 
-echo "{\"text\": \"$ICON\", \"class\": \"$CLASS\", \"tooltip\": \"Mode: $TOOLTIP\"}"
+  printf "    %-16s ${color}%2d°C${RST}\n" "$type:" "$temp_c"
+  found_temp=true
+done
+
+$found_temp || echo "    (no temperature data found)"
+
+echo -e "${BLD}${CYN}══════════════════════════════${RST}\n"
