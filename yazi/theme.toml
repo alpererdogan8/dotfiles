@@ -1,0 +1,55 @@
+[manager]
+cwd = { fg = "#00fcb9" }
+hovered = { bg = "#202036", fg = "#ffffff", bold = true }
+preview_hovered = { bg = "#202036" }
+find_keyword = { fg = "#ffe900", italic = true }
+find_position = { fg = "#ff57fd" }
+marker_copied = { fg = "#00fcb9", bg = "#00fcb9" }
+marker_cut = { fg = "#ff948b", bg = "#ff948b" }
+marker_marked = { fg = "#00a4ff", bg = "#00a4ff" }
+marker_selected = { fg = "#ff57fd", bg = "#ff57fd" }
+marker_symbol = "│"
+border_symbol = "│"
+border_style = { fg = "#7a5a3e" }
+
+[status]
+# Köşeleri yok etmek için ayırıcıları düzleştirdik
+separator_open = ""
+separator_close = ""
+separator_style = { fg = "#0f0f1a", bg = "#0f0f1a" }
+
+# Alt kısım (Status bar) renkleri - Tamamen köşeli
+normal_main = { fg = "#0f0f1a", bg = "#00a4ff", bold = true }
+normal_alt = { fg = "#ededfe", bg = "#202036" }
+select_main = { fg = "#0f0f1a", bg = "#ff57fd", bold = true }
+select_alt = { fg = "#ededfe", bg = "#202036" }
+unset_main = { fg = "#0f0f1a", bg = "#ff948b", bold = true }
+unset_alt = { fg = "#ededfe", bg = "#202036" }
+
+[indicator]
+# Köşeli göstergeler
+padding = { open = "", close = "" }
+
+[input]
+border = { fg = "#5c6675" }
+title = {}
+value = {}
+selected = { bg = "#202036" }
+
+[select]
+border = { fg = "#5c6675" }
+active = { fg = "#ff0063", bg = "#202036", bold = true }
+inactive = {}
+
+[completion]
+border = { fg = "#5c6675" }
+
+[tasks]
+border = { fg = "#5c6675" }
+title = {}
+hovered = { fg = "#ff0063", bg = "#202036" }
+
+[help]
+border = { fg = "#5c6675" }
+footer = {}
+hovered = { bg = "#202036" }

@@ -1,0 +1,4 @@
+# ~/dotfiles/git/.config/git/config.local.example
+[user]
+    name = alpererdogan8
+    email = alpererdogan8@gmail.com
