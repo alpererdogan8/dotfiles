@@ -1,4 +1,8 @@
-# Starship — sync yükle (prompt anında gelsin)
+if command -v fnm >/dev/null; then
+    eval "$(fnm env --use-on-cd --shell zsh)"
+fi
+
+
 if command -v starship >/dev/null; then
     eval "$(starship init zsh)"
 fi

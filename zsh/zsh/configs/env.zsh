@@ -3,6 +3,8 @@ export EDITOR=nvim
 export VISUAL=nvim
 export TERMINAL=ghostty
 
+export PATH="$HOME/.local/share/fnm:$PATH"
+
 export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin"
 

@@ -20,13 +20,8 @@ alias tl='tmux list-sessions'
 alias tk='tmux kill-session -t'
 alias tnew='tmux new-session -s'
 alias tm='tmux attach -t main || tmux new-session -s main'
-
-
-#-------------ARCH-LINUX---------------
-
+alias dt='cd ~/dotfiles'
 alias yay='paru'
-
-
 
 if [[ -x "$(command -v nvim)" ]]; then
     alias n='nvim'
@@ -35,9 +30,5 @@ if [[ -x "$(command -v nvim)" ]]; then
     alias nvim='nvim'
     alias lvim='NVIM_APPNAME=LazyVim nvim'
 fi
-
-
-alias dt='~/dotfiles'
-
 
 [[ -x "$(command -v bat)" ]] && alias cat='bat'

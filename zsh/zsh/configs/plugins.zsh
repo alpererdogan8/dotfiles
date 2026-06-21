@@ -18,16 +18,19 @@ function zvm_config() {
 zinit lucid depth"1" for \
     jeffreytse/zsh-vi-mode
 
-zinit wait"0a" lucid blockf for \
+zinit lucid blockf for \
     zsh-users/zsh-completions
 
-zinit wait"0b" lucid for \
+autoload -Uz compinit
+compinit
+
+zinit lucid for \
     Aloxaf/fzf-tab
 
 zinit wait"0c" lucid atload"_zsh_autosuggest_start" for \
     zsh-users/zsh-autosuggestions
 
-zinit wait"1" lucid for \
+zinit wait"1" lucid atload"ZSH_HIGHLIGHT_STYLES[comment]='fg=#ffffff,bold'" for \
     zsh-users/zsh-syntax-highlighting
 
 zinit wait"2" lucid for \
@@ -38,10 +41,11 @@ zinit wait"2" lucid for \
 zinit wait"3" lucid for \
     OMZP::docker
 
-
-
-# fnm
-eval "$(fnm env --use-on-cd --shell zsh)"
-
-zinit wait"0a" lucid blockf for \
-    zsh-users/zsh-completions
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
