@@ -2,30 +2,38 @@
 
 hl.config({
 	general = {
-		gaps_in = 2,
-		gaps_out = 2,
-		border_size = 0,
-		resize_on_border = false,
+		gaps_in = 1,
+		gaps_out = 1,
+		border_size = 2,
+		resize_on_border = true,
 		allow_tearing = false,
 		layout = "dwindle",
 	},
 
 	decoration = {
-		rounding = 0,
-		rounding_power = 0,
+		rounding = 8,
+		rounding_power = 8,
 		active_opacity = 1,
 		inactive_opacity = 1,
 
 		shadow = { enabled = false },
 
 		blur = {
-			enabled = false,
+			enabled = true,
+			size = 3,
+			passes = 4,
 			new_optimizations = true,
+			noise = 0,
+			contrast = 1,
+			brightness = 1,
+			vibrancy = 0.8,
+			vibrancy_darkness = 0,
+			xray = false,
 		},
 	},
 
 	animations = {
-		enabled = false,
+		enabled = false, -- Animations disabled
 	},
 
 	dwindle = { preserve_split = true },

@@ -45,7 +45,8 @@
 | Shortcut | Action | Sway Equivalent |
 |----------|--------|----------------|
 | `SUPER + P` | Toggle pseudo-tiling | `bindsym $mod+Shift+Space floating toggle` |
-| `SUPER + Alt + P` | Toggle fullscreen | `bindsym $mod+F fullscreen` |
+| `SUPER + F` | Maximize toggle (waybar görünür, tiling geri yüklenebilir) | `bindsym $mod+F fullscreen` |
+| `SUPER + Alt + P` | Toggle fullscreen (waybar gizlenir) | `bindsym $mod+Shift+F fullscreen` |
 | `SUPER + J` | Toggle split direction | `bindsym $mod+E layout toggle split` |
 | `SUPER + Shift + J` | Swap with next window | `bindsym $mod+Shift+J swap` |
 | `SUPER + arrows` | Move focus directionally | `bindsym $mod+{h,j,k,l} focus {left,down,up,right}` |

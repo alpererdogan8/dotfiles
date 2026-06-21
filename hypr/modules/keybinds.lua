@@ -3,7 +3,8 @@
 local mainMod = "SUPER"
 -- local terminal = "uwsm app -- alacritty"
 local terminal = "uwsm app -- ghostty"
-local fileManager = "uwsm app -- nautilus"
+-- local fileManager = "uwsm app -- nautilus" gnome
+local fileManager = "uwsm app -- dolphin"
 local menu = "uwsm app -- vicinae toggle"
 
 -------------------------
@@ -24,7 +25,8 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs && swaync-client -t -sw"))
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("$HOME/.local/bin/wallpaper_cycle.sh"))
-
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod alt"))
+hl.bind("SUPER + TAB", hl.dsp.exec_cmd("snappy-switcher next --workspace --mod super"))
 -------------------------
 -- Application Shortcuts--
 -------------------------
@@ -43,7 +45,8 @@ hl.bind(
 -------------------------
 
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + ALT + P", hl.dsp.window.fullscreen())
+hl.bind(mainMod .. " + ALT + P", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))  
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))      
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + J", hl.dsp.layout("swapnext"))
 

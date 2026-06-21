@@ -3,20 +3,19 @@
 --------------------
 -- Workspace Rules --
 --------------------
-
 hl.workspace_rule({ workspace = "w[tv1]", gaps_out = 0, gaps_in = 0 })
 hl.workspace_rule({ workspace = "f[1]", gaps_out = 0, gaps_in = 0 })
 
 hl.workspace_rule({ workspace = "1", monitor = "HDMI-A-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "HDMI-A-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "HDMI-A-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "HDMI-A-1", default = true, persistent = true })
+hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "4", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "5", monitor = "HDMI-A-1", persistent = true })
 hl.workspace_rule({ workspace = "6", monitor = "eDP-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "7", monitor = "eDP-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "8", monitor = "eDP-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "9", monitor = "eDP-1", default = true, persistent = true })
-hl.workspace_rule({ workspace = "10", monitor = "eDP-1", default = true, persistent = true })
+hl.workspace_rule({ workspace = "7", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "8", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "9", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "10", monitor = "eDP-1", persistent = true })
 
 -------------------
 -- Window Rules  --
@@ -28,6 +27,16 @@ hl.window_rule({ name = "vicinae-center", match = { class = "vicinae" }, center 
 hl.window_rule({ name = "vicinae-pin", match = { class = "vicinae" }, pin = true })
 hl.window_rule({ name = "vicinae-noanim", match = { class = "vicinae" }, no_anim = true })
 hl.window_rule({ name = "vicinae-focus", match = { class = "vicinae" }, stay_focused = true })
+
+-- hyprmoncfg-pin
+
+hl.window_rule({ name = "hyprmoncfg-float", match = { title = "hyprmoncfg" }, float = true })
+hl.window_rule({ name = "hyprmoncfg-size", match = { title = "hyprmoncfg" }, size = { 1360, 740 } })
+hl.window_rule({ name = "hyprmoncfg-activate", match = { class = "hyprmoncfg" }, focus_on_activate = true })
+hl.window_rule({ name = "hyprmoncfg-center", match = { title = "hyprmoncfg" }, center = true })
+hl.window_rule({ name = "hyprmoncfg-pin", match = { title = "hyprmoncfg" }, pin = true })
+hl.window_rule({ name = "hyprmoncfg-noanim", match = { title = "hyprmoncfg" }, no_anim = true })
+hl.window_rule({ name = "hyprmoncfg-focus", match = { title = "hyprmoncfg" }, stay_focused = true })
 
 -- XWayland video bridge: completely invisible
 hl.window_rule({
@@ -56,11 +65,11 @@ hl.window_rule({
 })
 
 -- Disable blur globally
-hl.window_rule({
-	name = "no-blur-global",
-	match = { class = "^.*$" },
-	no_blur = true,
-})
+-- hl.window_rule({
+-- 	name = "no-blur-global",
+-- 	match = { class = "^.*$" },
+-- 	no_blur = true,
+-- })
 
 -- No border/rounding on tiled windows in smart-gap workspaces
 hl.window_rule({
@@ -123,15 +132,6 @@ hl.window_rule({
 	size = { 1000, 650 },
 })
 
-hl.window_rule({
-	match = {
-		class = "^(com.mitchellh.ghostty)$",
-		title = "^(bluetui-float)$",
-	},
-	float = true,
-	center = true,
-	size = { 1000, 650 },
-})
 -- Steam: float by default, tile main window
 hl.window_rule({
 	name = "steam-float",
