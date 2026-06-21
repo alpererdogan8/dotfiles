@@ -8,8 +8,7 @@
     "margin-bottom": 0,
     "margin": 0,
     "modules-left": [
-        "hyprland/workspaces",
-        "custom/media"
+        "hyprland/workspaces"
     ],
     // ── Workspaces ───────────────────────────────────────────────────────
     "hyprland/workspaces": {
@@ -33,7 +32,7 @@
             "urgent": "<span foreground='#ff0000'>󱓻</span>",
         },
         "persistent-workspaces": {
-            "HDMI-1-A": [
+            "HDMI-A-1": [
                 1,
                 2,
                 3,
