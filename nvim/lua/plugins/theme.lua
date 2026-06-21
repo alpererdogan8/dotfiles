@@ -10,14 +10,6 @@ return {
 		end,
 	},
 
-	-- 2. LazyVim'e varsayılan temanın artık Everforest olduğunu söyle
-	{
-		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "everforest",
-		},
-	},
-
 	{
 		"LazyVim/LazyVim",
 		opts = {

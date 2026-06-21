@@ -1,4 +1,0 @@
-# ~/dotfiles/git/.config/git/config.local.example
-[user]
-    name = USERNAME
-    email = EMAIL

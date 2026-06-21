@@ -1,14 +1,17 @@
-background-opacity = 1
-font-family = "IoskeleyMono Nerd Font"
+background-opacity = 0.70
+background-blur = true
+font-family = IoskeleyMonoTerm Nerd Font
 font-style = SemiBold
-font-style-bold = Bold
+#font-style-bold = Bold
 font-thicken = true
 adjust-cell-width = -15%
-adjust-cell-height = 12%
-window-padding-x = 16
-window-padding-y = 16
+adjust-cell-height = 8%
+window-padding-x = 8
+window-padding-y = 8
 window-step-resize = true
 theme = Sunset Drive
+palette = 0=#d0d0d0
+palette = 8=#d0d0d0
 quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 5m
 confirm-close-surface = false

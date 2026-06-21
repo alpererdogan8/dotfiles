@@ -14,14 +14,14 @@ local c = {
 	bg_dim = "#0a0a13",
 	bg_alt = "#1a1a2e",
 	surface = "#252535",
-	overlay = "#3e3e4b",
-	muted = "#5a5a6e",
+	overlay = "#5c6675",
+	muted = "#ffffff",
 	subtle = "#8888a0",
 	fg = "#ededfe",
 	fg_dim = "#ededff",
 
 	-- Normal palette
-	black = "#0a0a13",
+	black = "#3e3e4b",
 	red = "#ff0063",
 	green = "#00f992",
 	yellow = "#ffe900",
@@ -31,7 +31,7 @@ local c = {
 	white = "#ededff",
 
 	-- Bright palette
-	br_black = "#3e3e4b",
+	br_black = "#ffffff",
 	br_red = "#ff948b",
 	br_green = "#00fcb9",
 	br_yellow = "#ffff68",
