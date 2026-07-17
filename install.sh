@@ -39,6 +39,7 @@ declare -A TARGET=(
   [hypr]="$HOME/.config/hypr"
   [nvim]="$HOME/.config/nvim"
   [rofi]="$HOME/.config/rofi"
+  [sway]="$HOME/.config/sway"
   [swaync]="$HOME/.config/swaync"
   [swayosd]="$HOME/.config/swayosd"
   [tmux]="$HOME/.config/tmux"
