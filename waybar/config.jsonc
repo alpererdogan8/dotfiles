@@ -8,11 +8,11 @@
     "margin-bottom": 0,
     "margin": 0,
     "modules-left": [
-        "hyprland/workspaces"
+        "sway/workspaces"
     ],
     // ── Workspaces ───────────────────────────────────────────────────────
-    "hyprland/workspaces": {
-        "active-only": true,
+    "sway/workspaces": {
+        "active-only": false,
         "all-outputs": false,
         "on-click": "activate",
         "format": "{icon}",
@@ -27,24 +27,21 @@
             "8": "8",
             "9": "9",
             "10": "10",
-            "active": "󱓻",
+            "focused": "<span foreground='#fff'>󱓻</span>",
             "default": "●",
-            "urgent": "<span foreground='#ff0000'>󱓻</span>",
+            "urgent": "<span foreground='#ff0000'>󱓻</span>"
         },
         "persistent-workspaces": {
-            "HDMI-A-1": [
-                1,
-                2,
-                3,
-                4,
-                5
-            ],
-            "eDP-1": [
-                7,
-                8,
-                9,
-                10
-            ]
+            "1": ["HDMI-A-1"],
+            "2": ["HDMI-A-1"],
+            "3": ["HDMI-A-1"],
+            "4": ["HDMI-A-1"],
+            "5": ["HDMI-A-1"],
+            "6": ["eDP-1"],
+            "7": ["eDP-1"],
+            "8": ["eDP-1"],
+            "9": ["eDP-1"],
+            "10": ["eDP-1"]
         },
         "sort-by-number": true
     },
@@ -53,7 +50,7 @@
     ],
     // ── Clock ───────────────────────────────────────────────────────
     "custom/clock": {
-        "exec": "sh -c '$HOME/.config/waybar/scripts/clock_focus.sh'",
+        "exec": "sh -c '$HOME/.config/waybar/scripts/clock_focus_sway.sh'",
         "return-type": "json",
         "tooltip": true,
     },
@@ -129,7 +126,7 @@
         "format-no-controller": "",
         "tooltip-format": "Devices connected: {num_connections}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bluetui\""
+        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c 'bluetui'\""
     },
     // ── Audio ───────────────────────────────────────────────────────
     "pulseaudio": {
