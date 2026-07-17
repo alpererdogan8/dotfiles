@@ -1,6 +1,6 @@
-background-opacity = 0.70
+background-opacity = 0.98
 background-blur = true
-font-family = IoskeleyMonoTerm Nerd Font
+font-family = IoskeleyMono Nerd Font
 font-style = SemiBold
 #font-style-bold = Bold
 font-thicken = true
