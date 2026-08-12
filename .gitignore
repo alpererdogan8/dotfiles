@@ -41,15 +41,13 @@ vscode/.config/Code/Trust Tokens-journal
 vscode/.config/Code/languagepacks.json
 vscode/.config/Code/machineid
 
-# local-bin icons, appimages & large binaries
+# local-bin icons & appimages
 local-bin/.local/bin/.icons/
 local-bin/.local/bin/*.appimage
 local-bin/.local/bin/*.old
-# Large binary executables (exceeds GitHub 100 MB limit or external tools)
+# Large binary executables (exceeds GitHub 100 MB limit)
 local-bin/.local/bin/agy
 local-bin/.local/bin/herdr
-local-bin/.local/bin/lazydocker
-local-bin/.local/bin/clockbar
 
 # zsh node dependencies
 zsh/node_modules/
