@@ -1,5 +1,6 @@
 export ZDOTDIR=$HOME/zsh/configs
 
+export PATH="$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export NVM_DIR="$HOME/.nvm"

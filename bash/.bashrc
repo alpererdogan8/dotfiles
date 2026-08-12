@@ -11,3 +11,12 @@ fi
 
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/home/polymath/.lmstudio/bin"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/polymath/.local/bin:$PATH"
+
+. "$HOME/.atuin/bin/env"
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+eval "$(atuin init bash)"

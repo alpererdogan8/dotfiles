@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# kanshi-workspace-assign — reassign sway workspaces based on active kanshi profile.
+# Called by kanshi exec on profile switch AND by display-mode after kanshictl switch.
+#
+# Usage: kanshi-workspace-assign <profile>
+
+profile="$1"
+
+# Find SWAYSOCK if not already set in the environment.
+# Kanshi may not inherit it depending on how sway spawned it.
+if [[ -z "$SWAYSOCK" ]]; then
+    SWAYSOCK=$(ls /run/user/"$(id -u)"/sway-ipc.*.sock 2>/dev/null | head -1)
+    export SWAYSOCK
+fi
+
+if [[ -z "$SWAYSOCK" ]]; then
+    echo "kanshi-workspace-assign: cannot find SWAYSOCK" >&2
+    exit 1
+fi
+
+# Wait for kanshi to finish applying output configuration before
+# swaymsg touches workspace assignments.
+sleep 0.5
+
+# Build a single batched swaymsg call with semicolon-separated commands.
+# This is faster and avoids race conditions from 10 separate IPC calls.
+build_assignments() {
+    local cmds=""
+    local i output
+    for i in "$@"; do
+        # Each argument is "workspace_number:output_name"
+        output="${i#*:}"
+        ws="${i%%:*}"
+        cmds+="workspace ${ws} output ${output}; "
+    done
+    echo "$cmds"
+}
+
+case "$profile" in
+    extend)
+        # All 10 workspaces on HDMI
+        args=()
+        for i in $(seq 1 10); do args+=("${i}:HDMI-A-1"); done
+        swaymsg "$(build_assignments "${args[@]}")"
+        ;;
+    extended)
+        # 1-5 on HDMI, 6-10 on laptop
+        args=()
+        for i in $(seq 1 5);  do args+=("${i}:HDMI-A-1"); done
+        for i in $(seq 6 10); do args+=("${i}:eDP-1");    done
+        swaymsg "$(build_assignments "${args[@]}")"
+        ;;
+    mirror)
+        # All 10 on HDMI (both outputs show same image)
+        args=()
+        for i in $(seq 1 10); do args+=("${i}:HDMI-A-1"); done
+        swaymsg "$(build_assignments "${args[@]}")"
+        ;;
+    laptop)
+        # All 10 on laptop screen
+        args=()
+        for i in $(seq 1 10); do args+=("${i}:eDP-1"); done
+        swaymsg "$(build_assignments "${args[@]}")"
+        ;;
+    *)
+        echo "kanshi-workspace-assign: unknown profile '${profile}'" >&2
+        exit 1
+        ;;
+esac

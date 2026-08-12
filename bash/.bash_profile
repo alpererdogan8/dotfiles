@@ -15,3 +15,9 @@ source /home/polymath/.local/share/bash-completion/completions/deno.bash
 
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/home/polymath/.lmstudio/bin"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/polymath/.local/bin:$PATH"
+
+. "$HOME/.atuin/bin/env"

@@ -21,7 +21,6 @@ alias tk='tmux kill-session -t'
 alias tnew='tmux new-session -s'
 alias tm='tmux attach -t main || tmux new-session -s main'
 alias dt='cd ~/dotfiles'
-alias yay='paru'
 
 if [[ -x "$(command -v nvim)" ]]; then
     alias n='nvim'

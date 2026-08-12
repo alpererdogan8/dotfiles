@@ -15,11 +15,11 @@ y = 8
 size = 12.0
 
 [font.normal]
-family = "Ioskeley Mono Nerd Font"
+family = "IoskeleyMonoTerm  Nerd Font"
 style = "SemiBold"
 
 [font.bold]
-family = "Ioskeley Mono Nerd Font"
+family = "Ioskeley MonoTerm Nerd Font"
 style = "ExtraBold"
 
 [font.offset]

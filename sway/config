@@ -1,58 +1,22 @@
 # Default config for sway
 #
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
 # Read `man 5 sway` for a complete reference.
 
 ### Variables
-#
-# Logo key. Use Mod1 for Alt.
 set $mod Mod4
-# Home row direction keys, like vim
-set $left h
-set $down j
-set $up k
-set $right l
-# Your preferred terminal emulator
-# Recommends: foot
-set $term ghostty
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
-# Recommends: rofi-wayland
-set $rofi_cmd rofi \
-        -terminal '$term'
-# Shows a combined list of the applications with desktop files and
-# executables from PATH.
-# TODO: add window with the next release of rofi-wayland
-set $menu $rofi_cmd -show combi -combi-modes drun#run -modes combi
+set $term ghostty +new-window
+# Raycast-inspired app launcher — uses launcher.rasi theme
+set $menu rofi -show combi -config ~/.config/rofi/launcher.rasi
 set $fileManager nautilus
 
 ### Output configuration
-#
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-# Requires: desktop-backgrounds-compat, swaybg, jxl-pixbuf-loader
-output * bg /usr/share/backgrounds/default-dark.jxl fill
-#
-# Example configuration:
-#
-output HDMI-A-1 resolution 1920x1080@120Hz position 0,0
-# output "eDP-1" mode 1366x768@60Hz pos 1920 0
-output eDP-1 disable
-
-# Screenshot region to clipboard
-bindsym $mod+ctrl+s exec grim -g "$(slurp)" - | wl-copy -t image/png
-#
-# You can get the names of your outputs by running: swaymsg -t get_outputs
+# Output enable/disable and resolution are managed by kanshi (~/.config/sway/kanshi).
+# kanshi automatically switches to eDP-1 when HDMI-A-1 is unplugged.
+# output * bg /usr/share/backgrounds/default-dark.jxl fill
+#output * bg $HOME/Pictures/abstract_a_black_and_white_picture_of_mountains_and_trees.png fill
 
 ### Borders and gaps
-#
-# NOTE: keep border settings defined only once, in one place. Previously this
-# file set "default_border pixel 2" here and then overrode it later with
-# "default_border normal 0", which left different windows with different
-# border styles (pixel vs. normal/titlebar) depending on window mapping
-# order. That mismatch is what made windows look like they were resizing on
-# focus change. Fix: one border style, applied consistently everywhere.
+# Single consistent border style everywhere — prevents layout shift on focus change
 smart_borders off
 hide_edge_borders none
 
@@ -61,122 +25,110 @@ default_floating_border pixel 1
 
 for_window [app_id="^.*"] border pixel 1
 for_window [class="^.*"] border pixel 1
-for_window [title="^.*"] title_format ""
 
 gaps inner 3
 smart_gaps on
 
-# client.focused #ffffff #ffffff #000000 #ffffff #ffffff
-# client.unfocused #444444 #444444 #ffffff #444444 #444444
-
-client.focused #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
+client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
 client.unfocused #3a3a3a #3a3a3a #7c8b9a #3a3a3a #3a3a3a
 
-
-exec /usr/libexec/kdeconnectd
-exec kdeconnect-indicator
-
-# SwayOSD server (on-screen display for volume/brightness)
+### Autostart
+# kanshi: dynamic output manager — handles monitor hotplug (HDMI <-> eDP-1)
+exec_always kanshi -c ~/.config/sway/kanshi
+exec uwsm app -- /usr/libexec/kdeconnectd
+exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
+exec uwsm app -- awww-daemon
+
+
+
+# cliphist: clipboard history daemon — stores entries as clipboard changes
+exec_always wl-paste --watch cliphist store
+
+# gnome-keyring: --start forks and exits immediately, must not be wrapped
+# with uwsm app --. pkcs11+secrets come from Fedora's systemd user socket
+# service; this exec only adds the ssh component.
+exec "gnome-keyring-daemon --start --components=pkcs11,secrets,ssh"
 
 ### Idle configuration
-#
-# Example configuration:
-#
- exec swayidle -w \
-          timeout 300 'swaylock -f -c 000000' \
-          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-          before-sleep 'swaylock -f -c 000000'
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
+# Managed by /usr/share/sway/config.d/20-swayidle.conf
+# To customize: create ~/.config/sway/config.d/20-swayidle.conf
 
 ### Input configuration
-#
-# Example configuration:
-#
-   input "2:14:SynPS/2_Synaptics_TouchPad" {
-       dwt enabled
-       tap enabled
-       natural_scroll enabled
-       middle_emulation enabled
-   }
+input "2:7:SynPS/2_Synaptics_TouchPad" {
+    accel_profile "adaptive"
+    dwt enabled
+    tap enabled
+    tap_button_map lrm
+    natural_scroll enabled
+    middle_emulation enabled
+    pointer_accel 0.4
+    scroll_method two_finger
+    drag enabled
+}
 
-   input * {
+
+
+input * {
     xkb_layout "tr"
-   }
+}
 
-# Notification panel
-bindsym $mod+n exec swaync-client -R && swaync-client -rs && swaync-client -t -sw
-# Application launcher (Vicinae)
-bindsym $mod+r exec uwsm app -- vicinae toggle
-#
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
+bindgesture swipe:3:right workspace prev
+bindgesture swipe:3:left workspace next
+bindgesture swipe:4:down kill
+
 
 ### Key bindings
 #
 # Basics:
 #
-    # Start a terminal
-    bindsym $mod+Return exec $term +new-window
+    bindsym $mod+Return exec uwsm app -- $term
 
-    # Kill focused window
     bindsym $mod+w kill
-
-    # Force kill focused window (send SIGKILL to PID)
     bindsym $mod+alt+w exec swaymsg -t get_tree | jq -r '.. | select(.focused? == true) | .pid' | xargs kill -9
 
-    # Start your launcher
+    # rofi is a launcher, not a managed app — no uwsm app needed
     bindsym $mod+d exec $menu
+    # display-mode: pick kanshi output profile via rofi (extend/extended/mirror/laptop)
+    bindsym $mod+Shift+p exec ~/.local/bin/display-mode
+    bindsym $mod+e exec uwsm app -- $fileManager
+    bindsym $mod+r exec uwsm app -- vicinae toggle
 
-    # File manager
-    bindsym $mod+e exec $fileManager
-
-    # Lock session
     bindsym $mod+l exec loginctl lock-session
-
-    # Wallpaper cycle
+    # wallpa er script manages its own child processes
     bindsym $mod+shift+w exec $HOME/.local/bin/wallpaper_cycle.sh
 
-    # Clipboard history (Vicinae)
-    bindsym alt+v exec uwsm app -- vicinae vicinae://launch/clipboard/history
+    bindsym $mod+n exec swaync-client -R && swaync-client -rs && swaync-client -t -sw
+    # bindsym alt+v exec uwsm app -- vicinae vicinae://launch/clipboard/history
+    bindsym alt+v exec ~/.local/bin/clipboard-menu
+    bindsym $mod+ctrl+s exec grim -g "$(slurp)" - | wl-copy -t image/png
 
-    # Alt-Tab window switcher
-    bindsym alt+Tab exec snappy-switcher next --mod alt
-    bindsym $mod+Tab exec snappy-switcher next --workspace --mod super
+    # bindsym alt+Tab exec uwsm app -- snappy-switcher next --mod alt
+    # bindsym $mod+Tab exec uwsm app -- snappy-switcher next --workspace --mod super
 
-    # Drag floating windows by holding down $mod and left mouse button.
-    # Resize them with right mouse button + $mod.
-    # Despite the name, also works for non-floating windows.
-    # Change normal to inverse to use left mouse button for resizing and right
-    # mouse button for dragging.
     floating_modifier $mod normal
 
-    # Reload the configuration file
     bindsym $mod+Shift+c reload
-
-    # Exit sway (logs you out of your Wayland session)
+    # swaynag is a short-lived dialog — no uwsm app needed
     bindsym $mod+Shift+m exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 #
 # Moving around:
 #
-    # Focus with arrow keys (vim h/j/k/l disabled — conflicts with $mod+l lock, $mod+j layout)
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
+    # Arrow keys only; vim h/j/k/l intentionally disabled
+    # ($mod+l = lock session, $mod+j = layout toggle)
+    bindsym $mod+Left  focus left
+    bindsym $mod+Down  focus down
+    bindsym $mod+Up    focus up
     bindsym $mod+Right focus right
 
-    # Move the focused window with arrow keys
-    bindsym $mod+Shift+Left move left
-    bindsym $mod+Shift+Down move down
-    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Left  move left
+    bindsym $mod+Shift+Down  move down
+    bindsym $mod+Shift+Up    move up
     bindsym $mod+Shift+Right move right
 #
 # Workspaces:
 #
-    # Workspace output assignments
+    # 1–5 on external monitor, 6–10 on laptop display
     workspace 1 output HDMI-A-1
     workspace 2 output HDMI-A-1
     workspace 3 output HDMI-A-1
@@ -188,122 +140,151 @@ bindsym $mod+r exec uwsm app -- vicinae toggle
     workspace 9 output eDP-1
     workspace 10 output eDP-1
 
-    # Switch to workspace
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
-    bindsym $mod+8 workspace number 8
-    bindsym $mod+9 workspace number 9
-    bindsym $mod+0 workspace number 10
-    # Move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace number 1
-    bindsym $mod+Shift+2 move container to workspace number 2
-    bindsym $mod+Shift+3 move container to workspace number 3
-    bindsym $mod+Shift+4 move container to workspace number 4
-    bindsym $mod+Shift+5 move container to workspace number 5
-    bindsym $mod+Shift+6 move container to workspace number 6
-    bindsym $mod+Shift+7 move container to workspace number 7
-    bindsym $mod+Shift+8 move container to workspace number 8
-    bindsym $mod+Shift+9 move container to workspace number 9
-    bindsym $mod+Shift+0 move container to workspace number 10
-    # Scroll through workspaces
-    bindsym alt+Right workspace next_on_output
-    bindsym alt+Left workspace prev_on_output
+    # focus floating: when scratchpad is visible (sticky+floating), re-focus it
+    # after workspace switch; when scratchpad is hidden, this is a silent no-op.
+    bindsym $mod+1 workspace number 1; focus floating
+    bindsym $mod+2 workspace number 2; focus floating
+    bindsym $mod+3 workspace number 3; focus floating
+    bindsym $mod+4 workspace number 4; focus floating
+    bindsym $mod+5 workspace number 5; focus floating
+    bindsym $mod+6 workspace number 6; focus floating
+    bindsym $mod+7 workspace number 7; focus floating
+    bindsym $mod+8 workspace number 8; focus floating
+    bindsym $mod+9 workspace number 9; focus floating
+    bindsym $mod+0 workspace number 10; focus floating
 
-    # Move window to adjacent workspace
-    bindsym alt+shift+Right move container to workspace next_on_output; workspace next_on_output
-    bindsym alt+shift+Left move container to workspace prev_on_output; workspace prev_on_output
+    bindsym $mod+Shift+1 move container to workspace number 1; workspace number 1
+    bindsym $mod+Shift+2 move container to workspace number 2; workspace number 2
+    bindsym $mod+Shift+3 move container to workspace number 3; workspace number 3
+    bindsym $mod+Shift+4 move container to workspace number 4; workspace number 4
+    bindsym $mod+Shift+5 move container to workspace number 5; workspace number 5
+    bindsym $mod+Shift+6 move container to workspace number 6; workspace number 6
+    bindsym $mod+Shift+7 move container to workspace number 7; workspace number 7
+    bindsym $mod+Shift+8 move container to workspace number 8; workspace number 8
+    bindsym $mod+Shift+9 move container to workspace number 9; workspace number 9
+    bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10
 
-    # Note: workspaces can have any name you want, not just numbers.
-    # We just use 1-10 as the default.
+    bindsym alt+Right workspace next_on_output; focus floating
+    bindsym alt+Left  workspace prev_on_output; focus floating
+    # Move container to next/prev *numbered* workspace (including empty ones) and follow.
+    # Uses ~/.local/bin/sway-move-workspace to step ±1 regardless of active state.
+    bindsym alt+shift+Right exec ~/.local/bin/sway-move-workspace next
+    bindsym alt+shift+Left  exec ~/.local/bin/sway-move-workspace prev
 #
-# Layout stuff:
+# Layout:
 #
-    # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
-    # respectively.
     bindsym $mod+b splith
-    # Toggle floating
     bindsym $mod+v floating toggle
 
-    # Switch the current container between different layout styles
-  #  bindsym $mod+s layout stacking
-  #  bindsym $mod+w layout tabbed
     bindsym $mod+j layout toggle split
     bindsym $mod+shift+j swap container with next
 
-    # Toggle maximized (fullscreen within bar)
-    # bindsym $mod+f fullscreen
     bindsym $mod+f layout toggle tabbed splith
     bindsym $mod+shift+f fullscreen
-    # True fullscreen (no bar)
     bindsym $mod+alt+p fullscreen toggle global
 
-    # Swap focus between the tiling area and the floating area
-    bindsym $mod+space focus mode_toggle
-
-    # Move focus to the parent container
+bindsym $mod+space focus mode_toggle
     bindsym $mod+a focus parent
 #
 # Scratchpad:
 #
-    # Sway has a "scratchpad", which is a bag of holding for windows.
-    # You can send windows there and get them back later.
-
-    # Move the currently focused window to the scratchpad
     bindsym $mod+Shift+s move scratchpad
-
-    # Show the next scratchpad window.
-    # If there are multiple scratchpad windows, this command cycles through them.
-    bindsym $mod+s scratchpad show; [con_id="__focused__" floating] resize set 90 ppt 90 ppt; [con_id="__focused__" floating] move position center
+    bindsym $mod+s scratchpad show; [con_id="__focused__" floating] sticky enable; [con_id="__focused__" floating] resize set 98 ppt 96 ppt; [con_id="__focused__" floating] move position center
 #
-# Resizing containers:
+# Resize mode:
 #
 mode "resize" {
-    # Resize with arrow keys
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
+    bindsym Left  resize shrink width 10px
+    bindsym Down  resize grow height 10px
+    bindsym Up    resize shrink height 10px
     bindsym Right resize grow width 10px
-
-    # Return to default mode
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-#bindsym $mod+r mode "resize"
+bindsym $mod+Shift+r mode "resize"
 
 ### Lid switch
-#
-    # Lock and disable internal display on lid close
-    bindswitch --locked lid:on exec swaymsg output eDP-1 disable && swaylock -f -c 000000
-    # Re-enable internal display on lid open
-    bindswitch --locked lid:off exec swaymsg output eDP-1 enable
+bindswitch --locked lid:on  exec swaymsg output eDP-1 disable && swaylock -f
+bindswitch --locked lid:off exec swaymsg output eDP-1 enable
 
-  exec gnome-keyring-daemon --start --components=pkcs11,secrets,ssh
 
-# Include configs from 3 locations:
-#  - /usr/share/sway/config.d
-#  - /etc/sway/config.d
-#  - $XDG_CONFIG_HOME/sway/config.d ($HOME/.config/sway/config.d)
-#
-# If multiple directories contain the files with the same name, the later
-# directory takes precedence; `$XDG_CONFIG_HOME/sway/config.d/20-swayidle.conf`
-# will always be loaded instead of `/usr/share/sway/config.d/20-swayidle.conf`
-# or `/etc/sway/config.d/20-swayidle.conf`
-#
-# This mechanism permits overriding our default configuration per-system
-# (/etc) or per-user ($XDG_CONFIG_HOME) basis. Just create the file you
-# want to modify/override in the higher-level directory.
-#
-# For example, to disable the default bar from Fedora configs, you'll need to
-#     $ echo -n > "$HOME/.config/sway/config.d/90-bar.conf"
-#
-# Note the quoting, the $() and the arguments quoting. All the parts are equally
-# important to make the magic work. And if you want to learn the secret behind
-# the trick, it's all in the `wordexp(3)`.
-#
+
+
+
+
+
+
+
+### Advanced Sway features - test bindings
+
+# Focus child container
+# Original default: no default binding
+bindsym $mod+Shift+a focus child
+
+
+# Explicit vertical split
+# Original default: $mod+v
+# Your $mod+v is used for floating toggle
+bindsym $mod+Shift+b splitv
+
+
+# Stacking layout
+# Original default: $mod+s
+# Your $mod+s is used for scratchpad show
+bindsym $mod+Ctrl+f layout stacking
+
+
+# Go back to the previously focused workspace
+# Original default: no default binding
+bindsym $mod+grave workspace back_and_forth
+
+
+# Focus another output / monitor
+# Original default: no default binding
+bindsym $mod+Ctrl+Left  focus output left
+bindsym $mod+Ctrl+Right focus output right
+
+
+# Move focused container to another output / monitor
+# Original default: no default binding
+bindsym $mod+Ctrl+Shift+Left  move container to output left
+bindsym $mod+Ctrl+Shift+Right move container to output right
+
+
+# Move entire current workspace to another output / monitor
+# Original default: no default binding
+bindsym $mod+Ctrl+Alt+Left  move workspace to output left
+bindsym $mod+Ctrl+Alt+Right move workspace to output right
+
+
+# Center focused floating window
+# Original default: no default binding
+bindsym $mod+Ctrl+c move position center
+
+
+# Toggle gaps on current workspace
+# Original default: no default binding
+bindsym $mod+g gaps inner current toggle 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Fedora Sway layered config.d
+# Files in ~/.config/sway/config.d/ override same-named files in
+# /etc/sway/config.d/ and /usr/share/sway/config.d/.
+# Example — disable the default bar:
+#   echo -n > ~/.config/sway/config.d/90-bar.conf
 include '$(/usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf")'

@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
+# =============================================================================
+# bluetooth.sh — Bluetooth device manager via Rofi
+#
+# Displays paired Bluetooth devices in a Rofi menu.
+# Allows connecting/disconnecting individual devices and toggling power.
+# =============================================================================
 
 THEME="$HOME/.config/rofi/config.rasi"
 ROFI_CMD="rofi -dmenu -i -markup-rows -theme $THEME"
 
+# Returns a list of paired devices as "MAC|Name" pairs (one per line)
 get_devices() {
   bluetoothctl devices | while read -r line; do
     mac=$(echo "$line" | awk '{print $2}')
@@ -11,6 +18,7 @@ get_devices() {
   done
 }
 
+# Check whether Bluetooth adapter is currently powered on
 power_state=$(bluetoothctl show | grep "Powered: yes")
 
 if [ -n "$power_state" ]; then
@@ -20,6 +28,7 @@ if [ -n "$power_state" ]; then
   entries=""
   declare -A name_to_mac
 
+  # Build the device list; mark already-connected devices with a checkmark
   while IFS="|" read -r mac name; do
     if [ -z "$mac" ]; then continue; fi
 
@@ -40,31 +49,34 @@ fi
 options="${entries}${POWER_TOGGLE}"
 chosen=$(echo -en "$options" | $ROFI_CMD -p "Bluetooth")
 
+# Close the panel if the user dismissed the menu
 if [ -z "$chosen" ]; then
   swaync-client -cp
   exit 0
 fi
 
+# Handle power toggle selection
 if [ "$chosen" = "$POWER_TOGGLE" ]; then
   if [ -n "$power_state" ]; then
     bluetoothctl power off >/dev/null
-    notify-send "Bluetooth" "Bluetooth is closed"
+    notify-send "Bluetooth" "Bluetooth turned off"
   else
     bluetoothctl power on >/dev/null
-    notify-send "Bluetooth" "Bluetooth is open"
+    notify-send "Bluetooth" "Bluetooth turned on"
   fi
   swaync-client -cp
   exit 0
 fi
 
+# Handle device connect / disconnect
 if [ -n "${name_to_mac["$chosen"]}" ]; then
   mac="${name_to_mac["$chosen"]}"
 
   if bluetoothctl info "$mac" | grep -q "Connected: yes"; then
-    notify-send "Bluetooth" "Disconnected..."
+    notify-send "Bluetooth" "Disconnecting..."
     bluetoothctl disconnect "$mac" >/dev/null
   else
-    notify-send "Bluetooth" "Connected..."
+    notify-send "Bluetooth" "Connecting..."
     bluetoothctl connect "$mac" >/dev/null
   fi
   exit 0

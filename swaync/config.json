@@ -64,7 +64,7 @@
         },
         {
           "label": "󰂯",
-          "command": "sh -c '$HOME/.config/swaync/scripts/bluetooth.sh'"
+          "command": "bash -c 'swaync-client -cp; $TERMINAL --title=bluetui-float -e $HOME/.cargo/bin/bluetui'"
         },
         {
           "label": "󰕾",

@@ -12,3 +12,5 @@ export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 export STARSHIP_CACHE=~/.starship/cache
 
 export NVM_DIR="$HOME/.config/nvm"
+
+export OBSIDIAN_REST_API_KEY=***REMOVED***

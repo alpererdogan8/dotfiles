@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# sway-move-workspace: Move focused container to the next or previous numbered
+# workspace and follow it with focus.
+# Usage: sway-move-workspace [next|prev]
+
+DIRECTION="${1:-next}"
+
+# Get current workspace number
+CURRENT=$(swaymsg -t get_workspaces | jq '[.[] | select(.focused == true)] | .[0].num')
+
+# Determine target workspace number (clamp to 1–10)
+if [[ "$DIRECTION" == "next" ]]; then
+    TARGET=$(( CURRENT < 10 ? CURRENT + 1 : 10 ))
+else
+    TARGET=$(( CURRENT > 1 ? CURRENT - 1 : 1 ))
+fi
+
+# Move container and switch to target workspace
+swaymsg "move container to workspace number $TARGET; workspace number $TARGET"

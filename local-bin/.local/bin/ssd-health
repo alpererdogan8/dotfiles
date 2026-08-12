@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+DISK="${1:-/dev/sda}"
+LOG_DIR="$HOME/.local/share/ssd-health"
+LOG_FILE="$LOG_DIR/$(basename "$DISK")-history.csv"
+
+if ! command -v smartctl &>/dev/null; then
+    echo "smartctl not found. Install with: sudo dnf install smartmontools"
+    exit 1
+fi
+
+if [[ ! -b "$DISK" ]]; then
+    echo "Disk not found: $DISK"
+    exit 1
+fi
+
+mkdir -p "$LOG_DIR"
+
+# Single read-only SMART query — no writes, no self-tests triggered
+RAW=$(sudo smartctl -x "$DISK")
+if [[ -z "$RAW" ]]; then
+    echo "Could not get data from smartctl. Check disk path / sudo permissions."
+    exit 1
+fi
+
+# Extract a vendor attribute's raw value by ID (column 8 in smartctl -x output)
+get_attr() {
+    echo "$RAW" | awk -v id="$1" '$1 == id {print $8}'
+}
+# Extract a value from the Device Statistics table by matching its label
+get_stat() {
+    echo "$RAW" | grep -F "$1" | head -1 | awk '{print $4}'
+}
+
+HEALTH=$(echo "$RAW" | awk '/overall-health self-assessment/ {print $NF}')
+TEMP=$(get_attr 194)
+POWER_ON_H=$(get_attr 9)
+POWER_CYCLES=$(get_attr 12)
+UNSAFE_SHUTDOWNS=$(get_attr 192)
+BAD_BLOCKS=$(get_attr 169)
+SATA_PHY_ERR=$(get_attr 168)
+PCT_USED=$(get_stat "Percentage Used Endurance Indicator")
+SECTORS_WRITTEN=$(get_stat "Logical Sectors Written")
+ICRC_ERR=$(echo "$RAW" | grep "ICRC error" | awk '{print $3}')
+
+if echo "$RAW" | grep -q "No Errors Logged"; then
+    ERROR_LOG="None"
+else
+    ERROR_LOG="FOUND — details: sudo smartctl -l error $DISK"
+fi
+
+# Convert logical sectors written (512 bytes each) to GB
+GB_WRITTEN="N/A"
+if [[ "$SECTORS_WRITTEN" =~ ^[0-9]+$ ]]; then
+    GB_WRITTEN=$(awk -v s="$SECTORS_WRITTEN" 'BEGIN{printf "%.1f", s*512/1e9}')
+fi
+
+echo "=================================================="
+echo "  SSD Health Report — $DISK — $(date '+%Y-%m-%d %H:%M')"
+echo "=================================================="
+printf "%-28s %s\n"    "Overall Health:"       "${HEALTH:-N/A}"
+printf "%-28s %s°C\n"  "Temperature:"          "${TEMP:-N/A}"
+printf "%-28s %s h\n"  "Power-On Hours:"       "${POWER_ON_H:-N/A}"
+printf "%-28s %s\n"    "Power Cycle Count:"    "${POWER_CYCLES:-N/A}"
+printf "%-28s %s\n"    "Unsafe Shutdowns:"     "${UNSAFE_SHUTDOWNS:-N/A}"
+printf "%-28s %s\n"    "Bad Block Rate:"       "${BAD_BLOCKS:-N/A}"
+printf "%-28s %s\n"    "SATA Phy Error Count:" "${SATA_PHY_ERR:-N/A}"
+printf "%-28s %s\n"    "ICRC Error Count:"     "${ICRC_ERR:-0}"
+printf "%-28s %s%%\n"  "Endurance Used:"       "${PCT_USED:-N/A}"
+printf "%-28s %s GB\n" "Total Data Written:"   "$GB_WRITTEN"
+printf "%-28s %s\n"    "Error Log:"            "$ERROR_LOG"
+echo "--------------------------------------------------"
+
+# Flag anything outside normal ranges
+WARN=0
+[[ "${HEALTH:-}" != "PASSED" ]] && echo "⚠ Overall health self-assessment is not PASSED!" && WARN=1
+[[ "${BAD_BLOCKS:-0}" =~ ^[0-9]+$ ]] && [[ "$BAD_BLOCKS" -gt 0 ]] && echo "⚠ Bad blocks detected ($BAD_BLOCKS)" && WARN=1
+[[ "${SATA_PHY_ERR:-0}" =~ ^[0-9]+$ ]] && [[ "$SATA_PHY_ERR" -gt 0 ]] && echo "⚠ SATA link errors present, check cable/caddy connection" && WARN=1
+[[ "${ICRC_ERR:-0}" =~ ^[0-9]+$ ]] && [[ "$ICRC_ERR" -gt 0 ]] && echo "⚠ ICRC errors present, possible connection issue" && WARN=1
+[[ "${PCT_USED:-0}" =~ ^[0-9]+$ ]] && [[ "$PCT_USED" -gt 80 ]] && echo "⚠ ${PCT_USED}% of SSD endurance has been used" && WARN=1
+
+[[ "$WARN" -eq 0 ]] && echo "✓ Everything looks normal."
+
+# Compare against the previous run, if one exists
+if [[ -f "$LOG_FILE" ]] && [[ $(wc -l < "$LOG_FILE") -gt 1 ]]; then
+    PREV=$(tail -1 "$LOG_FILE")
+    IFS=',' read -r _ _ _ PREV_HOURS _ _ _ _ _ PREV_GB <<< "$PREV"
+    if [[ "$PREV_GB" =~ ^[0-9.]+$ && "$GB_WRITTEN" =~ ^[0-9.]+$ && "$PREV_HOURS" =~ ^[0-9]+$ && "$POWER_ON_H" =~ ^[0-9]+$ ]]; then
+        DELTA_GB=$(awk -v a="$GB_WRITTEN" -v b="$PREV_GB" 'BEGIN{printf "%.1f", a-b}')
+        DELTA_H=$(( POWER_ON_H - PREV_HOURS ))
+        echo ""
+        echo "Since last check: +${DELTA_GB} GB written, +${DELTA_H} hours powered on"
+    fi
+fi
+
+# Append this run to the CSV history, creating the header on first use
+if [[ ! -f "$LOG_FILE" ]]; then
+    echo "date,health,temp_c,power_on_hours,power_cycles,unsafe_shutdowns,bad_blocks,sata_errors,endurance_used_pct,gb_written" > "$LOG_FILE"
+fi
+echo "$(date '+%Y-%m-%d %H:%M:%S'),${HEALTH:-NA},${TEMP:-NA},${POWER_ON_H:-NA},${POWER_CYCLES:-NA},${UNSAFE_SHUTDOWNS:-NA},${BAD_BLOCKS:-NA},${SATA_PHY_ERR:-NA},${PCT_USED:-NA},$GB_WRITTEN" >> "$LOG_FILE"
+
+echo ""
+echo "Saved to: $LOG_FILE"

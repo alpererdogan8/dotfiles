@@ -1,25 +1,24 @@
-#!/bin/bash
-
-# Usage: ./toggle_audio.sh [sink|source]
+#!/usr/bin/env bash
+# =============================================================================
+# toggle_audio.sh — Mute toggle for audio sink or source
+#
+# Usage: toggle_audio.sh [sink|source]
+#
+#   sink   — toggle mute on the default audio output (speakers/headphones)
+#   source — toggle mute on the default audio input (microphone)
+# =============================================================================
 
 TARGET=$1
 
-if [ "$TARGET" = "sink" ]; then
+case "$TARGET" in
+  sink)
     pactl set-sink-mute @DEFAULT_SINK@ toggle
-elif [ "$TARGET" = "source" ]; then
+    ;;
+  source)
     pactl set-source-mute @DEFAULT_SOURCE@ toggle
-else
-    echo "Usage: $0 [sink|source]"
+    ;;
+  *)
+    echo "Usage: $0 [sink|source]" >&2
     exit 1
-fi
-
-
-
-
-
-
-
-
-
-
-
+    ;;
+esac

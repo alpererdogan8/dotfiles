@@ -126,7 +126,7 @@
         "format-no-controller": "",
         "tooltip-format": "Devices connected: {num_connections}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c 'bluetui'\""
+        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c '$HOME/.cargo/bin/bluetui'\""
     },
     // ── Audio ───────────────────────────────────────────────────────
     "pulseaudio": {

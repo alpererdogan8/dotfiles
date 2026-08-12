@@ -1,0 +1,31 @@
+#!/bin/sh
+# clipboard-menu — rofi clipboard history via cliphist
+# Keybind: Alt+V
+
+CLEAR_ENTRY="󰃨  Clear History"
+
+# Build list: clear button on top, image entries formatted nicely
+entries=$(
+    printf "%s\n" "$CLEAR_ENTRY"
+    cliphist list | sed \
+        "s/\t\[\[ binary data \([0-9.]*\) \([A-Za-z]*\) \([a-z]*\) \([0-9x]*\) \]\]/\t󰋩  Image — \3 \4 (\1 \2)/"
+)
+
+# Show in rofi
+selected=$(printf "%s" "$entries" | rofi -dmenu \
+    -config ~/.config/rofi/launcher.rasi \
+    -p "󱉧 ")
+
+# No selection → exit
+[ -z "$selected" ] && exit 0
+
+# Clear history
+if [ "$selected" = "$CLEAR_ENTRY" ]; then
+    cliphist wipe
+    exit 0
+fi
+
+# Paste selection: copy to clipboard then auto-paste into focused window
+printf "%s\n" "$selected" | cliphist decode | wl-copy
+sleep 0.1
+wtype -M ctrl v

@@ -288,4 +288,5 @@
   "chat.editor.fontFamily": "Ioskeley Mono",
   "chat.viewSessions.orientation": "stacked",
   "terminal.integrated.gpuAcceleration": "on",
+  "workbench.colorTheme": "bird",
 }

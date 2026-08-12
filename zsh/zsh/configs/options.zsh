@@ -3,7 +3,7 @@ HISTSIZE=10000
 SAVEHIST=10000
 
 setopt autocd correct interactivecomments magicequalsubst notify numericglobsort promptsubst
-setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups
+setopt appendhistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups
 setopt hist_expire_dups_first hist_find_no_dups
 
 export FZF_DEFAULT_OPTS="--color=bg+:-1,bg:-1,spinner:#00fcb9,hl:#ff0063,fg:#ededfe,header:#ff948b,info:#ffe900,pointer:#ff57fd,marker:#00ffed,fg+:#ededff,prompt:#00a4ff,hl+:#ff0063,border:-1 --layout=reverse --border --info=inline --height=100% --pointer='▶'"

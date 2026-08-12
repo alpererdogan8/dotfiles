@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# display-mode — switch kanshi output profiles via rofi -dmenu or direct argument.
+#
+# Usage:
+#   display-mode                  → opens rofi picker
+#   display-mode extend           → HDMI only
+#   display-mode extended         → HDMI + laptop side-by-side
+#   display-mode mirror           → mirror both screens
+#   display-mode laptop           → laptop screen only
+#
+# Requires: kanshi (running), kanshictl, rofi
+
+declare -A LABELS=(
+    ["extend"]="  Extend — HDMI only"
+    ["extended"]="  Extended — HDMI + Laptop"
+    ["mirror"]="  Mirror — both screens same image"
+    ["laptop"]="  Laptop only"
+)
+
+# Ordered list for display
+ORDERED=(extend extended mirror laptop)
+
+switch_profile() {
+    local profile="$1"
+    if kanshictl switch "$profile" 2>/dev/null; then
+        notify-send -i video-display "Display mode" "${LABELS[$profile]:-$profile}" --expire-time=2000
+        # Re-assert HDMI mode after every switch so wlroots fully re-initialises
+        # its render pipeline. Kanshi may skip re-applying the mode when HDMI-A-1
+        # parameters haven't changed between profiles, leaving frame pacing broken.
+        case "$profile" in
+            extend|extended|mirror)
+                (sleep 1 && swaymsg output HDMI-A-1 mode 1920x1080@120Hz) &
+                ;;
+        esac
+    else
+        notify-send -u critical "Display mode" "Failed to switch to '$profile'" --expire-time=3000
+    fi
+}
+
+# Direct argument: bypass rofi
+if [[ -n "$1" ]]; then
+    switch_profile "$1"
+    exit $?
+fi
+
+# Build rofi menu lines: "label\0info\x1fprofile_key"
+menu=""
+for key in "${ORDERED[@]}"; do
+    menu+="${LABELS[$key]}\0info\x1f${key}\n"
+done
+
+chosen=$(printf "%b" "$menu" | rofi -dmenu \
+    -i \
+    -p "Display" \
+    -format "i" \
+    -no-custom)
+
+[[ -z "$chosen" ]] && exit 0
+
+# rofi -format i returns the 0-based index
+profile="${ORDERED[$chosen]}"
+switch_profile "$profile"

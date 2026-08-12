@@ -1,29 +1,49 @@
-/* Color Variables */
-@define-color cc-bg black;
-@define-color beige-light #dcd7ba;
-@define-color dark-blue-black #11111b;
-@define-color gray-dark-transparent rgba(22, 22, 22, 0.055);
-@define-color gray-dark-hover rgba(99, 99, 99, 0.466);
-@define-color gray-very-dark #1b1b1b;
-@define-color beige-close #dcd7ba;
-@define-color beige-close-hover #dcd7ba;
-@define-color text-color #ffffff;
-@define-color beige-secondary #dcd7ba;
-@define-color gray-disabled #828282;
-@define-color blue-light #7e9cd8;
-@define-color green-border #76946a;
-@define-color red-base #c34043;
-@define-color red-hover #e46876;
-@define-color green-base #98bb6c;
-@define-color gray-accent rgba(31, 31, 31, 1);
+/* =============================================================================
+   SwayNC Style Sheet
+   Theme: Dark / Kanagawa-inspired
+   ============================================================================= */
 
-/* Base Styles */
+/* -----------------------------------------------------------------------------
+   Color Variables
+   ----------------------------------------------------------------------------- */
+@define-color cc-bg              black;
+@define-color text-color         #ffffff;
+
+/* Accent / brand colors */
+@define-color blue-light         #7e9cd8;
+@define-color blue-base          #7e9cd8;
+@define-color green-base         #98bb6c;
+@define-color green-border       #76946a;
+@define-color red-base           #c34043;
+@define-color red-hover          #e46876;
+
+/* Beige / neutral tones (Kanagawa palette) */
+@define-color beige-light        #dcd7ba;
+@define-color beige-close        #dcd7ba;
+@define-color beige-close-hover  #dcd7ba;
+@define-color beige-secondary    #dcd7ba;
+
+/* Gray scale */
+@define-color gray-accent              rgba(31, 31, 31, 1);
+@define-color gray-dark-transparent    rgba(22, 22, 22, 0.055);
+@define-color gray-dark-hover          rgba(99, 99, 99, 0.466);
+@define-color gray-very-dark           #1b1b1b;
+@define-color gray-disabled            #828282;
+
+/* Dark background shades */
+@define-color dark-blue-black    #11111b;
+
+/* =============================================================================
+   Global Reset / Base Styles
+   ============================================================================= */
 * {
   font-family: "Inter", monospace;
   border-radius: 0;
 }
 
-/* Control Center */
+/* =============================================================================
+   Control Center Container
+   ============================================================================= */
 .control-center {
   background: @cc-bg;
   border-radius: 12px;
@@ -31,6 +51,7 @@
   margin: 0;
 }
 
+/* Notification rows inside the control center */
 .control-center .notification-row {
   outline: none;
   background: transparent;
@@ -52,11 +73,16 @@
   background: transparent;
 }
 
+/* Subtle highlight when hovering over a notification row */
 .control-center .notification-row:hover .notification {
   background: @gray-dark-transparent;
 }
 
-/* Notifications - Shared Styles */
+/* =============================================================================
+   Notifications — Shared Styles
+   ============================================================================= */
+
+/* Base card style shared by floating and panel notifications */
 .floating-notifications .notification,
 .control-center .notification,
 .control-center .notification-group .notification,
@@ -67,6 +93,7 @@
   box-shadow: none;
 }
 
+/* Slightly transparent variant for panel notifications */
 .control-center .notification,
 .control-center .notification-group.collapsed .notification-row .notification {
   background: rgba(10, 10, 10, 0.349);
@@ -78,12 +105,15 @@
   box-shadow: none;
 }
 
+/* Show close button on hover */
 .control-center .notification:hover .close-button {
   opacity: 1;
   border-radius: 8px;
 }
 
-/* Notification Content */
+/* =============================================================================
+   Notification Content
+   ============================================================================= */
 .control-center .notification .notification-content {
   color: @text-color;
   border-radius: 0;
@@ -101,7 +131,9 @@
   background-color: @gray-dark-hover;
 }
 
-/* Notification Actions - Shared Styles */
+/* =============================================================================
+   Notification Action Buttons — Shared Styles
+   ============================================================================= */
 .floating-notifications .notification-action,
 .control-center .notification .notification-action {
   border: 1px solid @gray-accent;
@@ -127,7 +159,9 @@
   box-shadow: none;
 }
 
-/* Notification Group */
+/* =============================================================================
+   Notification Group
+   ============================================================================= */
 .control-center .notification-group-header {
   font-weight: bold;
   font-size: 14px;
@@ -158,7 +192,9 @@
   box-shadow: none;
 }
 
-/* Notification Elements */
+/* =============================================================================
+   Notification Elements (Icons, Images)
+   ============================================================================= */
 .control-center .notification .app-icon,
 .floating-notifications .notification .app-icon,
 .control-center .notification .body-image,
@@ -174,6 +210,7 @@
   border-radius: 4px;
 }
 
+/* Close button — hidden by default, revealed on hover */
 .control-center .notification .close-button {
   background: @red-base;
   color: @cc-bg;
@@ -187,11 +224,12 @@
 .control-center .notification .close-button:hover {
   background: @red-hover;
   box-shadow: none;
-
   transition: all 0.15s ease-in-out;
 }
 
-/* Inline Reply */
+/* =============================================================================
+   Inline Reply
+   ============================================================================= */
 .control-center .notification .inline-reply-entry {
   background: @gray-dark-transparent;
   color: @text-color;
@@ -217,7 +255,11 @@
   background: @gray-dark-hover;
 }
 
-/* Notification Text Elements */
+/* =============================================================================
+   Notification Text Elements
+   ============================================================================= */
+
+/* Title / summary */
 .control-center .notification .summary {
   font-size: 15px;
   font-weight: 600;
@@ -226,6 +268,7 @@
   text-shadow: none;
 }
 
+/* Timestamp */
 .control-center .notification .time {
   font-size: 12px;
   font-weight: 500;
@@ -237,6 +280,7 @@
   opacity: 0.8;
 }
 
+/* Body text */
 .control-center .notification .body {
   font-size: 13px;
   font-weight: 400;
@@ -246,7 +290,9 @@
   opacity: 0.95;
 }
 
-/* Widget Title */
+/* =============================================================================
+   Widget — Title
+   ============================================================================= */
 .widget-title {
   color: @text-color;
   background: @gray-dark-transparent;
@@ -273,7 +319,9 @@
   color: @text-color;
 }
 
-/* Widget DND */
+/* =============================================================================
+   Widget — Do Not Disturb (DND)
+   ============================================================================= */
 .widget-dnd {
   background: @gray-dark-transparent;
   font-size: large;
@@ -296,7 +344,9 @@
   border: transparent;
 }
 
-/* Widget Label */
+/* =============================================================================
+   Widget — Label
+   ============================================================================= */
 .widget-label>label {
   font-size: 1rem;
   color: @text-color;
@@ -304,7 +354,9 @@
   border: transparent;
 }
 
-/* Widget Buttons Grid */
+/* =============================================================================
+   Widget — Buttons Grid
+   ============================================================================= */
 .widget-buttons-grid {
   background-color: rgba(57, 64, 80, 0.63);
   border-top: none;
@@ -315,6 +367,7 @@
   border-bottom-right-radius: 12px;
 }
 
+/* Reset flowbox child container styling */
 .widget-buttons-grid>flowbox>flowboxchild {
   background: transparent;
   box-shadow: none;
@@ -331,8 +384,8 @@
   outline: none;
 }
 
+/* Grid button base style */
 .widget-buttons-grid>flowbox>flowboxchild>button {
-
   min-height: 8px;
   min-width: 30px;
   background: @cc-bg;
@@ -345,6 +398,7 @@
   text-shadow: none;
 }
 
+/* Use Nerd Font icons inside grid buttons */
 .widget-buttons-grid>flowbox>flowboxchild>button label {
   font-family: "JetBrainsMono Nerd Font Propo";
   text-shadow: none;
@@ -356,6 +410,7 @@
   text-shadow: none;
 }
 
+/* Active / toggled state */
 .widget-buttons-grid>flowbox>flowboxchild>button:checked {
   background: rgb(168, 168, 168);
   color: @cc-bg;
@@ -371,7 +426,9 @@
   text-shadow: none;
 }
 
-/* Widget Volume & Backlight - Shared Base Styles */
+/* =============================================================================
+   Widget — Volume & Backlight (Shared Base)
+   ============================================================================= */
 .widget-volume,
 .widget-backlight {
   background-color: transparent;
@@ -382,6 +439,7 @@
   border: transparent;
 }
 
+/* Individual spacing overrides */
 .widget-volume {
   margin: -4px 0 0 0;
   padding-top: 0px;
@@ -394,7 +452,7 @@
   padding-bottom: 0px;
 }
 
-/* Scale (Slider) - Shared Reset */
+/* --- Scale (Slider) — Shared Reset ----------------------------------------- */
 .widget-volume scale trough,
 .widget-volume scale highlight,
 .widget-volume scale slider,
@@ -407,7 +465,7 @@
   outline: none;
 }
 
-/* Scale Trough */
+/* Scale trough (track background) */
 .widget-volume scale trough,
 .widget-backlight scale trough {
   background-color: @cc-bg;
@@ -415,7 +473,7 @@
   min-height: 2px;
 }
 
-/* Scale Highlight */
+/* Scale highlight (filled portion of the track) */
 .widget-volume scale highlight,
 .widget-backlight scale highlight {
   background-color: whitesmoke;
@@ -424,7 +482,7 @@
   min-height: 2px;
 }
 
-/* Scale Slider */
+/* Scale thumb / handle */
 .widget-volume scale slider,
 .widget-backlight scale slider {
   background-color: @dark-blue-black;
@@ -434,7 +492,9 @@
   min-width: 10px;
 }
 
-/* Widget MPRIS (Media Player) */
+/* =============================================================================
+   Widget — MPRIS (Media Player Remote Interface)
+   ============================================================================= */
 .widget-mpris {
   padding: 8px 16px;
   border-top: 1px solid @gray-accent;
@@ -443,12 +503,14 @@
   margin: 0 0 2px 0;
 }
 
+/* Remove default blurred background from mpris widget */
 .widget-mpris .mpris-background {
   filter: none;
   background-image: none;
   min-height: 0;
 }
 
+/* Media player card */
 .widget-mpris .widget-mpris-player {
   background-color: transparent;
   background-image: none;
@@ -460,6 +522,7 @@
   min-height: 0;
 }
 
+/* Album artwork */
 .widget-mpris .widget-mpris-album-art {
   opacity: 1;
   margin-right: 16px;
@@ -468,6 +531,7 @@
   background: transparent;
 }
 
+/* Track title */
 .widget-mpris .widget-mpris-title {
   font-size: 13px;
   font-weight: 700;
@@ -476,6 +540,7 @@
   background: none;
 }
 
+/* Artist / subtitle */
 .widget-mpris .widget-mpris-subtitle {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
@@ -483,6 +548,7 @@
   background: none;
 }
 
+/* Playback control buttons (prev / play-pause / next) */
 .widget-mpris .widget-mpris-player button {
   all: unset;
   background: rgba(255, 255, 255, 0.05);
@@ -497,6 +563,7 @@
     color 0.15s ease;
 }
 
+/* Play/pause button is slightly larger than prev/next */
 .widget-mpris .widget-mpris-player button:nth-child(2) {
   min-width: 24px;
   min-height: 24px;
@@ -511,6 +578,7 @@
   color: @text-color;
 }
 
+/* Dim unavailable controls */
 .widget-mpris .widget-mpris-player button:disabled {
   color: alpha(@beige-secondary, 0.3);
 }
