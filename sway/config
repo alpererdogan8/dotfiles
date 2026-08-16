@@ -39,8 +39,8 @@ exec uwsm app -- /usr/libexec/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
-
-
+# exec uwsm app -- $HOME/.local/bin/autotiling-rs
+exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
 # cliphist: clipboard history daemon — stores entries as clipboard changes
 exec_always wl-paste --watch cliphist store
