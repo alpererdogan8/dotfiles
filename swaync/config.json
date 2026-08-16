@@ -90,7 +90,7 @@
         },
         {
           "label": "󰹑",
-          "command": "sh -c 'swaync-client -cp && sleep 0.5 && $HOME/.local/bin/hyprshot -m region --clipboard-only --silent'"
+          "command": "sh -c 'swaync-client -cp && sleep 0.3 && grimshot copy area'"
         },
         {
           "label": "󰛼",
