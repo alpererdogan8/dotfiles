@@ -98,7 +98,7 @@
         },
         {
           "label": "󰍺",
-          "command": "sh -c '$TERMINAL --title=hyprmoncfg -e $HOME/.local/bin/hyprmoncfg'"
+          "command": "sh -c '$HOME/.config/swaync/scripts/monitor_layout.sh'"
         },
         {
           "label": "",
