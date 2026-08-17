@@ -1,6 +1,108 @@
 [include]
-    path = ~/.config/git/config.local
+	path = ~/.config/git/config.local
+
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
+
 [init]
 	defaultBranch = main
+
+[core]
+	editor = nvim
+	autocrlf = input
+
+[commit]
+	template = ~/.git-commit-template
+	verbose = true
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[pull]
+	rebase = true
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[branch]
+	sort = -committerdate
+
+[tag]
+	sort = version:refname
+
+[column]
+	ui = auto
+
+[help]
+	autocorrect = prompt
+
+[alias]
+	# --- Staging ---
+	a   = add
+	aa  = add -A
+	ap  = add -p
+
+	# --- Branching ---
+	br  = branch
+	cb  = checkout -b
+	ck  = checkout
+	new = checkout -b
+
+	# --- Committing ---
+	cm   = commit
+	cmt  = commit -m
+	cmta = commit --amend
+	cmtf = commit --amend --no-edit
+	dd   = commit --dry-run
+
+	# --- Diff ---
+	d  = diff
+	dc = diff --cached
+	dm = diff HEAD~ --color-moved=dimmed-zebra
+
+	# --- Fetch / Pull / Push ---
+	f    = fetch
+	p    = pull
+	ps   = push
+	psmi = push origin main
+	psmt = push origin master
+
+	# --- Log ---
+	l  = log
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	ll = log --graph --decorate --oneline --all
+	lo = log --graph --decorate --all
+
+	# --- File operations ---
+	ls  = ls-files
+	m   = mv
+	sh  = show
+
+	# --- Merge / Rebase ---
+	mr = merge
+	rb = rebase
+
+	# --- Remote ---
+	rmt = remote -v
+
+	# --- Restore / Reset ---
+	r   = restore
+	rs  = restore
+	rst = restore --staged
+	reset-soft    = reset --soft HEAD~
+	stash-all     = stash save --include-untracked
+	stash-unstaged = stash --keep-index -u
+
+	# --- Misc ---
+	i  = init
+	t  = tag
+	st = status
+	ups = config --get remote.origin.url
+	yolo = !git commit -m "$(curl -s https://whatthecommit.com/index.txt)"

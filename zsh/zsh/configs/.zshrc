@@ -8,6 +8,8 @@ source $ZDOTDIR/aliases.zsh
 source $ZDOTDIR/completions.zsh
 source $ZDOTDIR/plugins.zsh
 source $ZDOTDIR/tools.zsh
+source $ZDOTDIR/abbr.zsh
+source $ZDOTDIR/git.zsh
 # source $ZDOTDIR/tmux.zsh
 source $ZDOTDIR/herdr.zsh
 

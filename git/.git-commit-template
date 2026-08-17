@@ -1,0 +1,30 @@
+
+# <type>: (If applied, this commit will...) <subject> (Max 50 chars)
+# |<----  Using a Maximum Of 50 Characters  ---->|
+
+
+# Explain WHY this change is being made (not what — the diff shows that)
+# |<----   Try To Limit Each Line to a Maximum Of 72 Characters   ---->|
+
+
+# Reference relevant issues, PRs or tickets (optional)
+# Example: Closes #42  /  Refs: JIRA-1234
+
+# --- COMMIT END ---
+# Type must be one of:
+#   feat     - New feature
+#   fix      - Bug fix
+#   refactor - Refactoring (no behaviour change)
+#   perf     - Performance improvement
+#   style    - Formatting, whitespace, missing semicolons (no logic change)
+#   test     - Adding or updating tests
+#   docs     - Documentation only changes
+#   chore    - Build process, tooling, dependencies
+#   ci       - CI/CD configuration changes
+#   revert   - Reverts a previous commit
+# --------------------
+# Remember:
+#   Subject line is imperative mood: "Fix bug" not "Fixed bug" / "Fixes bug"
+#   Do not end subject line with a period
+#   Separate subject from body with a blank line
+#   Use the body to explain WHAT and WHY, not HOW
