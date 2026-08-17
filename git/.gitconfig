@@ -15,10 +15,7 @@
 	autocrlf = input
 
 [gpg]
-	format = ssh
-
-[gpg "ssh"]
-	allowedSignersFile = ~/.config/git/allowed_signers
+	program = gpg
 
 [commit]
 	template = ~/.git-commit-template
