@@ -14,9 +14,16 @@
 	editor = nvim
 	autocrlf = input
 
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
+
 [commit]
 	template = ~/.git-commit-template
 	verbose = true
+	gpgsign = true
 
 [push]
 	autoSetupRemote = true
