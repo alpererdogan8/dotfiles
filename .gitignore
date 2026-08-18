@@ -54,3 +54,7 @@ zsh/node_modules/
 zsh/package.json
 zsh/pnpm-lock.yaml
 vscode/.config/Code/SharedStorage
+
+# SELinux local policies
+*.pp
+*.te
