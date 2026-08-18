@@ -11,16 +11,16 @@
 #   kanshictl switch <profile-name>
 # or use Super+Shift+D to open the display-mode rofi picker.
 
-# HDMI connected (default): external monitor only, laptop screen off
-profile extend {
-    output HDMI-A-1 enable mode 1920x1080@120Hz position 0,0
-    output eDP-1 disable
-}
-
-# Both screens: HDMI as primary (left), laptop as secondary (right)
+# Both screens: HDMI as primary (top), laptop as secondary (bottom) (default)
 profile extended {
     output HDMI-A-1 enable mode 1920x1080@120Hz position 0,0 scale 1
     output eDP-1 enable position 0,1085
+}
+
+# HDMI only: external monitor only, laptop screen off
+profile extend {
+    output HDMI-A-1 enable mode 1920x1080@120Hz position 0,0
+    output eDP-1 disable
 }
 
 # Mirror: both outputs at position 0,0 — wlroots scales the difference.
