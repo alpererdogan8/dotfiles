@@ -4,11 +4,13 @@ This repository contains the configuration files and scripts that I use on my Fe
 
 ```text
 Distribution         : Fedora
-Window Manager       : Sway (Wayland)
+Window Manager       : Sway + Waybar
 Shell                : Zsh
 Terminal             : Ghostty / Kitty / Alacritty
 Terminal Multiplexer : Tmux
+Resource Monitor     : btop / fastfetch
 Editor               : Neovim (LazyVim)
+Notification Daemon  : SwayNotificationCenter
 File Manager         : Yazi
 App Launcher         : Rofi
 Theme                : Sunset Drive
