@@ -56,7 +56,7 @@ declare -A TARGET=(
   ['local-bin']="$HOME"
   [themes]="$HOME"
   [tmuxifier]="$HOME"
-  #[ly]="/etc/ly"
+  [ly]="/etc/ly"
   [yazi]="$HOME/.config/yazi"
   ['snappy-switcher']="$HOME/.config/snappy-switcher"
 )
@@ -187,16 +187,7 @@ stow_package() {
     log_error "$pkg stow error (exit: $rc)"
     return $rc
   fi
-
-  # Post-install hooks
-  if [[ "$pkg" == "ly" ]]; then
-    if "$REMOVE"; then
-      "$DRY_RUN" || sudo rm -f /etc/ly/blackhole-smooth.dur
-    else
-      "$DRY_RUN" || sudo ln -sf "$HOME/dotfiles/ly/animation/blackhole-smooth-240x67.dur" /etc/ly/blackhole-smooth.dur
-    fi
-  fi
-
+  
   log_ok "$pkg done"
 }
 
