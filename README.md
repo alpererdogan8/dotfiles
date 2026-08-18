@@ -5,7 +5,7 @@ This repository contains the configuration files and scripts that I use on my Fe
 ```text
 Distribution         : Fedora
 Window Manager       : Sway + Waybar
-Shell                : Zsh
+Shell                : Zsh (Zinit)
 Terminal             : Ghostty / Kitty / Alacritty
 Terminal Multiplexer : Tmux / herdr
 Resource Monitor     : btop
