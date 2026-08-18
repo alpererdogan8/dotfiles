@@ -7,8 +7,8 @@ Distribution         : Fedora
 Window Manager       : Sway + Waybar
 Shell                : Zsh
 Terminal             : Ghostty / Kitty / Alacritty
-Terminal Multiplexer : Tmux
-Resource Monitor     : btop / fastfetch
+Terminal Multiplexer : Tmux / herdr
+Resource Monitor     : btop
 Editor               : Neovim (LazyVim)
 Notification Daemon  : SwayNotificationCenter
 File Manager         : Yazi
