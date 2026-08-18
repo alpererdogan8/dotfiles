@@ -188,6 +188,15 @@ stow_package() {
     return $rc
   fi
 
+  # Post-install hooks
+  if [[ "$pkg" == "ly" ]]; then
+    if "$REMOVE"; then
+      "$DRY_RUN" || sudo rm -f /etc/ly/blackhole-smooth.dur
+    else
+      "$DRY_RUN" || sudo ln -sf "$HOME/dotfiles/ly/animation/blackhole-smooth-240x67.dur" /etc/ly/blackhole-smooth.dur
+    fi
+  fi
+
   log_ok "$pkg done"
 }
 
