@@ -18,6 +18,17 @@ Theme                : Sunset Drive
 
 ## Installation
 
+### Prerequisites
+
+You need to install the required packages before stowing the dotfiles. For Fedora:
+
+```bash
+sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
+  sway waybar swaylock swaync rofi-wayland ghostty yazi tmux neovim \
+  starship btop grim slurp wl-clipboard cliphist kanshi
+```
+
+### Setup
 ```bash
 # Clone the repository
 git clone git@github.com:alpererdogan8/dotfiles.git ~/dotfiles
