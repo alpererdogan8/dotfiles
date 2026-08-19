@@ -89,16 +89,17 @@
 .control-center .notification-row .notification {
   background: @cc-bg;
   border: 1px solid @gray-accent;
-  border-radius: 8px;
+  border-radius: 3px;
   box-shadow: none;
 }
+
 
 /* Slightly transparent variant for panel notifications */
 .control-center .notification,
 .control-center .notification-group.collapsed .notification-row .notification {
   background: rgba(10, 10, 10, 0.349);
   box-shadow: none;
-  border-radius: 8px;
+  border-radius: 3px;
 }
 
 .floating-notifications .notification {
@@ -108,16 +109,24 @@
 /* Show close button on hover */
 .control-center .notification:hover .close-button {
   opacity: 1;
-  border-radius: 8px;
+  border-radius: 3px;
 }
 
 /* =============================================================================
    Notification Content
    ============================================================================= */
+.floating-notifications .notification .notification-content {
+  color: @text-color;
+  border-radius: 0;
+  border: transparent;
+  padding: 6px;
+}
+
 .control-center .notification .notification-content {
   color: @text-color;
   border-radius: 0;
   border: transparent;
+  padding: 6px;
 }
 
 .control-center .notification .notification-default-action {
@@ -202,11 +211,11 @@
 .control-center .notification image,
 .floating-notifications .notification image {
   padding-top: 0;
-  margin-right: 8px;
-  margin-top: 8px;
+  margin-right: 10px;
+  margin-top: 4px;
   margin-bottom: auto;
-  min-width: 12px;
-  min-height: 12px;
+  min-width: 24px;
+  min-height: 24px;
   border-radius: 4px;
 }
 
@@ -260,15 +269,29 @@
    ============================================================================= */
 
 /* Title / summary */
+.floating-notifications .notification .summary {
+  font-size: 15px;
+  font-weight: 600;
+  background: transparent;
+  color: white;
+  text-shadow: none;
+  margin-bottom: 6px;
+  text-align: center;
+  min-width: 260px;
+}
+
 .control-center .notification .summary {
   font-size: 15px;
   font-weight: 600;
   background: transparent;
   color: white;
   text-shadow: none;
+  margin-bottom: 6px;
+  text-align: left;
 }
 
 /* Timestamp */
+.floating-notifications .notification .time,
 .control-center .notification .time {
   font-size: 12px;
   font-weight: 500;
@@ -281,6 +304,18 @@
 }
 
 /* Body text */
+.floating-notifications .notification .body {
+  font-size: 13px;
+  font-weight: 400;
+  background: transparent;
+  color: @text-color;
+  text-shadow: none;
+  opacity: 0.95;
+  margin-top: 4px;
+  text-align: center;
+  min-width: 260px;
+}
+
 .control-center .notification .body {
   font-size: 13px;
   font-weight: 400;
@@ -288,6 +323,8 @@
   color: @text-color;
   text-shadow: none;
   opacity: 0.95;
+  margin-top: 4px;
+  text-align: left;
 }
 
 /* =============================================================================
