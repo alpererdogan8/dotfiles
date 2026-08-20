@@ -8,7 +8,7 @@
 # =============================================================================
 
 ROFI_THEME="$HOME/.config/rofi/config.rasi"
-KANSHI_CONFIG="$HOME/.config/sway/kanshi"
+KANSHI_CONFIG="$HOME/.config/kanshi/config"
 
 # ── Guard: kanshi config must exist ─────────────────────────────────────────
 

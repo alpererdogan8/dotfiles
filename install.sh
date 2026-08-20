@@ -42,6 +42,7 @@ declare -A TARGET=(
   [nvim]="$HOME/.config/nvim"
   [rofi]="$HOME/.config/rofi"
   [sway]="$HOME/.config/sway"
+  [kanshi]="$HOME/.config/kanshi"
   [swaync]="$HOME/.config/swaync"
   [swayosd]="$HOME/.config/swayosd"
   [swaylock]="$HOME/.config/swaylock"
@@ -58,7 +59,6 @@ declare -A TARGET=(
   [tmuxifier]="$HOME"
   [ly]="/etc/ly"
   [yazi]="$HOME/.config/yazi"
-  ['snappy-switcher']="$HOME/.config/snappy-switcher"
 )
 
 SUDO_PACKAGES=(ly)
@@ -187,7 +187,7 @@ stow_package() {
     log_error "$pkg stow error (exit: $rc)"
     return $rc
   fi
-  
+
   log_ok "$pkg done"
 }
 
