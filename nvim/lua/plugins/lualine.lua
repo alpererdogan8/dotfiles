@@ -3,8 +3,8 @@ return {
     "nvim-lualine/lualine.nvim",
     enabled = true,
     opts = function(_, opts)
-      -- Tasarım ayarları burada olduğu gibi kalsın
-      -- LazyVim'in varsayılan şık ayarlarını kullanmaya devam eder
+      -- Keep design settings as they are here
+      -- Continues to use LazyVim's default elegant settings
     end,
   },
 }

@@ -13,12 +13,12 @@ border_symbol = "│"
 border_style = { fg = "#7a5a3e" }
 
 [status]
-# Köşeleri yok etmek için ayırıcıları düzleştirdik
+# Flattened separators to remove corners
 separator_open = ""
 separator_close = ""
 separator_style = { fg = "#0f0f1a", bg = "#0f0f1a" }
 
-# Alt kısım (Status bar) renkleri - Tamamen köşeli
+# Status bar colors - Completely square
 normal_main = { fg = "#0f0f1a", bg = "#00a4ff", bold = true }
 normal_alt = { fg = "#ededfe", bg = "#202036" }
 select_main = { fg = "#0f0f1a", bg = "#ff57fd", bold = true }
@@ -27,7 +27,7 @@ unset_main = { fg = "#0f0f1a", bg = "#ff948b", bold = true }
 unset_alt = { fg = "#ededfe", bg = "#202036" }
 
 [indicator]
-# Köşeli göstergeler
+# Square indicators
 padding = { open = "", close = "" }
 
 [input]

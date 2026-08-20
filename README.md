@@ -52,4 +52,4 @@ cd ~/dotfiles
 
 ## Preview
 
-*(Ekran görüntülerini (screenshot) buraya ekleyebilirsin)*
+*(You can add screenshots here)*
