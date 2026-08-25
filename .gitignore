@@ -54,3 +54,6 @@ zsh/node_modules/
 zsh/package.json
 zsh/pnpm-lock.yaml
 vscode/.config/Code/SharedStorage
+
+# Local secrets (not tracked by git)
+local.zsh

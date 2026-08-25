@@ -27,8 +27,8 @@ if command -v direnv > /dev/null; then
 fi
 
 # Corrects previous mistyped commands (e.g. type 'fuck' after an error)
-if command -v thefuck > /dev/null; then
-    zinit wait"1" lucid id-as"thefuck-init" for \
-        atload'eval "$(thefuck --alias)"' \
+if command -v pay-respects > /dev/null; then
+    zinit wait"1" lucid id-as"pay-respects-init" for \
+        atload'eval "$(pay-respects zsh --alias fuck)"' \
         zdharma-continuum/null
 fi

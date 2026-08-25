@@ -13,4 +13,6 @@ export STARSHIP_CACHE=~/.starship/cache
 
 export NVM_DIR="$HOME/.config/nvm"
 
-export OBSIDIAN_REST_API_KEY=***REMOVED***
+# Local secrets (not tracked by git)
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/local.zsh" ]] && \
+    source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/local.zsh"
