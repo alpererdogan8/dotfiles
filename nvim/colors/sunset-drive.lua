@@ -1,5 +1,5 @@
 -- Ghostty Dark — Neovim colorscheme
--- Kaynak: Ghostty terminal palette'inden uyarlanmıştır
+-- Source: Adapted from Ghostty terminal palette
 
 vim.cmd("hi clear")
 if vim.fn.exists("syntax_on") then
@@ -262,7 +262,7 @@ hl("CmpItemAbbrMatchFuzzy", { fg = c.yellow })
 hl("CmpItemKind", { fg = c.cyan })
 hl("CmpItemMenu", { fg = c.subtle })
 
--- ─── Lualine (terminal colors referansı için) ─────────────────
--- Lualine'da theme = "auto" veya özel tablo kullanabilirsin.
--- Aşağıda lualine için renk tablosu export edilmiştir:
+-- ─── Lualine (for terminal colors reference) ─────────────────
+-- In Lualine, you can use theme = "auto" or a custom table.
+-- The color table for lualine is exported below:
 vim.g.ghostty_dark_colors = c

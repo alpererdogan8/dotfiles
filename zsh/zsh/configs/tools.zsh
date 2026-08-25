@@ -32,3 +32,16 @@ if command -v pay-respects > /dev/null; then
         atload'eval "$(pay-respects zsh --alias fuck)"' \
         zdharma-continuum/null
 fi
+
+# Yazi file manager wrapper — cd to the last visited directory on exit
+if command -v yazi > /dev/null; then
+    yy() {
+        local tmp
+        tmp="$(mktemp)"
+        yazi --cwd-file="$tmp" "$@"
+        if [[ -f "$tmp" && -s "$tmp" ]]; then
+            cd "$(cat "$tmp")" || return 1
+        fi
+        rm -f "$tmp"
+    }
+fi

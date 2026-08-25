@@ -82,7 +82,7 @@
         ]
     },
     "custom/wrap": {
-        "format": "",
+        "format": "",
         "tooltip-format": "Hardware group"
     },
     "tray": {
@@ -98,7 +98,7 @@
     },
     "memory": {
         "interval": 30,
-        "format": " {}%"
+        "format": " {}%"
     },
     // ── CPU Frequency ───────────────────────────────────────────────────────
     "power-profiles-daemon": {
@@ -106,10 +106,10 @@
         "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
         "tooltip": true,
         "format-icons": {
-            "default": "",
-            "performance": "",
-            "balanced": "",
-            "power-saver": ""
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
         }
     },
     "custom/temperature": {
@@ -120,7 +120,7 @@
     },
     // ── Bluetooth ───────────────────────────────────────────────────────
     "bluetooth": {
-        "format": "",
+        "format": "",
         "format-off": "󰂲",
         "format-disabled": "󰂲",
         "format-connected": "󰂱",
@@ -137,8 +137,8 @@
         "tooltip-format": "Volume: {volume}%",
         "tooltip-format-bluetooth": "Bluetooth Volume {volume}%",
         "format-icons": {
-            "headphone": "",
-            "headset": "",
+            "headphone": "",
+            "headset": "",
             "default": [
                 "󰕿",
                 "󰖀",
@@ -175,36 +175,36 @@
         "format": "{capacity}% {icon}",
         "format-discharging": "{icon}",
         "format-charging": "{icon}",
-        "format-plugged": "",
+        "format-plugged": "",
         "format-icons": {
             "charging": [
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋",
-                " 󱐋"
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋"
             ],
             "default": [
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " "
             ]
         },
-        "format-full": "",
+        "format-full": "",
         "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
         "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
         "interval": 5,

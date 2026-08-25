@@ -55,5 +55,9 @@ zsh/package.json
 zsh/pnpm-lock.yaml
 vscode/.config/Code/SharedStorage
 
+# SELinux local policies
+*.pp
+*.te
+
 # Local secrets (not tracked by git)
 local.zsh

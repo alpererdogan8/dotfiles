@@ -6,13 +6,14 @@
 
 /* ─── Behavior ───────────────────────────────────────────── */
 configuration {
-    steal-focus:     false;
+    steal-focus:     true;
     show-icons:      false;
     font:            "Inter 11";
     hover-select:    true;
     me-select-entry: "";
     me-accept-entry: "MousePrimary";
-    kb-cancel:       "Escape,MousePrimary";
+    kb-cancel: "Escape";
+    click-to-exit: true;
 }
 
 /* ─── Design tokens ──────────────────────────────────────── */

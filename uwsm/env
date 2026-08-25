@@ -9,7 +9,7 @@ export ELECTRON_FLAGS="--password-store=gnome-libsecret"
 
 #export XDG_MENU_PREFIX="plasma-"
 
-#export XDG_CURRENT_DESKTOP=GNOME:Hyprland
+
 #export GDK_BACKEND="wayland,x11,*"
 export LIBVA_DRIVER_NAME=iHD
 export GBM_BACKEND=drm-intel

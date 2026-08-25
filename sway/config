@@ -10,7 +10,7 @@ set $menu rofi -show combi -config ~/.config/rofi/launcher.rasi
 set $fileManager nautilus
 
 ### Output configuration
-# Output enable/disable and resolution are managed by kanshi (~/.config/sway/kanshi).
+# Output enable/disable and resolution are managed by kanshi (~/.config/kanshi/config).
 # kanshi automatically switches to eDP-1 when HDMI-A-1 is unplugged.
 # output * bg /usr/share/backgrounds/default-dark.jxl fill
 #output * bg $HOME/Pictures/abstract_a_black_and_white_picture_of_mountains_and_trees.png fill
@@ -34,13 +34,13 @@ client.unfocused #3a3a3a #3a3a3a #7c8b9a #3a3a3a #3a3a3a
 
 ### Autostart
 # kanshi: dynamic output manager — handles monitor hotplug (HDMI <-> eDP-1)
-exec_always kanshi -c ~/.config/sway/kanshi
+exec_always kanshi
 exec uwsm app -- /usr/libexec/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
-
-
+# exec uwsm app -- $HOME/.local/bin/autotiling-rs
+exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
 # cliphist: clipboard history daemon — stores entries as clipboard changes
 exec_always wl-paste --watch cliphist store

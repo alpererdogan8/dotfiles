@@ -1,11 +1,11 @@
 return {
-	-- 1. Everforest temasını indir ve arka plan ayarını yap
+	-- 1. Install Everforest theme and configure background
 	{
 		"sainnhe/everforest",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			-- Arka planı 'hard' olarak ayarlar
+			-- Set background to 'hard'
 			vim.g.everforest_background = "hard"
 		end,
 	},

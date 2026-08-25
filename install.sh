@@ -13,6 +13,7 @@ RESET='\033[0m'
 
 DRY_RUN=false
 REMOVE=false
+RELINK=false
 LIST=false
 SELECTED_PACKAGES=()
 
@@ -20,6 +21,7 @@ for arg in "$@"; do
   case "$arg" in
   --dry-run) DRY_RUN=true ;;
   --remove) REMOVE=true ;;
+  --relink) RELINK=true ;;
   --list) LIST=true ;;
   --*)
     echo -e "${RED}Unknown option: $arg${RESET}"
@@ -40,6 +42,7 @@ declare -A TARGET=(
   [nvim]="$HOME/.config/nvim"
   [rofi]="$HOME/.config/rofi"
   [sway]="$HOME/.config/sway"
+  [kanshi]="$HOME/.config/kanshi"
   [swaync]="$HOME/.config/swaync"
   [swayosd]="$HOME/.config/swayosd"
   [swaylock]="$HOME/.config/swaylock"
@@ -54,9 +57,8 @@ declare -A TARGET=(
   ['local-bin']="$HOME"
   [themes]="$HOME"
   [tmuxifier]="$HOME"
-  #[ly]="/etc/ly"
+  [ly]="/etc/ly"
   [yazi]="$HOME/.config/yazi"
-  ['snappy-switcher']="$HOME/.config/snappy-switcher"
 )
 
 SUDO_PACKAGES=(ly)
@@ -145,12 +147,15 @@ stow_package() {
   "$DRY_RUN" && flags+=(-n)
   if "$REMOVE"; then
     flags+=(-D)
-  else
+  elif "$RELINK"; then
     flags+=(-R)
+  else
+    flags+=(-S)
   fi
 
   local action="Linking"
   "$REMOVE" && action="Unlinking"
+  "$RELINK" && action="Relinking"
   "$DRY_RUN" && action="[DRY] $action"
   echo -e "\n${BOLD}${action}:${RESET} ${CYAN}${pkg}${RESET} → ${target}"
 
@@ -200,6 +205,7 @@ echo -e "\n${BOLD}════════════════════�
 echo -e "${BOLD}  Dotfiles  │  ${DOTFILES_DIR}${RESET}"
 "$DRY_RUN" && echo -e "${YELLOW}  Mode: DRY RUN (no changes will be made)${RESET}"
 "$REMOVE" && echo -e "${RED}  Mode: REMOVE (links will be removed)${RESET}"
+"$RELINK" && echo -e "${CYAN}  Mode: RELINK (existing links will be re-created)${RESET}"
 echo -e "${BOLD}══════════════════════════════════════${RESET}"
 
 if [[ ${#SELECTED_PACKAGES[@]} -gt 0 ]]; then

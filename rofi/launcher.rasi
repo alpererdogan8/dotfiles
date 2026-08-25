@@ -56,6 +56,12 @@ configuration {
 
     /* Cache desktop entries for faster startup */
     drun-use-desktop-cache: true;
+    /* Mouse support */
+    hover-select:    true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    kb-cancel: "Escape";
+    click-to-exit: true;
 }
 
 /* ─── Design tokens (same palette as config.rasi) ───────── */

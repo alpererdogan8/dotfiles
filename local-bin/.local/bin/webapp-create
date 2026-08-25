@@ -4,7 +4,7 @@ APP_NAME="$1"
 APP_URL="$2"
 
 if [ -z "$APP_NAME" ] || [ -z "$APP_URL" ]; then
-  echo "Usage: webapp:create \"Name\" \"URL\""
+  echo "Usage: webapp-create \"Name\" \"URL\""
   exit 1
 fi
 

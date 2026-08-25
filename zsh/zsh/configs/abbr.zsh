@@ -53,3 +53,4 @@ abbr -q -S ....="cd ../../.."
 # --- Editor / Tool abbreviations ---
 abbr -q -S e="nvim"
 abbr -q -S lg="lazygit"
+abbr -q -S grep="rg"
