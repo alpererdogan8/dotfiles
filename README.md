@@ -50,6 +50,18 @@ cd ~/dotfiles
 ./install.sh --dry-run
 ```
 
+## Local Secrets
+
+Some environment variables (API keys, tokens) are **not tracked** in this repo.
+After cloning, create `~/.config/zsh/local.zsh` and add your secrets there:
+
+```zsh
+# ~/.config/zsh/local.zsh
+export OBSIDIAN_REST_API_KEY=your_key_here
+```
+
+This file is sourced automatically by `zsh/zsh/configs/env.zsh` and is listed in `.gitignore`.
+
 ## Preview
 
 *(You can add screenshots here)*
