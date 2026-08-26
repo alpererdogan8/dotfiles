@@ -6,7 +6,7 @@
 # Allows connecting/disconnecting individual devices and toggling power.
 # =============================================================================
 
-THEME="$HOME/.config/rofi/config.rasi"
+THEME="$HOME/.config/rofi/swaync.rasi"
 ROFI_CMD="rofi -dmenu -i -markup-rows -theme $THEME"
 
 # Returns a list of paired devices as "MAC|Name" pairs (one per line)

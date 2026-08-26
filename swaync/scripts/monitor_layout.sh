@@ -3,11 +3,11 @@
 # monitor_layout.sh — Kanshi profile switcher via Rofi
 #
 # Reads profile names dynamically from the kanshi config file.
-# Displays them in a Rofi menu (using the design language from config.rasi).
+# Displays them in a Rofi menu (using the design language from swaync.rasi).
 # Switches to the selected profile via `kanshictl switch`.
 # =============================================================================
 
-ROFI_THEME="$HOME/.config/rofi/config.rasi"
+ROFI_THEME="$HOME/.config/rofi/swaync.rasi"
 KANSHI_CONFIG="$HOME/.config/kanshi/config"
 
 # ── Guard: kanshi config must exist ─────────────────────────────────────────

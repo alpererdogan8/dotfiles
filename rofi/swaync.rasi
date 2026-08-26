@@ -1,0 +1,184 @@
+/**
+ * Rofi — SwayNC menus theme
+ * Compact dmenu style; shares the same design language as launcher.rasi.
+ *
+ * Used by:
+ *   bluetooth.sh, wifi.sh, powermenu.sh,
+ *   monitor_layout.sh, power_profile.sh
+ *
+ * Design tokens are intentionally identical to launcher.rasi so both
+ * surfaces feel like one coherent system.
+ */
+
+/* ─── Behavior ───────────────────────────────────────────── */
+configuration {
+    steal-focus:     true;
+    show-icons:      false;
+    font:            "Inter 11";
+    hover-select:    true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    kb-cancel:       "Escape";
+    click-to-exit:   true;
+}
+
+/* ─── Design tokens (identical to launcher.rasi) ─────────── */
+* {
+    bg:           #000000;
+    bg-alt:       #11111b;
+    bg-mode:      #0d0d0d;
+    fg:           #ffffff;
+    fg-dim:       rgba(255, 255, 255, 0.45);
+    accent:       #d1d1d1ff;
+    accent-dim:   rgba(209, 209, 209, 0.12);
+    border-col:   rgba(255, 255, 255, 0.118);
+    blue:         #3c6eb4;
+
+    background-color: transparent;
+    text-color:       @fg;
+    margin:           0;
+    padding:          0;
+    spacing:          0;
+}
+
+/* ─── Window — centered spotlight (same as launcher.rasi) ─── */
+window {
+    width:            480px;
+    location:         center;
+    anchor:           center;
+    background-color: @bg;
+    border:           1px;
+    border-color:     @border-col;
+    border-radius:    10px;
+    cursor:           "default";
+}
+
+/* ─── Root layout ─────────────────────────────────────────── */
+mainbox {
+    children:         [ "inputbar", "listview", "message" ];
+    background-color: @bg;
+    padding:          0px;
+    spacing:          0px;
+    border-radius:    10px;
+}
+
+/* ─── Search / prompt bar ────────────────────────────────── */
+inputbar {
+    enabled:          true;
+    background-color: @bg;
+    padding:          14px 16px;
+    border-radius:    10px 10px 0px 0px;
+    children:         [ "prompt", "entry" ];
+    spacing:          10px;
+    border:           0px 0px 1px 0px;
+    border-color:     @border-col;
+}
+
+prompt {
+    text-color:     @blue;
+    vertical-align: 0.5;
+    font:           "JetBrainsMono Nerd Font 13";
+}
+
+entry {
+    placeholder:       "Select…";
+    placeholder-color: @fg-dim;
+    text-color:        @fg;
+    vertical-align:    0.5;
+    font:              "Inter 12";
+    cursor-color:      @accent;
+}
+
+/* ─── Results list ───────────────────────────────────────── */
+listview {
+    columns:      1;
+    lines:        8;
+    cycle:        true;
+    dynamic:      true;
+    fixed-height: false;
+    scrollbar:    false;
+    spacing:      2px;
+    padding:      8px;
+}
+
+/* ─── Result items ───────────────────────────────────────── */
+element {
+    padding:      9px 12px;
+    border-radius: 6px;
+    children:     [ element-text ];
+    orientation:  horizontal;
+    cursor:       pointer;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element normal.urgent {
+    background-color: transparent;
+    text-color:       #f38ba8;
+}
+
+element normal.active {
+    background-color: transparent;
+    text-color:       @blue;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element alternate.urgent {
+    background-color: transparent;
+    text-color:       #f38ba8;
+}
+
+element alternate.active {
+    background-color: transparent;
+    text-color:       @blue;
+}
+
+element selected.normal {
+    background-color: @accent;
+    text-color:       @bg;
+    border-radius:    6px;
+}
+
+element selected.urgent {
+    background-color: #f38ba8;
+    text-color:       @bg;
+    border-radius:    6px;
+}
+
+element selected.active {
+    background-color: @blue;
+    text-color:       @fg;
+    border-radius:    6px;
+}
+
+element-text {
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+    text-color:       inherit;
+    font:             "Inter 11";
+}
+
+/* ─── Message / hint bar ─────────────────────────────────── */
+message {
+    enabled:          true;
+    background-color: @bg-mode;
+    padding:          6px 16px;
+    border-radius:    0px 0px 10px 10px;
+    border:           1px 0px 0px 0px;
+    border-color:     @border-col;
+}
+
+textbox {
+    text-color:       @fg-dim;
+    font:             "Inter 10";
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+    background-color: transparent;
+}

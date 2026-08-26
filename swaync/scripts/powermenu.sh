@@ -14,7 +14,7 @@ shutdown="󰐥    Shutdown"
 
 options="$lock\n$logout\n$suspend\n$reboot\n$shutdown"
 
-chosen=$(echo -e "$options" | rofi -dmenu -p "Power:" -layer overlay -theme ~/.config/rofi/config.rasi)
+chosen=$(echo -e "$options" | rofi -dmenu -p "Power:" -layer overlay -theme ~/.config/rofi/swaync.rasi)
 
 # Close the SwayNC panel if the user dismissed the menu
 if [ -z "$chosen" ]; then

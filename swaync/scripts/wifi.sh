@@ -7,7 +7,7 @@
 # Allows toggling Wi-Fi power or connecting to a selected network.
 # =============================================================================
 
-THEME="$HOME/.config/rofi/config.rasi"
+THEME="$HOME/.config/rofi/swaync.rasi"
 ROFI_CMD="rofi -dmenu -i -markup-rows -theme $THEME"
 
 # ── Power state ──────────────────────────────────────────────────────────────

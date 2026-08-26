@@ -10,7 +10,7 @@
 #   4. Sends a desktop notification
 # =============================================================================
 
-ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
+ROFI_CONFIG="$HOME/.config/rofi/swaync.rasi"
 SWAYNC_CONFIG="$HOME/.config/swaync/config.json"
 
 # Apply the given power profile and update the corresponding SwayNC button label
@@ -33,7 +33,7 @@ set_profile() {
 }
 
 # Show the profile selection menu
-chosen=$(printf "󱐋 Performance\n    Balanced\n  Power Saver" | \
+chosen=$(printf "󱐋  Performance\n󰾅  Balanced\n󰤄  Power Saver" | \
   rofi -dmenu -i -markup-rows -theme "$ROFI_CONFIG" -no-custom)
 
 # Map the selection to a profile identifier
