@@ -20,17 +20,20 @@ set $fileManager nautilus
 smart_borders off
 hide_edge_borders none
 
-default_border pixel 1
-default_floating_border pixel 1
+default_border pixel 3
+default_floating_border pixel 3
 
-for_window [app_id="^.*"] border pixel 1
-for_window [class="^.*"] border pixel 1
+# for_window [app_id="^.*"] bolder pixel 2
+# for_window [class="^.*"] border pixel 2
 
 gaps inner 3
 smart_gaps on
 
+# client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
+# client.unfocused #3a3a3a #3a3a3a #7c8b9a #3a3a3a #3a3a3a
+
 client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
-client.unfocused #3a3a3a #3a3a3a #7c8b9a #3a3a3a #3a3a3a
+client.unfocused #55606b #2b2b2b #8b98a5 #55606b #55606b
 
 ### Autostart
 # kanshi: dynamic output manager — handles monitor hotplug (HDMI <-> eDP-1)
@@ -40,7 +43,7 @@ exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
 # exec uwsm app -- $HOME/.local/bin/autotiling-rs
-exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
+# exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
 # cliphist: clipboard history daemon — stores entries as clipboard changes
 exec_always wl-paste --watch cliphist store
