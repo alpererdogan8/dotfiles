@@ -7,4 +7,4 @@ shopt -s globstar
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=20000
-HISTFILE=~/bash/configs/bash_history
+HISTFILE="${XDG_CONFIG_HOME:-$HOME/.config}/bash/bash_history"
