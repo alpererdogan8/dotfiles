@@ -21,3 +21,26 @@ yy() {
     fi
     rm -f "$tmp"
 }
+
+# Notify about the exit status of the last command via desktop notification
+# Usage: some-long-command; notify
+notify() {
+    local status
+    status=$([ $? -eq 0 ] && echo "✓ Completed" || echo "✗ Failed")
+    local last_cmd
+    last_cmd=$(fc -nl -1 | xargs | sed -e 's/;\s*notify$//')
+    notify-send --urgency=normal "$status" "$last_cmd"
+}
+
+# Fetch a quick cheatsheet from cheat.sh
+# Usage: cheat <command>
+cheat() {
+    curl -s "cheat.sh/$1"
+}
+
+# Decode a JWT token and pretty-print header + payload
+# Usage: decode-jwt <token>
+decode-jwt() {
+    jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
+}
+
