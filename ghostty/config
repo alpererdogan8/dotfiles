@@ -1,4 +1,6 @@
-background-opacity = 0.98
+#background-opacity = 0.98
+
+background-opacity = 1
 background-blur = true
 font-family = 
 font-family = IoskeleyMono Nerd Font
@@ -10,7 +12,12 @@ adjust-cell-height = 8%
 window-padding-x = 8
 window-padding-y = 8
 window-step-resize = true
-theme = Sunset Drive
+theme = Hybrid
+#theme = Sunset Drive
+#theme = Horizon
+
+#theme = Hurtado
+
 palette = 0=#d0d0d0
 palette = 8=#d0d0d0
 quit-after-last-window-closed = false
