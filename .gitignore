@@ -61,3 +61,4 @@ vscode/.config/Code/SharedStorage
 
 # Local secrets (not tracked by git)
 local.zsh
+sway/scripts/__pycache__/
