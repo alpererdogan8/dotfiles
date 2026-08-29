@@ -2,6 +2,7 @@ tmux/plugins/
 .gitconfig.local
 zsh/zsh/configs/zsh_history
 zsh/zsh/configs/.zcompdump
+bash/.config/bash/bash_history
 
 # VSCode cache & runtime files
 vscode/.config/Code/User/workspaceStorage/
