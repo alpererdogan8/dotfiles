@@ -13,7 +13,8 @@ return {
 	{
 		"LazyVim/LazyVim",
 		opts = {
-			colorscheme = "sunset-drive",
+			-- colorscheme = "sunset-drive",
+			colorscheme = "hybrid",
 		},
 	},
 }
