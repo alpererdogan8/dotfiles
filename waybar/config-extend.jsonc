@@ -1,0 +1,237 @@
+// -*- mode: jsonc -*-
+// Laptop-only mode: all workspaces (1-10) are shown on HDMI-A-1 when no external monitor is connected.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+    "spacing": 0,
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin": 0,
+    "modules-left": [
+        "sway/workspaces"
+    ],
+    // ── Workspaces ───────────────────────────────────────────────────────
+    "sway/workspaces": {
+        "active-only": false,
+        "all-outputs": false,
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
+            "focused": "<span foreground='#fff'>󱓻</span>",
+            "default": "●",
+            "urgent": "<span foreground='#ff0000'>󱓻</span>"
+        },
+        "persistent-workspaces": {
+            "1": ["HDMI-A-1"],
+            "2": ["HDMI-A-1"],
+            "3": ["HDMI-A-1"],
+            "4": ["HDMI-A-1"],
+            "5": ["HDMI-A-1"],
+            "6": ["HDMI-A-1"],
+            "7": ["HDMI-A-1"],
+            "8": ["HDMI-A-1"],
+            "9": ["HDMI-A-1"],
+            "10": ["HDMI-A-1"]
+        },
+        "sort-by-number": true
+    },
+    "modules-center": [
+        "custom/clock",
+    ],
+    // ── Clock ───────────────────────────────────────────────────────
+    "custom/clock": {
+        "exec": "sh -c '$HOME/.config/waybar/scripts/clock_focus_sway.sh'",
+        "return-type": "json",
+        "tooltip": true,
+    },
+    "modules-right": [
+        "group/tray",
+        "cpu",
+        "power-profiles-daemon",
+        "bluetooth",
+        "pulseaudio",
+        "network",
+        "battery",
+        "custom/swaync-open-button",
+    ],
+    // ── Tray Group ───────────────────────────────────────────────────────
+    "group/tray": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 350,
+            "transition-left-to-right": true,
+            "click-to-reveal": false,
+            "start-expanded": false,
+        },
+        "modules": [
+            "custom/wrap",
+            "tray",
+            "custom/temperature",
+            "memory",
+        ]
+    },
+    "custom/wrap": {
+        "format": "",
+        "tooltip-format": "Hardware group"
+    },
+    "tray": {
+        "spacing": 10,
+    },
+    // ── CPU ───────────────────────────────────────────────────────
+    "cpu": {
+        "interval": 5,
+        "format": "󰍛",
+        "max-length": 10,
+        "on-click": "bash -c \"$TERMINAL --title=btop-float -e btop\"",
+        "tooltip": true
+    },
+    "memory": {
+        "interval": 30,
+        "format": " {}%"
+    },
+    // ── CPU Frequency ───────────────────────────────────────────────────────
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "tooltip": true,
+        "format-icons": {
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
+        }
+    },
+    "custom/temperature": {
+        "exec": "sh -c '$HOME/.config/waybar/scripts/avg_temp.sh'",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+    },
+    // ── Bluetooth ───────────────────────────────────────────────────────
+    "bluetooth": {
+        "format": "",
+        "format-off": "󰂲",
+        "format-disabled": "󰂲",
+        "format-connected": "󰂱",
+        "format-no-controller": "",
+        "tooltip-format": "Devices connected: {num_connections}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c '$HOME/.cargo/bin/bluetui'\""
+    },
+    // ── Audio ───────────────────────────────────────────────────────
+    "pulseaudio": {
+        "format": "{icon}",
+        "format-bluetooth": "{icon}",
+        "format-muted": "󰝟",
+        "tooltip-format": "Volume: {volume}%",
+        "tooltip-format-bluetooth": "Bluetooth Volume {volume}%",
+        "format-icons": {
+            "headphone": "",
+            "headset": "",
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
+        },
+        "scroll-step": 1,
+        "on-click": "bash -c \"$TERMINAL --title=btop-float -e wiremix\"",
+        "ignored-sinks": [
+            "Easy Effects Sink"
+        ]
+    },
+    // ── Network ───────────────────────────────────────────────────────
+    "network": {
+        "tooltip": true,
+        "format": "{icon}",
+        "format-ethernet": "󰈀",
+        "format-wifi": "{icon}",
+        "format-disconnected": "󰤮",
+        "tooltip-format-wifi": "{essid}  ·  {signalStrength}%\n{ipaddr}",
+        "tooltip-format-ethernet": "{ifname}  ·  {ipaddr}",
+        "tooltip-format-disconnected": "No Connection",
+        "format-icons": [
+            "󰤯",
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ],
+        "max-length": 50
+    },
+    // ── Battery ───────────────────────────────────────────────────────
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-discharging": "{icon}",
+        "format-charging": "{icon}",
+        "format-plugged": "",
+        "format-icons": {
+            "charging": [
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋",
+                " 󱐋"
+            ],
+            "default": [
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " ",
+                " "
+            ]
+        },
+        "format-full": "",
+        "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+        "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+        "interval": 5,
+        "states": {
+            "warning": 20,
+            "critical": 10
+        }
+    },
+    // ── Notifications ───────────────────────────────────────────────────────
+    "custom/swaync-open-button": {
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='#ff6b6b'>󰂚</span>",
+            "none": "󰂚",
+            "dnd-notification": "<span foreground='#ff6b6b'>󰂛</span>",
+            "dnd-none": "󰂛",
+            "inhibited-notification": "<span foreground='#ff6b6b'>󰂚</span>",
+            "inhibited-none": "󰂚",
+            "dnd-inhibited-notification": "<span foreground='#ff6b6b'>󰂛</span>",
+            "dnd-inhibited-none": "󰂛",
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "tooltip": true,
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true,
+    },
+}
