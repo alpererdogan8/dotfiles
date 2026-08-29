@@ -56,7 +56,16 @@
     "wm",
     "shell",
     "terminal",
-    "font",
+    {
+      "type": "font",
+      "key": "System Font"
+    },
+    {
+      "type": "command",
+      "key": "Terminal Font",
+      "keyIcon": "",
+      "text": "cat ~/.config/kitty/kitty.conf ~/.config/alacritty/alacritty.toml 2>/dev/null | grep -E '^(font_family|family)' | head -n 1 | sed 's/^.*family[^a-zA-Z0-9]*//' | tr -d '\\\"'"
+    },
     "packages",
     {
       "type": "custom",
