@@ -9,8 +9,8 @@ source $ZDOTDIR/completions.zsh
 source $ZDOTDIR/plugins.zsh
 source $ZDOTDIR/tools.zsh
 source $ZDOTDIR/git.zsh
-# source $ZDOTDIR/tmux.zsh
-source $ZDOTDIR/herdr.zsh
+source $ZDOTDIR/tmux.zsh
+# source $ZDOTDIR/herdr.zsh
 
 if [[ -n "$ZSH_PROFILE" ]]; then
     zprof
