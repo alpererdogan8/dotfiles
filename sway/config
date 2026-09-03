@@ -5,8 +5,8 @@
 ### Variables
 set $mod Mod4
 set $term ghostty +new-window
-# Raycast-inspired app launcher — uses launcher.rasi theme
-set $menu rofi -show combi -config ~/.config/rofi/launcher.rasi
+# Focused application launcher — supports handoffs such as Alt+V → clipboard.
+set $menu ~/.local/bin/rofi-launcher
 set $fileManager nautilus
 
 ### Output configuration
@@ -23,8 +23,8 @@ hide_edge_borders none
 default_border pixel 3
 default_floating_border pixel 3
 
-# for_window [app_id="^.*"] bolder pixel 2
-# for_window [class="^.*"] border pixel 2
+for_window [app_id="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 3
 
 gaps inner 3
 smart_gaps on
@@ -32,13 +32,13 @@ smart_gaps on
 # client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
 # client.unfocused #3a3a3a #3a3a3a #7c8b9a #3a3a3a #3a3a3a
 
-client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
+client.focused   #b8b8b8 #b8b8b8 #b8b8b8 #b8b8b8 #b8b8b8
 client.unfocused #55606b #2b2b2b #8b98a5 #55606b #55606b
 
 ### Autostart
 # kanshi: dynamic output manager — handles monitor hotplug (HDMI <-> eDP-1)
 exec_always kanshi
-exec uwsm app -- /usr/libexec/kdeconnectd
+exec uwsm app -- /usr/bin/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
@@ -212,12 +212,6 @@ bindswitch --locked lid:off exec swaymsg output eDP-1 enable
 
 
 
-
-
-
-
-
-
 ### Advanced Sway features - test bindings
 
 # Focus child container
@@ -239,7 +233,7 @@ bindsym $mod+Ctrl+f layout stacking
 
 # Go back to the previously focused workspace
 # Original default: no default binding
-bindsym $mod+grave workspace back_and_forth
+bindsym Alt+Tab workspace back_and_forth
 
 
 # Focus another output / monitor
