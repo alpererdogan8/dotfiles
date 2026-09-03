@@ -1,10 +1,18 @@
 [general]
 import = [
-    "~/.config/alacritty/themes/sunset-drive.toml"
+    "~/.config/alacritty/themes/hybrid.toml"
+    # "~/.config/alacritty/themes/sunset-drive.toml"
+    # "~/.config/alacritty/themes/horizon.toml"
+    # "~/.config/alacritty/themes/hurtado.toml"
+    # "~/.config/alacritty/themes/everforest-dark.toml"
+    # "~/.config/alacritty/themes/gotham.toml"
+    # "~/.config/alacritty/themes/iceberg-dark.toml"
+    # "~/.config/alacritty/themes/nocturnal-winter.toml"
+    # "~/.config/alacritty/themes/Orng.toml"
 ]
 
 [window]
-opacity = 0.90
+opacity = 1
 dynamic_title = true
 
 [window.padding]
