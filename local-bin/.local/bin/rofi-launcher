@@ -1,0 +1,15 @@
+#!/bin/sh
+# rofi-launcher — application launcher with in-launcher shortcut handoffs.
+
+rofi -show drun \
+    -config "$HOME/.config/rofi/launcher.rasi" \
+    -mesg "Alt+V  Clipboard    ·    Esc  Close" \
+    -global-kb \
+    -kb-custom-1 "!Alt+v"
+status=$?
+
+# Rofi returns 10 for kb-custom-1. The leading ! makes the binding run only
+# after Alt and V are released, so the next Rofi instance can grab the keys.
+case "$status" in
+    10) exec "$HOME/.local/bin/clipboard-menu" ;;
+esac
