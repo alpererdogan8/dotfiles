@@ -20,12 +20,33 @@ Theme                : Sunset Drive
 
 ### Prerequisites
 
-You need to install the required packages before stowing the dotfiles. For Fedora:
+You need to install the required packages before stowing the dotfiles. 
+
+For Arch Linux:
+
+```bash
+sudo pacman -S stow git zsh fzf ripgrep fd eza bat zoxide \
+  sway waybar swaylock rofi ghostty yazi tmux neovim \
+  starship btop grim slurp wl-clipboard cliphist kanshi
+yay -S swaync
+```
+
+For Fedora:
 
 ```bash
 sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
-  sway waybar swaylock swaync rofi-wayland ghostty yazi tmux neovim \
+  sway waybar swaylock swaync rofi ghostty yazi tmux neovim \
   starship btop grim slurp wl-clipboard cliphist kanshi
+```
+
+For Debian/Ubuntu:
+
+```bash
+sudo apt install stow git zsh fzf ripgrep fd-find bat zoxide \
+  sway waybar swaylock rofi tmux neovim \
+  btop grim slurp wl-clipboard kanshi
+# eza, ghostty, yazi, starship, swaync, cliphist are not in default repos
+# Install separately — see zsh/INSTALL.md
 ```
 
 ### Setup
