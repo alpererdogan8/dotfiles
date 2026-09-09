@@ -4,26 +4,26 @@
 
 ## ⌨️ Zsh Keybindings
 
-| Tuş | Ne Yapar |
+| Key | Description |
 |:---|:---|
-| `↑` / `↓` | Yazdığın prefix'e göre geçmişte arama (history-substring-search) |
-| `j` / `k` (normal mod) | vi-mode'da geçmişte gezinme |
-| `Ctrl+R` | fzf ile geçmiş araması (fuzzy, reverse search) |
-| `Ctrl+T` | fzf ile dosya seç (bat önizlemeli) |
-| `Ctrl+F` | Dizin değiştir (lsd önizlemeli) |
-| `Alt+C` | fzf ile dizine atla (lsd tree önizlemeli) |
-| `Tab` | fzf-tab ile interaktif tamamlama |
-| `Tab Tab` | Tamamlama menüsünde gezinme |
-| `Esc` | vi-mode normal moda geç |
-| `i` | vi-mode insert moda geç |
-| `v` (normal mod) | Komutu `$EDITOR`'de düzenle |
+| `↑` / `↓` | Search history by typed prefix (history-substring-search) |
+| `j` / `k` (normal mode) | Navigate history in vi-mode |
+| `Ctrl+R` | Fuzzy reverse history search with fzf |
+| `Ctrl+T` | Select file with fzf (bat preview) |
+| `Ctrl+F` | Change directory (lsd preview) |
+| `Alt+C` | Jump to directory with fzf (lsd tree preview) |
+| `Tab` | Interactive completion with fzf-tab |
+| `Tab Tab` | Navigate completion menu |
+| `Esc` | Switch to vi-mode normal mode |
+| `i` | Switch to vi-mode insert mode |
+| `v` (normal mode) | Edit command in `$EDITOR` |
 
 ---
 
-## 🔤 Abbr Kısaltmaları (Space ile genişler)
+## 🔤 Abbreviations (Expand with Space)
 
 ### Git
-| Kısaltma | Genişler |
+| Abbreviation | Expands To |
 |:---|:---|
 | `g` | `git` |
 | `ga` | `git add` |
@@ -48,7 +48,7 @@
 | `grss` | `git restore --staged` |
 
 ### Docker
-| Kısaltma | Genişler |
+| Abbreviation | Expands To |
 |:---|:---|
 | `dk` | `docker` |
 | `dkc` | `docker compose` |
@@ -61,8 +61,8 @@
 | `dkrmi` | `docker rmi` |
 | `dkex` | `docker exec -it` |
 
-### Sistem & Diğer
-| Kısaltma | Genişler |
+### System & Other
+| Abbreviation | Expands To |
 |:---|:---|
 | `syu` | `sudo dnf upgrade` |
 | `syi` | `sudo dnf install` |
@@ -77,7 +77,7 @@
 
 ## 📁 Aliases
 
-| Alias | Komut |
+| Alias | Command |
 |:---|:---|
 | `c` | `clear` |
 | `q` | `exit` |
@@ -87,118 +87,118 @@
 | `grep` | `grep --color=auto` |
 | `cat` | `bat` (syntax highlighted) |
 | `n` / `vi` / `vim` | `nvim` |
-| `lvim` | LazyVim profiliyle nvim |
+| `lvim` | nvim with LazyVim profile |
 | `lzd` | `lazydocker` |
 | `dt` | `cd ~/dotfiles` |
 
 ### Tmux
-| Alias | Komut |
+| Alias | Command |
 |:---|:---|
-| `tm` | `tmux attach -t main` (yoksa oluşturur) |
-| `ta` | `tmux attach -t <isim>` |
+| `tm` | `tmux attach -t main` (creates if not exists) |
+| `ta` | `tmux attach -t <name>` |
 | `tl` | `tmux list-sessions` |
-| `tk` | `tmux kill-session -t <isim>` |
-| `tnew` | `tmux new-session -s <isim>` |
+| `tk` | `tmux kill-session -t <name>` |
+| `tnew` | `tmux new-session -s <name>` |
 
 ---
 
-## 🛠️ Araç Komutları
+## 🛠️ Tool Commands
 
-### zoxide (akıllı cd)
-| Komut | Ne Yapar |
+### zoxide (smart cd)
+| Command | Description |
 |:---|:---|
-| `cd <dizin>` | zoxide üzerinden cd (geçmişi öğrenir) |
-| `cd <kısmi>` | Daha önce gittiğin dizini kısmi isimle bulur |
-| `cdi` | fzf ile interaktif dizin seçimi |
+| `cd <dir>` | cd via zoxide (learns from history) |
+| `cd <partial>` | Finds a previously visited directory by partial name |
+| `cdi` | Interactive directory selection with fzf |
 
 ### fzf
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `fzf` | Pipe ile fuzzy filtre |
-| `vim $(fzf)` | fzf ile dosya seçip aç |
+| `fzf` | Fuzzy filter via pipe |
+| `vim $(fzf)` | Select and open a file with fzf |
 
 
-### bat (gelişmiş cat)
-| Komut | Ne Yapar |
+### bat (enhanced cat)
+| Command | Description |
 |:---|:---|
-| `cat <dosya>` | Syntax highlighted görüntüleme |
-| `bat --plain <dosya>` | Satır numarasız sade görünüm |
-| `bat -A <dosya>` | Görünmez karakterleri göster |
+| `cat <file>` | Syntax highlighted viewing |
+| `bat --plain <file>` | Plain view without line numbers |
+| `bat -A <file>` | Show invisible characters |
 
-### fd (hızlı find)
-| Komut | Ne Yapar |
+### fd (fast find)
+| Command | Description |
 |:---|:---|
-| `fd <isim>` | Dosya/dizin ara |
-| `fd -e py` | Sadece `.py` uzantılıları bul |
-| `fd -H <isim>` | Gizli dosyaları da dahil et |
-| `fd -t d <isim>` | Sadece dizin ara |
+| `fd <name>` | Search files/directories |
+| `fd -e py` | Find only `.py` files |
+| `fd -H <name>` | Include hidden files |
+| `fd -t d <name>` | Search directories only |
 
-### ripgrep (hızlı grep)
-| Komut | Ne Yapar |
+### ripgrep (fast grep)
+| Command | Description |
 |:---|:---|
-| `rg <pattern>` | Tüm dosyalarda içerik ara |
-| `rg <pattern> -t py` | Sadece Python dosyalarında ara |
-| `rg -i <pattern>` | Büyük/küçük harf duyarsız |
-| `rg -l <pattern>` | Sadece dosya isimlerini listele |
+| `rg <pattern>` | Search content in all files |
+| `rg <pattern> -t py` | Search only in Python files |
+| `rg -i <pattern>` | Case insensitive search |
+| `rg -l <pattern>` | List only file names |
 
 ### delta (git diff)
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `git diff` | delta ile otomatik syntax-highlighted diff |
-| `git show` | delta ile renkli commit görünümü |
+| `git diff` | Automatic syntax-highlighted diff via delta |
+| `git show` | Colorful commit view via delta |
 
-### eza (gelişmiş ls)
-| Komut | Ne Yapar |
+### eza (enhanced ls)
+| Command | Description |
 |:---|:---|
-| `eza` | Renkli liste |
-| `eza -la` | Uzun format, gizli dosyalar dahil |
-| `eza --tree` | Ağaç görünümü |
-| `eza --git` | Git durumunu da göster |
+| `eza` | Colorful listing |
+| `eza -la` | Long format, including hidden files |
+| `eza --tree` | Tree view |
+| `eza --git` | Show git status |
 
 ### direnv
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `echo 'export FOO=bar' > .envrc` | Proje env değişkeni tanımla |
-| `direnv allow` | `.envrc`'yi güvenli olarak işaretle |
-| Dizinden çıkınca | Değişkenler otomatik silinir |
+| `echo 'export FOO=bar' > .envrc` | Define project env variable |
+| `direnv allow` | Mark `.envrc` as trusted |
+| Leaving the directory | Variables are automatically unset |
 
 ### thefuck
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `fuck` | Son hatalı komutu otomatik düzeltip çalıştırır |
+| `fuck` | Automatically corrects and reruns the last failed command |
 
-### yazi (dosya yöneticisi)
-| Komut | Ne Yapar |
+### yazi (file manager)
+| Command | Description |
 |:---|:---|
-| `y` | yazi'yi aç, çıkınca o dizinde kal |
-| `hjkl` (içinde) | Gezinme |
-| `Enter` | Dosyayı aç |
-| `Space` | Seç |
-| `y` → `p` (içinde) | Kopyala → yapıştır |
+| `y` | Open yazi, stay in its directory on exit |
+| `hjkl` (inside) | Navigate |
+| `Enter` | Open file |
+| `Space` | Select |
+| `y` → `p` (inside) | Copy → paste |
 
 ### lazygit
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `lg` | lazygit TUI'sini aç |
-| `space` (içinde) | Stage/unstage |
-| `c` (içinde) | Commit |
-| `P` (içinde) | Push |
-| `p` (içinde) | Pull |
+| `lg` | Open lazygit TUI |
+| `space` (inside) | Stage/unstage |
+| `c` (inside) | Commit |
+| `P` (inside) | Push |
+| `p` (inside) | Pull |
 
 ### tmuxifier
-| Komut | Ne Yapar |
+| Command | Description |
 |:---|:---|
-| `tmuxifier new-session <isim>` | Yeni session layout oluştur |
-| `tmuxifier load-session <isim>` | Layout'u yükle |
-| `tmuxifier list` | Kayıtlı layout'ları listele |
+| `tmuxifier new-session <name>` | Create new session layout |
+| `tmuxifier load-session <name>` | Load a layout |
+| `tmuxifier list` | List saved layouts |
 
 ---
 
-## 💡 İpuçları
+## 💡 Tips
 
-> **you-should-use**: Bir alias'ın olduğu komutu tam yazarsan terminal seni uyarır.
-> Örnek: `git status` yazarsan `zsh: Found existing alias for "git status". You should use: gss` der.
+> **you-should-use**: If you type a command that has an alias, the terminal will warn you.
+> Example: typing `git status` will show `zsh: Found existing alias for "git status". You should use: gss`.
 
-> **autosuggestions**: Yazmaya başladığında soluk gri öneri çıkar → `→` ile kabul et.
+> **autosuggestions**: As you start typing, a dim gray suggestion appears → press `→` to accept.
 
-> **syntax-highlighting**: Yazarken geçerli komut **yeşil**, hatalı **kırmızı** görünür.
+> **syntax-highlighting**: While typing, valid commands appear **green**, invalid ones appear **red**.

@@ -1,17 +1,17 @@
 # Zsh Dotfiles — Installation Guide
 
-Bu dosya, zsh yapılandırmasının ihtiyaç duyduğu tüm araçları,
-kurulum komutlarını ve resmi bağlantılarını içerir.
+This file contains all the tools, installation commands, and official links
+required by the zsh configuration.
 
 ---
 
-## 🔧 Otomatik Yüklenenler (Zinit)
+## 🔧 Automatically Installed (Zinit)
 
-Aşağıdaki eklentiler `plugins.zsh` ve `tools.zsh` tarafından
-ilk zsh oturumunda **zinit** aracılığıyla otomatik indirilir.
-Manuel kurulum gerekmez.
+The following plugins are automatically downloaded by `plugins.zsh` and `tools.zsh`
+via **zinit** on the first zsh session.
+No manual installation is required.
 
-| Eklenti | Kaynak |
+| Plugin | Source |
 |:---|:---|
 | `zsh-vi-mode` | https://github.com/jeffreytse/zsh-vi-mode |
 | `zsh-completions` | https://github.com/zsh-users/zsh-completions |
@@ -24,12 +24,12 @@ Manuel kurulum gerekmez.
 | `tmuxifier` | https://github.com/jimeh/tmuxifier |
 | OMZ: `git`, `sudo`, `command-not-found`, `docker` | https://github.com/ohmyzsh/ohmyzsh |
 
-> Zinit kendisi de yoksa `plugins.zsh` tarafından otomatik klonlanır.
-> Kaynak: https://github.com/zdharma-continuum/zinit
+> Zinit itself is also automatically cloned by `plugins.zsh` if not present.
+> Source: https://github.com/zdharma-continuum/zinit
 
 ---
 
-## 📦 Manuel Kurulum Gerektirenler
+## 📦 Manual Installation Required
 
 ### Fedora (dnf)
 
@@ -48,7 +48,7 @@ sudo dnf install -y \
     bat
 ```
 
-### Fedora — Ayrı Kaynak Gerektiren Paketler
+### Fedora — Packages Requiring Separate Sources
 
 #### lsd (ls replacement)
 ```bash
@@ -70,7 +70,7 @@ go install github.com/jesseduffield/lazydocker@latest
 ```
 🔗 https://github.com/jesseduffield/lazydocker
 
-#### yazi (file manager — y() fonksiyonu)
+#### yazi (file manager — y() function)
 ```bash
 sudo dnf copr enable atim/yazi
 sudo dnf install -y yazi
@@ -105,18 +105,18 @@ pipx install thefuck
 
 ---
 
-## 🚀 Hızlı Kurulum (Sırasıyla)
+## 🚀 Quick Setup (In Order)
 
 ```bash
-# 1. dnf paketleri
+# 1. dnf packages
 sudo dnf install -y zsh git tmux neovim fzf fd-find ripgrep git-delta direnv eza bat
 
-# 2. COPR repoları
+# 2. COPR repos
 sudo dnf copr enable atim/lsd && sudo dnf install -y lsd
 sudo dnf copr enable atim/lazygit && sudo dnf install -y lazygit
 sudo dnf copr enable atim/yazi && sudo dnf install -y yazi
 
-# 3. Script ile kurulanlar
+# 3. Script-based installations
 curl -sS https://starship.rs/install.sh | sh
 curl -fsSL https://fnm.vercel.app/install | bash
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
@@ -124,29 +124,29 @@ curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh 
 # 4. thefuck
 sudo dnf install -y pipx && pipx install thefuck
 
-# 5. Go araçları (Go kurulu olması gerekir)
+# 5. Go tools (Go must be installed)
 go install github.com/jesseduffield/lazydocker@latest
 
-# 6. Zsh varsayılan shell yap
+# 6. Set zsh as default shell
 chsh -s $(which zsh)
 
-# 7. Yeni oturum aç (zinit eklentileri otomatik indirir)
+# 7. Open a new session (zinit will auto-download plugins)
 exec zsh
 ```
 
 ---
 
-## 🗂 Yapılandırma Dosyaları
+## 🗂 Configuration Files
 
-| Dosya | Açıklama |
+| File | Description |
 |:---|:---|
-| `.zshenv` | ZDOTDIR ve temel env değişkenleri |
-| `configs/.zshrc` | Ana giriş noktası, dosyaları source eder |
-| `configs/env.zsh` | PATH ve ortam değişkenleri |
-| `configs/options.zsh` | Zsh seçenekleri ve FZF ayarları |
-| `configs/aliases.zsh` | Alias tanımları |
-| `configs/abbr.zsh` | Fish tarzı kısaltmalar (zsh-abbr) |
-| `configs/completions.zsh` | Tamamlama sistemi ayarları |
-| `configs/plugins.zsh` | Zinit eklenti yüklemeleri |
-| `configs/tools.zsh` | CLI araç entegrasyonları (starship, fzf, zoxide vb.) |
-| `configs/tmux.zsh` | Otomatik tmux oturumu |
+| `.zshenv` | ZDOTDIR and base env variables |
+| `configs/.zshrc` | Main entry point, sources other files |
+| `configs/env.zsh` | PATH and environment variables |
+| `configs/options.zsh` | Zsh options and FZF settings |
+| `configs/aliases.zsh` | Alias definitions |
+| `configs/abbr.zsh` | Fish-style abbreviations (zsh-abbr) |
+| `configs/completions.zsh` | Completion system settings |
+| `configs/plugins.zsh` | Zinit plugin loading |
+| `configs/tools.zsh` | CLI tool integrations (starship, fzf, zoxide, etc.) |
+| `configs/tmux.zsh` | Automatic tmux session |

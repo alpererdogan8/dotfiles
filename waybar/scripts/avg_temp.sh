@@ -28,5 +28,5 @@ if [ "$count" -gt 0 ]; then
   tooltip=${tooltip%??}
   printf '{"text": " %d°C", "tooltip": "%s"}\n' "$avg" "$tooltip"
 else
-  printf '{"text": "N/A", "tooltip": "Core sensör dosyaları bulunamadı."}\n'
+  printf '{"text": "N/A", "tooltip": "Core sensor files not found."}\n'
 fi
