@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DIR="$HOME/Pictures/wallpapers"
+DIR="$HOME/Pictures/wallpapers-2/"
 
 PICS=($(ls $DIR | grep -E ".jpg|.jpeg|.png|.webp|.gif"))
-RANDOM_PICS=${PICS[RANDOM%${#PICS[@]}]}
+RANDOM_PICS=${PICS[RANDOM % ${#PICS[@]}]}
 
 #swww img "$DIR/$RANDOM_PICS" --transition-type wipe --transition-fps 60 --transition-step 90
 #swww img "$DIR/$RANDOM_PICS" --transition-type any --transition-fps 120 --transition-step 180

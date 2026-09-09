@@ -52,6 +52,7 @@ done
 chosen=$(printf "%b" "$menu" | rofi -dmenu \
     -i \
     -p "Display" \
+    -theme ~/.config/rofi/swaync.rasi \
     -format "i" \
     -no-custom)
 
