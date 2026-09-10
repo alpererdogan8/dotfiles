@@ -168,7 +168,8 @@
                 "󰤥",
                 "󰤨"
             ],
-            "max-length": 50
+            "max-length": 50,
+            "on-click": "bash -c \"$TERMINAL --gtk-single-instance=false --title=impala-float -e $HOME/.cargo/bin/impala\""
         },
         // ── Notifications ───────────────────────────────────────────────────────
         "custom/swaync-open-button": {
@@ -365,7 +366,8 @@
                 "󰤥",
                 "󰤨"
             ],
-            "max-length": 50
+            "max-length": 50,
+            "on-click": "bash -c \"$TERMINAL --gtk-single-instance=false --title=impala-float -e $HOME/.cargo/bin/impala\""
         },
         // ── Battery ───────────────────────────────────────────────────────
         "battery": {
