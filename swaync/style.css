@@ -106,14 +106,14 @@
   box-shadow: none;
 }
 
-/* Hide close button on floating popup notifications — even on hover */
-.floating-notifications .notification .close-button,
-.floating-notifications .notification:hover .close-button {
+/* Hide close button globally — popups should never show it */
+.close-button {
   display: none !important;
 }
 
-/* Show close button on hover */
+/* Re-enable close button in control center on hover only */
 .control-center .notification:hover .close-button {
+  display: block !important;
   opacity: 1;
   border-radius: 3px;
 }
