@@ -106,9 +106,10 @@
   box-shadow: none;
 }
 
-/* Hide close button on floating popup notifications */
-.floating-notifications .notification .close-button {
-  display: none;
+/* Hide close button on floating popup notifications — even on hover */
+.floating-notifications .notification .close-button,
+.floating-notifications .notification:hover .close-button {
+  display: none !important;
 }
 
 /* Show close button on hover */
