@@ -56,7 +56,7 @@ git clone git@github.com:alpererdogan8/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # Install all packages using Stow (creates symlinks)
-./install.sh
+./install.sh  or ./install sway git ghostty
 
 # Relink packages (useful if you added/removed files inside a package)
 ./install.sh --relink
