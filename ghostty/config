@@ -12,7 +12,11 @@ adjust-cell-height = 8%
 window-padding-x = 8
 window-padding-y = 8
 window-step-resize = true
-theme = Hybrid
+# Primary
+# theme = Hybrid
+
+theme = Kanagawa Wave
+
 #theme = Sunset Drive
 #theme = Horizon
 

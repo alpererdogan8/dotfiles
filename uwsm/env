@@ -25,4 +25,4 @@ export MOZ_ENABLE_WAYLAND=1
 export QT_QPA_PLATFORM=wayland
 
 
-
+export CARGO_TARGET_DIR="/tmp/cargo-target"
