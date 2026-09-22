@@ -2,11 +2,12 @@
 @define-color bg #000000;
 @define-color fg #ffffff;
 @define-color fg-muted rgba(174, 174, 174, 1);
-@define-color col-warning rgba(255, 196, 90, 0.90);
-@define-color col-critical rgba(255, 85, 85, 0.95);
+@define-color col-warning rgba(255, 145, 32, 0.95);
+@define-color col-yellow rgba(255, 214, 48, 0.95);
+@define-color col-high rgba(90, 170, 255, 0.95);
+@define-color col-critical rgba(255, 70, 70, 0.95);
 @define-color col-charging rgba(140, 210, 140, 0.90);
 @define-color col-plugged rgba(100, 180, 255, 0.95);
-@define-color col-blink #f53c3c;
 @define-color col-attention #eb4d4b;
 
 /* ── Base ─────────────────────────────────────────────────────────── */
@@ -126,6 +127,18 @@ button {
 }
 
 /* ── Battery ──────────────────────────────────────────────────────── */
+#battery.high:not(.charging) {
+    color: @col-high;
+}
+
+#battery.full:not(.charging) {
+    color: @col-charging;
+}
+
+#battery.yellow:not(.charging) {
+    color: @col-yellow;
+}
+
 #battery.warning:not(.charging) {
     color: @col-warning;
 }
@@ -140,23 +153,6 @@ button {
 
 #battery.plugged {
     color: @col-plugged;
-}
-
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: #000000;
-    }
-}
-
-#battery.critical:not(.charging) {
-    background-color: @col-blink;
-    color: @fg;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: steps(12);
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
 }
 
 /* ── Temperature ──────────────────────────────────────────────────── */
