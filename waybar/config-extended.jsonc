@@ -260,7 +260,7 @@
             "bluetooth#edp",
             "pulseaudio#edp",
             "network#edp",
-            "battery",
+            "custom/battery-watt",
             "custom/swaync-open-button#edp",
         ],
         // ── Tray Group ───────────────────────────────────────────────────────
@@ -391,6 +391,14 @@
                 "high": 99,
                 "full": 100
             }
+        },
+        "custom/battery-watt": {
+            "exec": "sh -c '$HOME/.config/waybar/scripts/battery-watt.sh'",
+            "interval": 12,
+            "return-type": "json",
+            "format": "{text}",
+            "tooltip": true,
+            "hide-empty-text": false
         },
         // ── Notifications ───────────────────────────────────────────────────────
         "custom/swaync-open-button#edp": {

@@ -92,6 +92,7 @@ button {
 #cpu,
 #memory,
 #battery,
+#custom-battery-watt,
 #pulseaudio,
 #custom-power,
 #power-profiles-daemon,
@@ -107,6 +108,7 @@ button {
 #cpu,
 #bluetooth,
 #battery,
+#custom-battery-watt,
 #pulseaudio {
     font-size: 15px;
 }
@@ -127,31 +129,38 @@ button {
 }
 
 /* ── Battery ──────────────────────────────────────────────────────── */
-#battery.high:not(.charging) {
+#battery.high:not(.charging),
+#custom-battery-watt.high:not(.charging) {
     color: @col-high;
 }
 
-#battery.full:not(.charging) {
+#battery.full:not(.charging),
+#custom-battery-watt.full:not(.charging) {
     color: @col-charging;
 }
 
-#battery.yellow:not(.charging) {
+#battery.yellow:not(.charging),
+#custom-battery-watt.yellow:not(.charging) {
     color: @col-yellow;
 }
 
-#battery.warning:not(.charging) {
+#battery.warning:not(.charging),
+#custom-battery-watt.warning:not(.charging) {
     color: @col-warning;
 }
 
-#battery.critical:not(.charging) {
+#battery.critical:not(.charging),
+#custom-battery-watt.critical:not(.charging) {
     color: @col-critical;
 }
 
-#battery.charging {
+#battery.charging,
+#custom-battery-watt.charging {
     color: @col-charging;
 }
 
-#battery.plugged {
+#battery.plugged,
+#custom-battery-watt.plugged {
     color: @col-plugged;
 }
 
