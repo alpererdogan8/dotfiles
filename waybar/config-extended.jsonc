@@ -380,8 +380,8 @@
                 "default": ["", "", "", "", "", "", "", "", "", ""]
             },
             "format-full": "",
-            "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
-            "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+            "tooltip": true,
+            "tooltip-format": "{capacity}% remaining",
             "interval": 5,
             "states": {
                 "critical": 39,
