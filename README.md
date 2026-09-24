@@ -1,88 +1,85 @@
 # dotfiles
 
-This repository contains the configuration files and scripts that I use on my Fedora Wayland setup. Managed with [GNU Stow](https://www.gnu.org/software/stow/) and themed with a custom **Sunset Drive** palette.
+This repository contains the configuration files and scripts for a Fedora Wayland setup. It uses GNU Stow and targets Sway with Waybar, Kanshi, SwayNC, Zsh, and Neovim.
 
 ```text
 Distribution         : Fedora
-Window Manager       : Sway + Waybar
+Window Manager       : Sway
+Status Bar           : Waybar
+Display Manager      : Kanshi + Sway
 Shell                : Zsh (Zinit)
-Terminal             : Ghostty / Kitty / Alacritty
-Terminal Multiplexer : Tmux / Herdr
-Resource Monitor     : btop
+Terminals            : Ghostty / Kitty / Alacritty / WezTerm
+Terminal Multiplexer : Tmux
 Editor               : Neovim (LazyVim)
-Notification Daemon  : SwayNotificationCenter
+Notifications        : SwayNotificationCenter
 File Manager         : Yazi
 App Launcher         : Rofi
-Theme                : Sunset Drive
 ```
 
 ## Installation
 
 ### Prerequisites
 
-You need to install the required packages before stowing the dotfiles. 
-
-For Arch Linux:
-
-```bash
-sudo pacman -S stow git zsh fzf ripgrep fd eza bat zoxide \
-  sway waybar swaylock rofi ghostty yazi tmux neovim \
-  starship btop grim slurp wl-clipboard cliphist kanshi
-yay -S swaync
-```
-
-For Fedora:
+The core Fedora packages are:
 
 ```bash
 sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
-  sway waybar swaylock swaync rofi ghostty yazi tmux neovim \
-  starship btop grim slurp wl-clipboard cliphist kanshi
+  sway waybar swaylock rofi yazi tmux neovim starship btop \
+  grim slurp wl-clipboard cliphist kanshi jq
 ```
 
-For Debian/Ubuntu:
-
-```bash
-sudo apt install stow git zsh fzf ripgrep fd-find bat zoxide \
-  sway waybar swaylock rofi tmux neovim \
-  btop grim slurp wl-clipboard kanshi
-# eza, ghostty, yazi, starship, swaync, cliphist are not in default repos
-# Install separately — see zsh/INSTALL.md
-```
+Install SwayNC, SwayOSD, power-profiles-daemon, GNOME Keyring, KDE Connect, Awww, UWSM, and the optional tools used by the session scripts separately when needed. The configuration intentionally guards optional tools where possible.
 
 ### Setup
+
 ```bash
-# Clone the repository
 git clone git@github.com:alpererdogan8/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # Install all packages using Stow (creates symlinks)
-./install.sh  or ./install sway git ghostty
+./install.sh
 
-# Relink packages (useful if you added/removed files inside a package)
-./install.sh --relink
+# Install specific packages
+./install.sh sway git ghostty
 
-# List installation status of all packages
+# Relink packages after adding or removing files
+./install.sh --relink sway waybar
+
+# List installation status
 ./install.sh --list
 
-# Remove (unlink) a specific package
+# Remove links
 ./install.sh --remove sway
 
-# Dry run (preview without making changes)
+# Preview without making changes
 ./install.sh --dry-run
 ```
 
+The `ly` package targets `/etc/ly` and is installed with `sudo` by the installer. The runtime configurations are expected at their Stow targets, such as `~/.config/sway/config`; they do not require the repository to remain at `~/dotfiles`.
+
 ## Local Secrets
 
-Some environment variables (API keys, tokens) are **not tracked** in this repo.
-After cloning, create `~/.config/zsh/local.zsh` and add your secrets there:
+Secrets are not tracked by Git. Create `~/zsh/configs/local.zsh` for secrets loaded by the Zsh configuration:
 
 ```zsh
-# ~/.config/zsh/local.zsh
-export OBSIDIAN_REST_API_KEY=your_key_here
+export EXAMPLE_API_KEY=your_key_here
 ```
 
-This file is sourced automatically by `zsh/zsh/configs/env.zsh` and is listed in `.gitignore`.
+The loader also accepts the legacy `~/.config/zsh/local.zsh` location. Local files should remain untracked.
 
-## Preview
+## Themes
 
-*(You can add screenshots here)*
+There is no single cross-application theme source in this repository. Terminal, tmux, Ghostty, Neovim, Yazi, Starship, and FZF currently use independent palettes. Theme changes should be made per application instead of assuming the old Sunset Drive documentation applies everywhere.
+
+## Validation
+
+After changing dotfiles, run:
+
+```bash
+bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.sh
+zsh -n zsh/zsh/configs/*.zsh
+sway -C -c sway/config
+./install.sh --dry-run
+```
+
+Waybar JSONC files should be checked with a Waybar reload in a graphical session. The repository does not currently include a CI test suite.

@@ -1,95 +1,134 @@
-# CLAUDE.md
+# Dotfiles Guide
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This repository contains the configuration files and scripts for a Fedora Wayland setup. The primary compositor is Sway; Hyprland is not part of this repository.
 
 ## Managing Dotfiles
 
-**Install all packages:**
+Install all packages:
+
 ```bash
 ./install.sh
 ```
 
-**Install specific packages:**
+Install specific packages:
+
 ```bash
-./install.sh hypr zsh waybar
+./install.sh sway waybar zsh
 ```
 
-**Preview changes without applying (dry run):**
+Preview changes without applying them:
+
 ```bash
 ./install.sh --dry-run
 ```
 
-**Remove symlinks:**
+Remove links:
+
 ```bash
 ./install.sh --remove
-# or for specific packages:
-./install.sh --remove hypr waybar
+./install.sh --remove sway waybar
 ```
+
+Relink a package after adding or removing files:
+
+```bash
+./install.sh --relink sway waybar
+```
+
+List installation status:
+
+```bash
+./install.sh --list
+```
+
+The `ly` package targets `/etc/ly` and is installed with `sudo`. All other packages use the current user's home directory.
 
 ## Architecture
 
-This repo uses **GNU Stow** to symlink config files into their target locations. Each top-level directory is a "package" with a fixed target defined in `install.sh`'s `TARGET` map.
-
-**Stow convention:** files inside a package directory mirror the path relative to the target. For example:
-- `zsh/.zshenv` → `~/.zshenv`
-- `zsh/zsh/configs/.zshrc` → `~/zsh/configs/.zshrc` (because `ZDOTDIR=$HOME/zsh/configs`)
-- `hypr/hyprland.lua` → `~/.config/hypr/hyprland.lua`
-
-**Package → target mapping** (from `install.sh`):
+The repository uses GNU Stow. A package is a top-level directory whose contents mirror paths below its target.
 
 | Package | Target |
-|---------|--------|
-| `alacritty`, `fastfetch`, `ghostty`, `hypr`, `nvim`, `rofi`, `swaync`, `swayosd`, `tmux`, `uwsm`, `waybar`, `yazi`, `snappy-switcher` | `~/.config/<name>` |
-| `starship` | `~/.config` (starship.toml lands at `~/.config/starship.toml`) |
-| `bash`, `git`, `zsh`, `vscode`, `local-bin` | `~HOME` |
-| `ly` | `/etc/ly` (requires sudo — handled automatically) |
+|---|---|
+| `alacritty`, `fastfetch`, `ghostty`, `kanshi`, `kitty`, `nvim`, `rofi`, `sway`, `swaylock`, `swaync`, `swayosd`, `tmux`, `uwsm`, `waybar`, `yazi` | `~/.config/<package>` |
+| `starship` | `~/.config` |
+| `bash`, `git`, `local-bin`, `vscode`, `zsh` | `$HOME` |
+| `ly` | `/etc/ly` |
 
-## Hyprland Config (Lua)
+Examples:
 
-Hyprland config is written in **Lua** via `hyprland.lua`, which loads modules from `hypr/modules/`:
+- `sway/config` → `~/.config/sway/config`
+- `sway/config.d/90-bar.conf` → `~/.config/sway/config.d/90-bar.conf`
+- `zsh/zsh/configs/.zshrc` → `~/zsh/configs/.zshrc`
+- `local-bin/.local/bin/display-mode` → `~/.local/bin/display-mode`
+- `starship/starship.toml` → `~/.config/starship.toml`
 
-- `monitors.lua` — monitor layout, persistent workspace→monitor binding, native hotplug handling (`hl.monitor()`, `hl.workspace_rule({ monitor=, persistent= })`, `hl.on("monitor.added"/"monitor.removed")`), plus the global `MonitorProfiles` table (extend/external/laptop/mirror) called from the rofi switcher
-- `env.lua` — environment variables (`hl.env()`)
-- `autostart.lua` — startup apps (`hl.on("hyprland.start", ...)`)
-- `config.lua` — general/decoration/animation/input settings (`hl.config()`)
-- `rules.lua` — window and layer rules (`hl.window_rule()`, `hl.layer_rule()`)
-- `keybinds.lua` — keybindings (`hl.bind()`)
+Runtime configuration paths should use installed Stow targets such as `~/.config/...`; they should not depend on the repository being located at `~/dotfiles`.
 
-The `hl` global is the Hyprland Lua API. All apps are launched via `uwsm app --` prefix for proper session management.
+## Sway Session
 
-## Zsh Config Structure
+The Sway entry point is `sway/config`. Monitor profiles are managed by Kanshi in `kanshi/config`.
 
-`zsh/.zshenv` sets `ZDOTDIR=$HOME/zsh/configs`, so all zsh config files live in `~/zsh/configs/` (symlinked from `zsh/zsh/configs/`).
+Monitor profiles:
 
-Load order: `.zshenv` → `.zshrc` → sourced files in this order:
-1. `env.zsh` — PATH, EDITOR, GOPATH, fnm, starship env vars
-2. `options.zsh` — setopt flags, FZF theme/opts
-3. `aliases.zsh` — aliases and PATH prepend helper
-4. `plugins.zsh` — Zinit plugin loading (zsh-vi-mode, fzf-tab, autosuggestions, syntax-highlighting, OMZ plugins)
-5. `tools.zsh` — fnm, starship init, fzf keybinds, zoxide, tmuxifier
-6. `tmux.zsh` — tmux auto-attach logic
+- `extend`: HDMI only; workspaces 1–10 are assigned to HDMI.
+- `extended`: HDMI and laptop; workspaces 1–5 use HDMI and 6–10 use eDP.
+- `mirror`: both outputs are enabled; the workspace assignment command uses HDMI for the shared workspace set.
+- `laptop`: eDP only; workspaces 1–10 are assigned to eDP.
 
-Plugin manager: **Zinit** with deferred loading (`wait"0a"`, `wait"1"`, etc.) for fast startup. Profile with `ZSH_PROFILE=1 zsh`.
+The output names are hardware-specific and currently assume `HDMI-A-1` and `eDP-1`. The display-mode switcher is `~/.local/bin/display-mode`. Workspace assignments are synchronized by `~/.local/bin/kanshi-workspace-assign` during manual profile changes and Waybar output events.
 
-## Theme System
+Waybar selects its configuration from the active Kanshi profile and active outputs:
 
-The active color palette is **Sunset Drive** — applied consistently across:
-- Ghostty: `theme = Sunset Drive`
-- Tmux: `source-file ~/.config/tmux/themes/sunset-drive.conf`
-- Neovim: `colorscheme = "sunset-drive"` (custom color at `nvim/colors/sunset-drive.lua`)
-- Yazi: `yazi/theme.toml` (root-level `theme.toml` is the Yazi theme)
-- FZF: color opts in `options.zsh`
-- Waybar/SwayNC: `style.css` files
+- `config-extend.jsonc` for HDMI-only mode
+- `config-extended.jsonc` for extended and mirror layouts
+- `config-laptop.jsonc` for laptop-only mode
 
-Core palette: `bg=#0f0f1a`, accents `#00fcb9` (cyan), `#ff0063` (pink), `#00a4ff` (blue), `#ff57fd` (purple). Dim colors: `overlay=#5c6675` (borders, dark slate), `muted=#ffffff` (comments/dim text, white), `subtle=#8888a0` (secondary text). ANSI black=`#3e3e4b`, bright-black=`#ffffff`.
+The custom battery module is defined for each bar that uses it. The battery script derives watts from charge-change samples and must always emit valid JSON.
 
-When changing the theme, update all of the above files.
+Sway starts several session services from `sway/config`, including Kanshi, KDE Connect, SwayOSD, Awww, clipboard history, and the keyring daemon. Applications that need session tracking use `uwsm app --`; short-lived commands may run directly.
 
-## Key Design Decisions
+## Zsh Configuration
 
-- **No animations, blur, or shadows** — intentional performance choice (`config.lua`)
-- **HDMI-A-1 is the primary monitor, eDP-1 the secondary** (both enabled in extend by default); lid switch keybinds toggle eDP-1
-- **All autostart apps use `uwsm app --`** — required for UWSM session management; omitting it breaks session tracking
-- **`vicinae`** serves dual roles: app launcher (`SUPER+R`) and clipboard history daemon (must be running as `vicinae server` at startup)
-- **Workspaces 1–5** are bound to the primary monitor (HDMI-A-1), **6–10** to the secondary (eDP-1) via persistent `hl.workspace_rule` in `monitors.lua`. Monitor hotplug is handled natively in-process by `hl.on` events in `monitors.lua` (no external socat script) — on disconnect, an absent monitor's workspaces fall to the surviving one and return when it reconnects
-- Turkish keyboard layout (`kb_layout = "tr"` in `config.lua`)
+`zsh/.zshenv` sets `ZDOTDIR=$HOME/zsh/configs`. The active `.zshrc` sources files in this order:
+
+1. `env.zsh`
+2. `options.zsh`
+3. `aliases.zsh`
+4. `completions.zsh`
+5. `plugins.zsh`
+6. `tools.zsh`
+7. `git.zsh`
+8. `herdr.zsh`
+
+`tmux.zsh` is present but is not currently sourced. Herdr is optional and runs only for an interactive terminal when it is installed and `HERDR_ENV` is unset.
+
+Zinit installs missing plugins on the first shell start. Optional tools such as fnm, Starship, direnv, Yazi, and Herdr are guarded where possible. `ZSH_PROFILE=1 zsh` enables zprof output.
+
+Local secrets can be stored in `~/zsh/configs/local.zsh`. The loader also accepts the legacy `~/.config/zsh/local.zsh` location.
+
+## Neovim Configuration
+
+Neovim uses LazyVim with local overrides in `nvim/lua/`. Lazy.nvim bootstraps the `stable` branch on first use. The current theme configuration is not a single shared palette: terminal, tmux, Ghostty, Neovim, Yazi, Starship, and FZF contain independent theme choices.
+
+`vim.g.lazyvim_colorscheme` and the local theme plugin should agree when changing the Neovim theme.
+
+## Themes
+
+There is currently no single cross-application theme source. Changing a theme requires reviewing the relevant files under `alacritty/`, `kitty/`, `ghostty/`, `tmux/`, `wezterm/`, `nvim/`, `yazi/`, `starship/`, and `zsh/zsh/configs/options.zsh`.
+
+## Local Scripts
+
+`local-bin/.local/bin/` contains session helpers such as display-mode selection, workspace movement, screenshots, wallpapers, health checks, and the webapp launcher. Scripts should use quoted arguments and safe shell-escaped generated commands.
+
+## Validation
+
+After changing dotfiles, run the available checks:
+
+```bash
+bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.sh
+zsh -n zsh/zsh/configs/*.zsh
+sway -C -c sway/config
+./install.sh --dry-run
+```
+
+Waybar JSONC files should be checked with the Waybar parser when a graphical Waybar restart is available. The repository does not currently include a CI test suite.

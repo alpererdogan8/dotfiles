@@ -149,4 +149,4 @@ exec zsh
 | `configs/completions.zsh` | Completion system settings |
 | `configs/plugins.zsh` | Zinit plugin loading |
 | `configs/tools.zsh` | CLI tool integrations (starship, fzf, zoxide, etc.) |
-| `configs/tmux.zsh` | Automatic tmux session |
+| `configs/tmux.zsh` | Optional automatic tmux session; currently not sourced |
