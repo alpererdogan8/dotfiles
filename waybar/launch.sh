@@ -53,9 +53,22 @@ sw() {
 assign_workspaces
 sw
 
+WAYBAR_DEBOUNCE="${WAYBAR_DEBOUNCE:-1.2}"
+restart_pid=""
+
+schedule_restart() {
+    if [[ -n "$restart_pid" ]]; then
+        kill "$restart_pid" 2>/dev/null || true
+    fi
+    (
+        sleep "$WAYBAR_DEBOUNCE"
+        assign_workspaces
+        sw
+    ) &
+    restart_pid=$!
+}
+
 # Reload on output changes to handle hotplugging
 swaymsg -t subscribe -m '["output"]' 2>/dev/null | while read -r _; do
-    sleep 0.8
-    assign_workspaces
-    sw
+    schedule_restart
 done
