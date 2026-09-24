@@ -11,8 +11,12 @@ export PATH="$PATH:$GOPATH/bin"
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 export STARSHIP_CACHE=~/.starship/cache
 
-export NVM_DIR="$HOME/.config/nvm"
+export NVM_DIR="$HOME/.nvm"
 
 # Local secrets (not tracked by git)
-[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/local.zsh" ]] && \
-    source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/local.zsh"
+for local_config in "${ZDOTDIR:-$HOME/zsh/configs}/local.zsh" "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/local.zsh"; do
+    if [[ -f "$local_config" ]]; then
+        source "$local_config"
+        break
+    fi
+done

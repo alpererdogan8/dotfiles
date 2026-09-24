@@ -7,13 +7,17 @@ if command -v starship > /dev/null; then
     eval "$(starship init zsh)"
 fi
 
-zinit wait"0" lucid id-as"fzf-keybinds" for \
-    atload'source <(fzf --zsh)' \
-    zdharma-continuum/null
+if command -v fzf > /dev/null; then
+    zinit wait"0" lucid id-as"fzf-keybinds" for \
+        atload'source <(fzf --zsh)' \
+        zdharma-continuum/null
+fi
 
-zinit wait"0" lucid id-as"zoxide-init" for \
-    atload'eval "$(zoxide init --cmd cd zsh)"' \
-    zdharma-continuum/null
+if command -v zoxide > /dev/null; then
+    zinit wait"0" lucid id-as"zoxide-init" for \
+        atload'eval "$(zoxide init --cmd cd zsh)"' \
+        zdharma-continuum/null
+fi
 
 zinit lucid id-as"tmuxifier-init" \
     atload'ln -sf ${ZINIT[PLUGINS_DIR]}/tmuxifier-init $HOME/.tmuxifier; source $HOME/.tmuxifier/init.sh' for \

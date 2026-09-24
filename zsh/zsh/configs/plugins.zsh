@@ -23,7 +23,7 @@ function zvm_after_init() {
     bindkey -M vicmd 'j' history-substring-search-down
 }
 
-zinit lucid depth"1" for \
+zinit lucid depth"1" atinit"zvm_config" atload"zvm_after_init" for \
     jeffreytse/zsh-vi-mode
 
 zinit lucid blockf for \

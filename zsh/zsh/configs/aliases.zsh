@@ -23,7 +23,11 @@ alias tl='tmux list-sessions'
 alias tk='tmux kill-session -t'
 alias tnew='tmux new-session -s'
 alias tm='tmux attach -t main || tmux new-session -s main'
-alias dt='cd ~/dotfiles'
+dt() {
+    local repo
+    repo=$(git -C "${ZDOTDIR:-$HOME/zsh/configs}" rev-parse --show-toplevel 2>/dev/null) || return 1
+    cd -- "$repo"
+}
 
 # Safe deletion — moves to trash instead of permanently removing
 [[ -x "$(command -v trash)" ]] && alias rm='trash'

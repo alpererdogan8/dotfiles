@@ -19,7 +19,7 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Added by LM Studio CLI tool (lms)
-export PATH="$PATH:/home/polymath/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 
 
 # Added by Antigravity CLI installer

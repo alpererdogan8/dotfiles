@@ -3,7 +3,7 @@
 
 # Returns non-zero if the current directory is not inside a git repository
 _git_is_repo() {
-    git rev-parse HEAD > /dev/null 2>&1
+    command -v git > /dev/null 2>&1 && command -v fzf > /dev/null 2>&1 && git rev-parse HEAD > /dev/null 2>&1
 }
 
 # gb — interactive branch switcher
@@ -35,7 +35,8 @@ gb() {
 gl() {
     _git_is_repo || return
 
-    git log \
+    local selection hash
+    selection=$(git log \
         --date=short \
         --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" \
         --graph \
@@ -43,14 +44,25 @@ gl() {
     | fzf --ansi --no-sort --reverse \
           --preview-window 'right:60%' \
           --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | head -1 \
-              | xargs git show --color=always 2>/dev/null | head -200'
+              | xargs git show --color=always 2>/dev/null | head -200') || return
+    [[ -n "$selection" ]] || return
+    hash=$(printf '%s' "$selection" | grep -o '[a-f0-9]\{7,\}' | head -1)
+    if command -v wl-copy > /dev/null 2>&1; then
+        printf '%s' "$hash" | wl-copy
+    elif command -v xclip > /dev/null 2>&1; then
+        printf '%s' "$hash" | xclip -selection clipboard
+    else
+        printf '%s\n' "$selection"
+    fi
 }
 
 # gt — interactive tag selector with show preview
 gt() {
     _git_is_repo || return
 
-    git tag --sort -version:refname \
+    local tag
+    tag=$(git tag --sort -version:refname \
     | fzf --preview-window 'right:60%' \
-          --preview 'git show --color=always {} 2>/dev/null | head -200'
+          --preview 'git show --color=always {} 2>/dev/null | head -200') || return
+    [[ -n "$tag" ]] && git show --color=always "$tag"
 }
