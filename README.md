@@ -1,6 +1,6 @@
 # dotfiles
 
-This repository contains the configuration files and scripts for a Fedora Wayland setup. It uses GNU Stow and targets Sway with Waybar, Kanshi, SwayNC, Zsh, and Neovim.
+This repository contains the configuration files and scripts for a Fedora, Arch, or Debian-based Wayland setup. It uses GNU Stow and targets Sway with Waybar, Kanshi, SwayNC, Zsh, and Neovim.
 
 ```text
 Distribution         : Fedora
@@ -20,7 +20,9 @@ App Launcher         : Rofi
 
 ### Prerequisites
 
-The core Fedora packages are:
+The repository has a primary Fedora setup and documented Arch Linux and Debian/Ubuntu variants.
+
+#### Fedora
 
 ```bash
 sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
@@ -28,7 +30,33 @@ sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
   grim slurp wl-clipboard cliphist kanshi jq
 ```
 
-Install SwayNC, SwayOSD, power-profiles-daemon, GNOME Keyring, KDE Connect, Awww, UWSM, and the optional tools used by the session scripts separately when needed. The configuration intentionally guards optional tools where possible.
+#### Arch Linux
+
+```bash
+sudo pacman -S stow git zsh fzf ripgrep fd eza bat zoxide \
+  sway waybar swaylock rofi ghostty yazi tmux neovim starship btop \
+  grim slurp wl-clipboard cliphist kanshi jq
+```
+
+If `yay` is available, install SwayNC and other packages unavailable in the enabled repositories through the AUR:
+
+```bash
+yay -S swaync
+```
+
+#### Debian / Ubuntu
+
+```bash
+sudo apt install stow git zsh fzf ripgrep fd-find bat zoxide \
+  sway waybar swaylock rofi tmux neovim btop grim slurp \
+  wl-clipboard kanshi jq
+```
+
+Install optional packages such as `eza`, `cliphist`, `ghostty`, `yazi`, `starship`, `swaync`, and `wezterm` from the distribution repositories, an AUR-equivalent source, or their official installers when they are not packaged for the release.
+
+#### Optional session tools
+
+Install SwayOSD, power-profiles-daemon, GNOME Keyring, KDE Connect, Awww, UWSM, and other tools used by session scripts separately when needed. The configuration guards optional tools where possible.
 
 ### Setup
 
