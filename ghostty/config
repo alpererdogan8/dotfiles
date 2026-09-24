@@ -2,7 +2,6 @@
 
 background-opacity = 1
 background-blur = true
-font-family = 
 font-family = IoskeleyMono Nerd Font
 font-style = SemiBold
 #font-style-bold = Bold
@@ -32,6 +31,5 @@ cursor-style-blink = true
 
 keybind = ctrl+plus=increase_font_size:1
 keybind = ctrl+equal=increase_font_size:1
-keybind = ctrl+shift+4=increase_font_size:
 keybind = ctrl+minus=decrease_font_size:1
 keybind = ctrl+0=reset_font_size
