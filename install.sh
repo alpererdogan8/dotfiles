@@ -32,13 +32,12 @@ for arg in "$@"; do
 done
 
 # TARGET: repo/package/file.conf → TARGET/file.conf
-# e.g. dotfiles/hypr/hypr.conf → ~/.config/hypr/hypr.conf
+# e.g. dotfiles/sway/config → ~/.config/sway/config
 declare -A TARGET=(
   [alacritty]="$HOME/.config/alacritty"
   [kitty]="$HOME/.config/kitty"
   [fastfetch]="$HOME/.config/fastfetch"
   [ghostty]="$HOME/.config/ghostty"
-  #[hypr]="$HOME/.config/hypr"
   [nvim]="$HOME/.config/nvim"
   [rofi]="$HOME/.config/rofi"
   [sway]="$HOME/.config/sway"
@@ -55,8 +54,6 @@ declare -A TARGET=(
   [zsh]="$HOME"
   [vscode]="$HOME"
   ['local-bin']="$HOME"
-  [themes]="$HOME"
-  [tmuxifier]="$HOME"
   [ly]="/etc/ly"
   [yazi]="$HOME/.config/yazi"
 )
@@ -215,27 +212,37 @@ else
 fi
 
 ERRORS=0
+ok=0
+total=0
+skipped=0
 for pkg in "${PACKAGES[@]}"; do
   if [[ -z "${TARGET[$pkg]+_}" ]]; then
     log_error "Undefined package: '$pkg'"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
     continue
   fi
   if [[ ! -d "$DOTFILES_DIR/$pkg" ]]; then
     log_warn "Directory not found, skipping: $pkg"
+    skipped=$((skipped + 1))
     continue
   fi
 
-  stow_package "$pkg" || ((ERRORS++))
+  total=$((total + 1))
+  if stow_package "$pkg"; then
+    ok=$((ok + 1))
+  else
+    ERRORS=$((ERRORS + 1))
+  fi
 done
 
 echo -e "\n${BOLD}══════════════════════════════════════${RESET}"
-total="${#PACKAGES[@]}"
-ok=$((total - ERRORS))
-if [[ $ERRORS -eq 0 ]]; then
+if [[ $ERRORS -eq 0 && $skipped -eq 0 ]]; then
   echo -e "${GREEN}${BOLD}  ✓ $ok/$total packages processed successfully${RESET}"
+elif [[ $ERRORS -eq 0 ]]; then
+  echo -e "${GREEN}${BOLD}  ✓ $ok/$total packages processed successfully${RESET} ${YELLOW}│ $skipped skipped${RESET}"
 else
   echo -e "${YELLOW}${BOLD}  ⚠ $ok/$total succeeded │ $ERRORS errors${RESET}"
+  [[ $skipped -gt 0 ]] && echo -e "${YELLOW}  $skipped packages skipped${RESET}"
 fi
 echo -e "${BOLD}══════════════════════════════════════${RESET}\n"
 
