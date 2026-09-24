@@ -3,5 +3,5 @@
 -- Add any additional options here
 
 vim.opt.inccommand = "split"
-vim.g.lazyvim_colorscheme = "sunset-drive"
+vim.g.lazyvim_colorscheme = "hybrid"
 -- vim.opt.laststatus = 0
