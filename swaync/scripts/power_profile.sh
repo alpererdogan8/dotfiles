@@ -11,24 +11,16 @@
 # =============================================================================
 
 ROFI_CONFIG="$HOME/.config/rofi/swaync.rasi"
-SWAYNC_CONFIG="$HOME/.config/swaync/config.json"
 
-# Apply the given power profile and update the corresponding SwayNC button label
 set_profile() {
-  local profile="$1"  # powerprofilesctl profile identifier
-  local label="$2"    # human-readable label shown in the SwayNC button
+  local profile="$1"
+  local label="$2"
 
-  powerprofilesctl set "$profile"
+  if ! powerprofilesctl set "$profile"; then
+    notify-send -u critical "Power Profile" "Failed to set profile: $label" -t 3000
+    return 1
+  fi
 
-  # Atomically update the button label in the SwayNC JSON config
-  local tmp
-  tmp=$(mktemp)
-  jq --arg label "$label" \
-    '(.[\"widget-config\"][\"buttons-grid\"][\"actions\"][] |
-    select(.command | contains("power_profile")) | .label) = $label' \
-    "$SWAYNC_CONFIG" > "$tmp" && mv "$tmp" "$SWAYNC_CONFIG"
-
-  swaync-client --reload-config
   notify-send "Power Profile" "$label" -t 2000 -u normal
 }
 

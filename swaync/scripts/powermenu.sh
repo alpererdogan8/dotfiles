@@ -22,6 +22,13 @@ if [ -z "$chosen" ]; then
   exit 0
 fi
 
+confirm() {
+  local prompt="$1"
+  local answer
+  answer=$(printf '%s\n' 'No' 'Yes' | rofi -dmenu -p "$prompt" -theme ~/.config/rofi/swaync.rasi -no-custom)
+  [[ "$answer" == "Yes" ]]
+}
+
 # Execute the selected action
 case "$chosen" in
 "$lock")
@@ -29,15 +36,15 @@ case "$chosen" in
   swaylock
   ;;
 "$logout")
-  swaymsg exit
+  confirm "Log out?" && swaymsg exit || true
   ;;
 "$suspend")
-  systemctl suspend
+  confirm "Suspend?" && systemctl suspend || true
   ;;
 "$reboot")
-  systemctl reboot
+  confirm "Reboot?" && systemctl reboot || true
   ;;
 "$shutdown")
-  systemctl poweroff
+  confirm "Shut down?" && systemctl poweroff || true
   ;;
 esac
