@@ -4,7 +4,7 @@
     "layer": "top",
     "position": "top",
     "height": 26,
-    "spacing": 0,
+    "spacing": 3,
     "margin-top": 0,
     "margin-bottom": 0,
     "margin": 0,
@@ -33,16 +33,36 @@
             "urgent": "<span foreground='#ff0000'>󱓻</span>"
         },
         "persistent-workspaces": {
-            "1": ["HDMI-A-1"],
-            "2": ["HDMI-A-1"],
-            "3": ["HDMI-A-1"],
-            "4": ["HDMI-A-1"],
-            "5": ["HDMI-A-1"],
-            "6": ["HDMI-A-1"],
-            "7": ["HDMI-A-1"],
-            "8": ["HDMI-A-1"],
-            "9": ["HDMI-A-1"],
-            "10": ["HDMI-A-1"]
+            "1": [
+                "HDMI-A-1"
+            ],
+            "2": [
+                "HDMI-A-1"
+            ],
+            "3": [
+                "HDMI-A-1"
+            ],
+            "4": [
+                "HDMI-A-1"
+            ],
+            "5": [
+                "HDMI-A-1"
+            ],
+            "6": [
+                "HDMI-A-1"
+            ],
+            "7": [
+                "HDMI-A-1"
+            ],
+            "8": [
+                "HDMI-A-1"
+            ],
+            "9": [
+                "HDMI-A-1"
+            ],
+            "10": [
+                "HDMI-A-1"
+            ]
         },
         "sort-by-number": true
     },
@@ -86,7 +106,7 @@
         "tooltip-format": "Hardware group"
     },
     "tray": {
-        "spacing": 10,
+        "spacing": 3,
     },
     // ── CPU ───────────────────────────────────────────────────────
     "cpu": {
@@ -178,8 +198,30 @@
         "format-charging": "{icon}",
         "format-plugged": "{icon}",
         "format-icons": {
-            "charging": ["", "", "", "", "", "", "", "", "", ""],
-            "default": ["", "", "", "", "", "", "", "", "", ""]
+            "charging": [
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋",
+                "󱐋"
+            ],
+            "default": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         },
         "format-full": "",
         "tooltip": true,
@@ -196,7 +238,7 @@
     },
     "custom/battery-watt": {
         "exec": "sh -c '$HOME/.config/waybar/scripts/battery-watt.sh'",
-        "interval": 12,
+        "interval": 6,
         "return-type": "json",
         "format": "{text}",
         "tooltip": true,

@@ -9,7 +9,7 @@
         "layer": "top",
         "position": "top",
         "height": 26,
-        "spacing": 0,
+        "spacing": 3,
         "margin-top": 0,
         "margin-bottom": 0,
         "margin": 0,
@@ -39,11 +39,21 @@
             },
             // Workspaces 1-5 pinned to the external HDMI monitor.
             "persistent-workspaces": {
-                "1": ["HDMI-A-1"],
-                "2": ["HDMI-A-1"],
-                "3": ["HDMI-A-1"],
-                "4": ["HDMI-A-1"],
-                "5": ["HDMI-A-1"]
+                "1": [
+                    "HDMI-A-1"
+                ],
+                "2": [
+                    "HDMI-A-1"
+                ],
+                "3": [
+                    "HDMI-A-1"
+                ],
+                "4": [
+                    "HDMI-A-1"
+                ],
+                "5": [
+                    "HDMI-A-1"
+                ]
             },
             "sort-by-number": true
         },
@@ -63,6 +73,7 @@
             "bluetooth",
             "pulseaudio",
             "network",
+            "custom/battery-watt",
             "custom/swaync-open-button",
         ],
         // ── Tray Group ───────────────────────────────────────────────────────
@@ -86,7 +97,7 @@
             "tooltip-format": "Hardware group"
         },
         "tray": {
-            "spacing": 10,
+            "spacing": 3,
         },
         "memory": {
             "interval": 30,
@@ -172,6 +183,14 @@
             "on-click": "bash -c \"$TERMINAL --gtk-single-instance=false --title=impala-float -e $HOME/.cargo/bin/impala\""
         },
         // ── Notifications ───────────────────────────────────────────────────────
+        "custom/battery-watt": {
+            "exec": "sh -c '$HOME/.config/waybar/scripts/battery-watt.sh'",
+            "interval": 6,
+            "return-type": "json",
+            "format": "{text}",
+            "tooltip": true,
+            "hide-empty-text": false
+        },
         "custom/swaync-open-button": {
             "format": "{icon}",
             "format-icons": {
@@ -193,14 +212,13 @@
             "escape": true,
         }
     },
-
     // ── Bar 2: Laptop screen (eDP-1) ────────────────────────────────────
     {
         "output": "eDP-1",
         "layer": "top",
         "position": "top",
         "height": 26,
-        "spacing": 0,
+        "spacing": 3,
         "margin-top": 0,
         "margin-bottom": 0,
         "margin": 0,
@@ -231,16 +249,36 @@
             // Dual mode: 1-5 on HDMI, 6-10 on eDP.
             // Laptop-only mode is handled by config-laptop.jsonc via 90-bar.conf.
             "persistent-workspaces": {
-                "1": ["HDMI-A-1"],
-                "2": ["HDMI-A-1"],
-                "3": ["HDMI-A-1"],
-                "4": ["HDMI-A-1"],
-                "5": ["HDMI-A-1"],
-                "6": ["eDP-1"],
-                "7": ["eDP-1"],
-                "8": ["eDP-1"],
-                "9": ["eDP-1"],
-                "10": ["eDP-1"]
+                "1": [
+                    "HDMI-A-1"
+                ],
+                "2": [
+                    "HDMI-A-1"
+                ],
+                "3": [
+                    "HDMI-A-1"
+                ],
+                "4": [
+                    "HDMI-A-1"
+                ],
+                "5": [
+                    "HDMI-A-1"
+                ],
+                "6": [
+                    "eDP-1"
+                ],
+                "7": [
+                    "eDP-1"
+                ],
+                "8": [
+                    "eDP-1"
+                ],
+                "9": [
+                    "eDP-1"
+                ],
+                "10": [
+                    "eDP-1"
+                ]
             },
             "sort-by-number": true
         },
@@ -284,7 +322,7 @@
             "tooltip-format": "Hardware group"
         },
         "tray": {
-            "spacing": 10,
+            "spacing": 3,
         },
         // ── CPU ───────────────────────────────────────────────────────
         "cpu#edp": {
@@ -376,8 +414,30 @@
             "format-charging": "{icon}",
             "format-plugged": "{icon}",
             "format-icons": {
-                "charging": ["", "", "", "", "", "", "", "", "", ""],
-                "default": ["", "", "", "", "", "", "", "", "", ""]
+                "charging": [
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋",
+                    "󱐋"
+                ],
+                "default": [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
             },
             "format-full": "",
             "tooltip": true,
@@ -394,7 +454,7 @@
         },
         "custom/battery-watt": {
             "exec": "sh -c '$HOME/.config/waybar/scripts/battery-watt.sh'",
-            "interval": 12,
+            "interval": 6,
             "return-type": "json",
             "format": "{text}",
             "tooltip": true,

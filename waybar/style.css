@@ -52,8 +52,8 @@ button {
 /* ── Workspaces ───────────────────────────────────────────────────── */
 #workspaces button {
     all: initial;
-    padding: 0 6px;
-    margin: 0 2px;
+    padding: 0 3px;
+    margin: 0;
     min-width: 10px;
 }
 
@@ -86,7 +86,10 @@ button {
 }
 
 #clock,
+#custom-clock,
 #temperature,
+#custom-temperature,
+#custom-wrap,
 #network,
 #bluetooth,
 #cpu,
@@ -97,12 +100,8 @@ button {
 #custom-power,
 #power-profiles-daemon,
 #custom-swaync-open-button {
-    padding: 0 9px;
+    padding: 0 3px;
     color: @fg;
-}
-
-#custom-temperature {
-    padding: 0;
 }
 
 #cpu,
@@ -116,7 +115,7 @@ button {
 /* ── Tray ─────────────────────────────────────────────────────────── */
 #tray {
     background-color: @bg;
-    padding: 0 9px;
+    padding: 0 3px;
 }
 
 #tray>.passive {
