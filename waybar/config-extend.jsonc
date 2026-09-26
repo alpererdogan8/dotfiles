@@ -228,7 +228,10 @@
         "tooltip-format": "{capacity}% remaining",
         "interval": 5,
         "states": {
-            "critical": 39,
+            // critical must match Environment=WARN in
+            // systemd/user/battery-notify.service: the bar turns red at the
+            // same moment the first low-battery notification appears.
+            "critical": 30,
             "warning": 59,
             "yellow": 69,
             "normal": 79,
