@@ -114,6 +114,37 @@ Only one kanshi process may run. A leftover process spawned by an older `sway/co
 
 Keep the config path as the Stow target `~/.config/kanshi/config`; do not hardcode the repository location.
 
+## Low Battery Notification
+
+`systemd/user/battery-notify.service` and `systemd/user/battery-notify.timer` raise a notification below 30% and a second, more insistent one below 20%. Enable them with `./install.sh systemd` and `systemctl --user enable --now battery-notify.timer`.
+
+The timer polls once a minute and the whole decision lives in one `ExecStart` line, so there is no monitoring script to install or keep in sync. Every behaviour is an `Environment=` knob at the top of the unit — thresholds, sound file, repeat counts, icons, state file name — and a drop-in overrides any of them without touching the repo:
+
+```bash
+mkdir -p ~/.config/systemd/user/battery-notify.service.d
+printf '[Service]\nEnvironment=WARN=25\nEnvironment=BEEPS_CRIT=5\n' \
+  > ~/.config/systemd/user/battery-notify.service.d/override.conf
+systemctl --user daemon-reload
+```
+
+Why it is not built out of SwayNC, notify-send and Waybar, since that is the obvious first thing to try:
+
+- **SwayNC has no sound engine.** There is no `sounds` key in its config schema and no audio code in its daemon; the `"sounds": {"notification": …, "critical": …}` block that appears in guides does not exist. Its only audio hook is the `scripts` config block, which runs a shell command against an incoming notification.
+- **notify-send can only send.** `-u critical` changes urgency, which SwayNC spends on `timeout-critical` and the critical CSS class. The `sound-file` hint from libnotify 0.8.8 is accepted and then ignored.
+- **Waybar cannot raise notifications.** `battery.states` only recolours the bar, and `on-click` / `on-scroll-*` are manual.
+
+None of the three can watch the battery, and none of them can play a sound, so the threshold decision needs a fourth thing. A systemd timer is the smallest one available. Audio is played with `pw-play` in the unit rather than through a SwayNC `scripts` entry, which keeps `swaync/config.json` untouched and stops a failed sound from taking the notification down with it.
+
+`waybar/config*.jsonc` sets `battery.states.critical` to 30 so the bar turns red at the same moment the first notification appears. That value and `Environment=WARN` are the same threshold expressed twice; change both together.
+
+Notifications fire once per threshold per discharge, tracked in `$XDG_RUNTIME_DIR/battery-notify.stage` (`0` nothing announced, `1` warned, `2` critical). The stage is cleared only once the charge climbs back above `RESET`, which is 5 points above `WARN`. Merely being plugged in is deliberately not a reset: otherwise a battery warned about at 28% that gets plugged in for a moment and unplugged at 29% would warn again. A full charge is the only way to re-arm. The stage advances only if `notify-send` succeeded, so a session that starts before SwayNC retries on the next poll instead of swallowing the warning.
+
+Do not use `dialog-error.oga` to distinguish the levels: in `sound-theme-freedesktop` it is a symlink to `dialog-warning.oga`, so the two are the same audio. The unit uses one short 0.14 s `bell.oga` repeated instead, because the alternative — `alarm-clock-elapsed.oga` — is 6.1 s of beeping.
+
+For the same reason the icons are `breeze-dark` rather than `AdwaitaLegacy`: the legacy theme draws a shaded 3D cell that looks out of place in a notification, and plain `breeze` draws dark-on-dark and disappears on the dark panel.
+
+Sound reaching the speakers is a separate problem from the PipeWire volume. If `pw-play` is silent while `wpctl get-volume` shows a healthy level, the ALSA hardware mixer is the culprit: `amixer -c 0 sget Headphone` shows `0 [0%] [off]`, and a PipeWire volume of 0.9 changes nothing while the channel is off at the hardware level. Check the jack too — an empty 3.5 mm jack also sends the analog sink nowhere.
+
 ## Zsh Configuration
 
 `zsh/.zshenv` sets `ZDOTDIR=$HOME/zsh/configs`. The active `.zshrc` sources files in this order:
@@ -164,6 +195,7 @@ After changing dotfiles, run the available checks:
 bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.sh
 zsh -n zsh/zsh/configs/*.zsh
 sway -C -c sway/config
+systemd-analyze verify systemd/user/battery-notify.service systemd/user/battery-notify.timer
 ./install.sh --dry-run
 ./install.sh --is-linked
 ```
