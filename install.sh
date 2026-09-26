@@ -10,12 +10,32 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 RESET='\033[0m'
+DIM='\033[2m'
 
 DRY_RUN=false
 REMOVE=false
 RELINK=false
 LIST=false
+IS_LINKED=false
 SELECTED_PACKAGES=()
+
+usage() {
+  cat <<'EOF'
+usage: install.sh [options] [package ...]
+
+  (no options)      link every package with stow
+  --dry-run         show what stow would do, change nothing
+  --remove          unlink the given packages (or all)
+  --relink          unlink and link again, picking up added or removed files
+  --list            table of every package and its link state
+  --is-linked       check link state: silent when all linked, exit 0;
+                    on failure prints why on stderr and exits 1
+  --help            this message
+
+  With no package names the operation applies to every package. The ly package
+  targets /etc/ly and is installed with sudo.
+EOF
+}
 
 for arg in "$@"; do
   case "$arg" in
@@ -23,8 +43,12 @@ for arg in "$@"; do
   --remove) REMOVE=true ;;
   --relink) RELINK=true ;;
   --list) LIST=true ;;
+  --is-linked) IS_LINKED=true ;;
+  -h|--help) usage; exit 0 ;;
   --*)
     echo -e "${RED}Unknown option: $arg${RESET}"
+    echo -e "${DIM}Did you mean --list, --is-linked, --dry-run, --relink or --remove?${RESET}"
+    usage >&2
     exit 1
     ;;
   *) SELECTED_PACKAGES+=("$arg") ;;
@@ -65,71 +89,6 @@ log_ok() { echo -e "${GREEN}[OK]${RESET}    $*"; }
 log_warn() { echo -e "${YELLOW}[WARN]${RESET}  $*"; }
 log_error() { echo -e "${RED}[ERROR]${RESET} $*"; }
 
-list_packages() {
-  local pkg target first_file rel_path target_path link_dest
-  local installed=0 missing=0 conflict=0
-
-  echo -e "\n${BOLD}══════════════════════════════════════════════════════${RESET}"
-  echo -e "${BOLD}  Dotfiles  │  ${DOTFILES_DIR}${RESET}"
-  echo -e "${BOLD}══════════════════════════════════════════════════════${RESET}"
-  printf "\n${BOLD}  %-20s %-30s %s${RESET}\n" "PACKAGE" "TARGET" "STATUS"
-  printf "  %-20s %-30s %s\n" "──────────────────" "────────────────────────────" "──────────────"
-
-  for pkg in $(echo "${!TARGET[@]}" | tr ' ' '\n' | sort); do
-    if [[ ! -d "$DOTFILES_DIR/$pkg" ]]; then
-      continue
-    fi
-    target="${TARGET[$pkg]}"
-
-    # Check all top-level files — stow links at this level first.
-    # A package is "installed" if ANY top-level file is properly symlinked.
-    # Fall back to any depth if the package has no top-level files (dirs only).
-    local status="missing" probe rel_path target_path link_dest
-    local search_depth="-maxdepth 1"
-    mapfile -t top_files < <(find "$DOTFILES_DIR/$pkg" -maxdepth 1 -type f 2>/dev/null)
-    [[ ${#top_files[@]} -eq 0 ]] && mapfile -t top_files < <(find "$DOTFILES_DIR/$pkg" -type f 2>/dev/null)
-
-    if [[ ${#top_files[@]} -eq 0 ]]; then
-      printf "  ${CYAN}%-20s${RESET} %-30s ${YELLOW}EMPTY${RESET}\n" "$pkg" "$target"
-      continue
-    fi
-
-    for probe in "${top_files[@]}"; do
-      rel_path="${probe#$DOTFILES_DIR/$pkg/}"
-      target_path="$target/$rel_path"
-      if [[ -L "$target_path" ]]; then
-        link_dest=$(readlink -f "$target_path")
-        if [[ "$link_dest" == "$probe" ]]; then
-          status="installed"
-          break
-        else
-          status="conflict"
-        fi
-      elif [[ -e "$target_path" ]] && [[ "$status" == "missing" ]]; then
-        status="conflict"
-      fi
-    done
-
-    case "$status" in
-    installed)
-      printf "  ${GREEN}%-20s${RESET} %-30s ${GREEN}✓ installed${RESET}\n" "$pkg" "$target"
-      installed=$((installed + 1))
-      ;;
-    conflict)
-      printf "  ${YELLOW}%-20s${RESET} %-30s ${YELLOW}⚠ exists (not symlink)${RESET}\n" "$pkg" "$target"
-      conflict=$((conflict + 1))
-      ;;
-    missing)
-      printf "  ${RED}%-20s${RESET} %-30s ${RED}✗ not installed${RESET}\n" "$pkg" "$target"
-      missing=$((missing + 1))
-      ;;
-    esac
-  done
-
-  echo -e "\n${BOLD}══════════════════════════════════════════════════════${RESET}"
-  echo -e "  ${GREEN}✓ installed: $installed${RESET}  ${RED}✗ missing: $missing${RESET}  ${YELLOW}⚠ conflict: $conflict${RESET}"
-  echo -e "${BOLD}══════════════════════════════════════════════════════${RESET}\n"
-}
 
 is_sudo_pkg() {
   local p
@@ -194,9 +153,24 @@ if ! command -v stow &>/dev/null; then
   exit 1
 fi
 
-if "$LIST"; then
-  list_packages
-  exit 0
+# Link state is owned by stow-status.sh, which reads the TARGET map above, so
+# there is a single definition of "linked" for both --list and --is-linked.
+LINK_CHECKER="$DOTFILES_DIR/local-bin/.local/bin/stow-status.sh"
+
+if "$LIST" || "$IS_LINKED"; then
+  if [[ ! -x "$LINK_CHECKER" ]]; then
+    echo -e "${RED}Link checker not found: $LINK_CHECKER${RESET}"
+    exit 2
+  fi
+  if "$DRY_RUN"; then
+    echo -e "${YELLOW}Note: reporting current link state; --dry-run does not simulate it${RESET}"
+  fi
+  if "$IS_LINKED"; then
+    "$LINK_CHECKER" --quiet "$DOTFILES_DIR"
+  else
+    "$LINK_CHECKER" --brief "$DOTFILES_DIR"
+  fi
+  exit $?
 fi
 
 echo -e "\n${BOLD}══════════════════════════════════════${RESET}"

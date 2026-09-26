@@ -76,6 +76,9 @@ cd ~/dotfiles
 # List installation status
 ./install.sh --list
 
+# Check link state only: no output, exit 0 when everything is linked
+./install.sh --is-linked
+
 # Remove links
 ./install.sh --remove sway
 
@@ -108,6 +111,7 @@ bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.s
 zsh -n zsh/zsh/configs/*.zsh
 sway -C -c sway/config
 ./install.sh --dry-run
+./install.sh --is-linked
 ```
 
 Waybar JSONC files should be checked with a Waybar reload in a graphical session. The repository does not currently include a CI test suite.

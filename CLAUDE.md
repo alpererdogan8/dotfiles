@@ -41,6 +41,12 @@ List installation status:
 ./install.sh --list
 ```
 
+Check whether every package is linked, without any output. Exits 0 when all packages are linked, 1 when any package has a broken, missing, conflicting or absolute link, and 2 when the link checker itself cannot run. This is the form to use in scripts and commit hooks:
+
+```bash
+./install.sh --is-linked || echo "run ./install.sh"
+```
+
 The `ly` package targets `/etc/ly` and is installed with `sudo`. All other packages use the current user's home directory.
 
 ## Architecture
@@ -141,6 +147,15 @@ There is currently no single cross-application theme source. Changing a theme re
 
 `local-bin/.local/bin/` contains session helpers such as display-mode selection, workspace movement, screenshots, wallpapers, health checks, and the webapp launcher. Scripts should use quoted arguments and safe shell-escaped generated commands.
 
+`stow-status.sh` reports the link state of every package. It is the single implementation behind both `./install.sh --list` and `./install.sh --is-linked`; `install.sh` only forwards to it and propagates its exit status, so there is one definition of "linked" rather than two that can disagree. It reads the `TARGET` map out of `install.sh`, so it needs no changes when a package is added or retargeted, and it locates the repository from the path `install.sh` passes it, or by resolving its own symlink when run directly. `--brief` prints the table and summary only, `--quiet` prints nothing and reports through the exit status. It checks every file in a package rather than only the first, so a single unlinked file is no longer hidden. Two classes of file are excluded from the link count: paths ignored by `.gitignore` (local artifacts such as `node_modules`, `__pycache__`, `.zcompdump`, `zsh_history`) and the basenames GNU Stow never deploys (`README*`, `LICENSE*`, `LICENCE*`, `COPYING*`, `.git*`). Because Stow sometimes links a whole directory, a file reached through a linked parent directory counts as linked even though it is a real file. The script exits non-zero when any package is not fully linked.
+
+An absolute symlink into the repository is reported as `absolute`, not `linked`. Stow only ever creates relative links and compares the raw link text, so a hand-made absolute link makes it abort the entire package with "existing target is not owned by stow". Resolving the link would hide this, which is why the raw target is checked. Fix it by removing the link and re-running the installer; `--relink` does not work here because the unstaging step fails the same way:
+
+```bash
+rm ~/.config/rofi/launcher.rasi
+./install.sh rofi
+```
+
 ## Validation
 
 After changing dotfiles, run the available checks:
@@ -150,6 +165,7 @@ bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.s
 zsh -n zsh/zsh/configs/*.zsh
 sway -C -c sway/config
 ./install.sh --dry-run
+./install.sh --is-linked
 ```
 
 Waybar JSONC files should be checked with the Waybar parser when a graphical Waybar restart is available. The repository does not currently include a CI test suite.
