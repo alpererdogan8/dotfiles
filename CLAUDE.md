@@ -49,7 +49,7 @@ The repository uses GNU Stow. A package is a top-level directory whose contents 
 
 | Package | Target |
 |---|---|
-| `alacritty`, `fastfetch`, `ghostty`, `kanshi`, `kitty`, `nvim`, `rofi`, `sway`, `swaylock`, `swaync`, `swayosd`, `tmux`, `uwsm`, `waybar`, `yazi` | `~/.config/<package>` |
+| `alacritty`, `fastfetch`, `ghostty`, `kanshi`, `kitty`, `nvim`, `rofi`, `sway`, `swaylock`, `swaync`, `swayosd`, `systemd`, `tmux`, `uwsm`, `waybar`, `yazi` | `~/.config/<package>` |
 | `starship` | `~/.config` |
 | `bash`, `git`, `local-bin`, `vscode`, `zsh` | `$HOME` |
 | `ly` | `/etc/ly` |
@@ -60,6 +60,7 @@ Examples:
 - `sway/config.d/90-bar.conf` → `~/.config/sway/config.d/90-bar.conf`
 - `zsh/zsh/configs/.zshrc` → `~/zsh/configs/.zshrc`
 - `local-bin/.local/bin/display-mode` → `~/.local/bin/display-mode`
+- `systemd/user/kanshi.service` → `~/.config/systemd/user/kanshi.service`
 - `starship/starship.toml` → `~/.config/starship.toml`
 
 Runtime configuration paths should use installed Stow targets such as `~/.config/...`; they should not depend on the repository being located at `~/dotfiles`.
@@ -85,7 +86,27 @@ Waybar selects its configuration from the active Kanshi profile and active outpu
 
 The custom battery module is defined for each bar that uses it. The battery script derives watts from charge-change samples and must always emit valid JSON.
 
-Sway starts several session services from `sway/config`, including Kanshi, KDE Connect, SwayOSD, Awww, clipboard history, and the keyring daemon. Applications that need session tracking use `uwsm app --`; short-lived commands may run directly.
+Sway starts several session services from `sway/config`, including KDE Connect, SwayOSD, Awww, clipboard history, and the keyring daemon. Applications that need session tracking use `uwsm app --`; short-lived commands may run directly.
+
+Kanshi is not started from `sway/config`; it runs as a systemd user service. The `systemd` package owns `systemd/user/kanshi.service`, which overrides the vendor unit in `/usr/lib/systemd/user/` because `~/.config/systemd/user` has higher load priority. Stowing the file is enough — systemd resolves the unit by name and picks the highest-priority file:
+
+```bash
+./install.sh systemd
+systemctl --user daemon-reload
+systemctl --user restart kanshi.service
+```
+
+`graphical-session.target.wants/kanshi.service` is what makes the unit start with the session. Its target path is cosmetic: the vendor and dotfiles units share a name, so the link works either way. The dotfiles path is used so `systemctl --user disable` does not remove the Stow link. Do not run `systemctl --user disable kanshi.service` during normal operation — it also deletes the Stow-managed symlink and hands control back to the vendor unit. If that happens, re-run `./install.sh systemd` and recreate the enablement symlink:
+
+```bash
+ln -sfn "$HOME/dotfiles/systemd/user/kanshi.service" \
+  ~/.config/systemd/user/graphical-session.target.wants/kanshi.service
+systemctl --user daemon-reload
+```
+
+Only one kanshi process may run. A leftover process spawned by an older `sway/config` `exec_always` line stays in the `wayland-wm@sway.service` cgroup until sway exits, so after removing that line, check `pgrep -a kanshi` and kill the stray process.
+
+Keep the config path as the Stow target `~/.config/kanshi/config`; do not hardcode the repository location.
 
 ## Zsh Configuration
 

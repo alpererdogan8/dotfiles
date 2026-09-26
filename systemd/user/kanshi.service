@@ -1,0 +1,26 @@
+# kanshi.service — dynamic display configuration for Wayland
+#
+# Overrides the vendor unit shipped by the package
+# (/usr/lib/systemd/user/kanshi.service). A unit in ~/.config/systemd/user
+# takes precedence over /usr/lib/systemd/user, so this file is the one that
+# actually runs. The vendor copy must NOT be enabled directly; keep the
+# enablement pointing at this unit.
+#
+# Installed from dotfiles via: ./install.sh systemd
+# Config: ~/.config/kanshi/config (symlinked to the dotfiles package)
+
+[Unit]
+Description=Dynamic display configuration for Wayland
+Documentation=man:kanshi(1) man:kanshi(5)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecCondition=/bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+ExecStart=/usr/bin/kanshi -c %h/.config/kanshi/config
+ExecReload=/usr/bin/kanshictl reload
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.targetlssls

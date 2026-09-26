@@ -43,6 +43,7 @@ declare -A TARGET=(
   [sway]="$HOME/.config/sway"
   [kanshi]="$HOME/.config/kanshi"
   [swaync]="$HOME/.config/swaync"
+  [systemd]="$HOME/.config/systemd"
   [swayosd]="$HOME/.config/swayosd"
   [swaylock]="$HOME/.config/swaylock"
   [tmux]="$HOME/.config/tmux"
