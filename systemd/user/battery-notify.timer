@@ -1,0 +1,34 @@
+# battery-notify.timer — drives battery-notify.service
+#
+# Installed from dotfiles via: ./install.sh systemd
+#
+# Why a timer instead of a resident service: the unit has nothing to hold open.
+# It is a oneshot that reads two sysfs files, and a service that exited
+# immediately would just be a oneshot plus a restart loop. A timer gives the
+# same thing without a process sitting idle between checks.
+
+[Unit]
+Description=Poll battery capacity for the low-battery notification
+Documentation=man:systemd.timer(5)
+
+[Timer]
+Unit=battery-notify.service
+# First check shortly after login, so a session that starts at 15% warns right
+# away instead of after a full interval.
+OnActiveSec=1min
+# One poll a minute. Battery state changes on the scale of tens of minutes, so
+# anything faster only burns wakeups; the overshoot at the threshold is at most
+# a percent or so, which the message body reports anyway.
+OnUnitActiveSec=1min
+# systemd's default accuracy window is 1 min, which is the same order as the
+# interval and would let it coalesce these unpredictably. 5 s keeps the spacing
+# honest.
+AccuracySec=5s
+
+[Install]
+# Bound to the session rather than timers.target: there is no reason to keep
+# polling once the graphical session is gone, and a lingering user manager
+# would otherwise keep waking up for nothing. This also matches how
+# kanshi.service is enabled in this repo. Install with:
+#   systemctl --user enable --now battery-notify.timer
+WantedBy=graphical-session.target

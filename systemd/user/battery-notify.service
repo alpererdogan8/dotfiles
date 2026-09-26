@@ -1,0 +1,114 @@
+# battery-notify.service — low-battery notification with a sound per threshold
+#
+# Installed from dotfiles via: ./install.sh systemd
+# Started by:  battery-notify.timer (WantedBy=graphical-session.target)
+# Tune it with a drop-in, e.g.
+#   mkdir -p ~/.config/systemd/user/battery-notify.service.d
+#   printf '[Service]\nEnvironment=WARN=25\n' > ~/.config/systemd/user/battery-notify.service.d/override.conf
+#   systemctl --user daemon-reload
+#
+# ── Why this exists ───────────────────────────────────────────────────────────
+# The goal was "warn below 30% and below 20%, with a sound, and nothing else".
+# The three obvious pieces cannot do it, and it is worth recording why, because
+# the obvious thing to look up first does not exist:
+#
+#   * swaync has no sound engine. There is no "sounds" key in the config schema
+#     (checked upstream v0.7.2, v0.9.0, v0.10.0, v0.11.0, v0.12.6 and main) and
+#     no sound playback in swayncDaemon. The `"sounds": {"notification": …,
+#     "critical": …}` block that circulates in blog posts is not a real option.
+#     The only audio hook swaync 0.12 exposes is the "scripts" config block,
+#     which runs a shell command on a matching notification.
+#   * notify-send can only send. `-u critical` only changes urgency, which
+#     swaync uses for `timeout-critical` and the critical CSS class — not for
+#     audio. `-h sound-file:` is accepted by libnotify 0.8.8 and then ignored
+#     by swaync.
+#   * Waybar cannot raise notifications at all. `battery.states` only recolours
+#     the bar; `on-click` / `on-scroll-*` are manual actions.
+#
+# So the threshold decision has to live somewhere, and none of the three above
+# is that somewhere. A systemd timer is the smallest thing that can: it re-reads
+# sysfs once a minute and the whole decision lives in one ExecStart line, so
+# there is still no script file to install and keep in sync.
+#
+# The sound is played here with pw-play rather than through a swaync "scripts"
+# entry. That keeps swaync's config untouched, and it means a failed sound
+# cannot take the notification down with it.
+
+[Unit]
+Description=Low-battery notification with a per-threshold sound
+# pipewire ships no pw-play man page on Fedora, so it is referenced by name.
+Documentation=man:notify-send(1) man:systemd.service(5) https://docs.pipewire.org/page_man_pw-play_1.html
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+# Outside a graphical session there is no swaync to show it and no reason to
+# look. Matches the guard on kanshi.service.
+ExecCondition=/bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+
+# ── Behaviour ────────────────────────────────────────────────────────────────
+# Thresholds, in percent.
+#   WARN  normal-urgency notification, ICON_WARN, BEEPS_WARN × SOUNDFILE
+#   CRIT  critical-urgency notification, ICON_CRIT, BEEPS_CRIT × SOUNDFILE
+#   RESET re-arms the thresholds, but only once the charge climbs this far
+#         above WARN. The gap is what stops a battery oscillating across the
+#         boundary from re-announcing on every poll.
+# WARN is duplicated as `states.critical` in the waybar configs so the bar turns
+# red at the same moment the first notification appears. Change both together.
+Environment=WARN=30
+Environment=CRIT=20
+Environment=RESET=35
+
+# ── Sound ────────────────────────────────────────────────────────────────────
+# One short 0.14 s "ding", repeated. Repeats rather than a longer file: the
+# freedesktop alarm-clock-elapsed.oga is 6.1 s of beeping and gets annoying
+# fast, whereas a short blip can be as loud as you like. bell.oga is a
+# deliberate departure from the message.oga / dialog-*.oga that ordinary
+# notifications would use, so the battery is audible without looking.
+#
+# Note: dialog-error.oga is a symlink to dialog-warning.oga in the
+# sound-theme-freedesktop package, so those two are the same audio — do not use
+# them to tell the two levels apart.
+Environment=SOUNDFILE=/usr/share/sounds/freedesktop/stereo/bell.oga
+Environment=BEEPS_WARN=1
+Environment=BEEPS_CRIT=3
+# Pause between repeats, so three blips read as three and not as one long one.
+Environment=BEEP_GAP=0.35
+
+# ── Icons ────────────────────────────────────────────────────────────────────
+# breeze-dark, not AdwaitaLegacy: the legacy theme draws a shaded 3D cell that
+# looks out of place in the notification, and plain breeze draws dark-on-dark
+# and disappears. Full paths, so swapping in a different icon is one line here
+# rather than an edit inside ExecStart. There is no 64px size in this theme, so
+# these get scaled up from 32 by swaync.
+Environment=ICON_WARN=/usr/share/icons/breeze-dark/status/32/battery-low.svg
+Environment=ICON_CRIT=/usr/share/icons/breeze-dark/status/32/battery-empty.svg
+
+# ── State ────────────────────────────────────────────────────────────────────
+# Makes this fire once per threshold crossing instead of once per poll:
+# 0 nothing announced, 1 WARN announced, 2 CRIT announced.
+# $XDG_RUNTIME_DIR is a tmpfs, so logging out clears it and the next session
+# re-arms from scratch.
+Environment=STATEFILE=battery-notify.stage
+
+# One pass, no helper script:
+#
+#   1. Lowest capacity across every BAT* device, plus whether any of them is
+#      actually discharging. The device is not always BAT0 — on this machine it
+#      is BAT1 — and dual-battery laptops report two of them.
+#   2. Re-arms, and only re-arms, once the charge is back above RESET. Note
+#      what is deliberately NOT a re-arm condition: merely being plugged in.
+#      Otherwise a battery warned about at 28% that gets plugged in for a
+#      moment and unplugged at 29% would warn a second time. The only way to
+#      get the warnings back is an actual top-up.
+#   3. Otherwise announces at most one threshold per discharge, and only
+#      advances the stage if notify-send succeeded — no daemon yet means no
+#      beep, no state change, and a retry on the next poll.
+#
+# The notification is sent before the sound so the popup appears immediately
+# rather than after the blips finish. "%%" is systemd's escape for a literal
+# percent sign, which is what the message bodies print.
+ExecStart=/bin/sh -c 'sf=$XDG_RUNTIME_DIR/$STATEFILE; beep() { n=0; while [ "$n" -lt "$1" ]; do pw-play --volume=1.0 "$SOUNDFILE" >/dev/null 2>&1 || :; n=$((n+1)); sleep "$BEEP_GAP"; done; }; cap=100; dis=0; for d in /sys/class/power_supply/BAT*; do [ -r "$d/capacity" ] || continue; v=$(cat "$d/capacity" 2>/dev/null); [ -n "$v" ] || continue; [ "$v" -lt "$cap" ] && cap=$v; [ "$(cat "$d/status" 2>/dev/null)" = Discharging ] && dis=1; done; stage=$(cat "$sf" 2>/dev/null || echo 0); case $stage in ""|*[!0-9]*) stage=0 ;; esac; if [ "$cap" -gt "$RESET" ]; then [ "$stage" = 0 ] || echo 0 >"$sf"; exit 0; fi; [ "$dis" = 1 ] || exit 0; if [ "$cap" -le "$CRIT" ] && [ "$stage" -lt 2 ]; then notify-send -a battery -u critical -i "$ICON_CRIT" "Battery critically low" "Charge is at [$cap%%]. Save your work and plug in the charger now." && beep "$BEEPS_CRIT" && echo 2 >"$sf"; elif [ "$cap" -le "$WARN" ] && [ "$stage" -lt 1 ]; then notify-send -a battery -u normal -i "$ICON_WARN" "Battery low" "Charge is at [$cap%%]. Consider plugging in the charger." && beep "$BEEPS_WARN" && echo 1 >"$sf"; fi; exit 0'
+
+TimeoutStartSec=30
