@@ -42,8 +42,7 @@ vscode/.config/Code/Trust Tokens-journal
 vscode/.config/Code/languagepacks.json
 vscode/.config/Code/machineid
 
-# local-bin icons & appimages
-local-bin/.local/bin/.icons/
+# local-bin appimages & backups
 local-bin/.local/bin/*.appimage
 local-bin/.local/bin/*.old
 # Large binary executables (exceeds GitHub 100 MB limit)
