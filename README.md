@@ -6,7 +6,7 @@ This repository contains the configuration files and scripts for a Fedora, Arch,
 Distribution         : Fedora
 Window Manager       : Sway
 Status Bar           : Waybar
-Display Manager      : Kanshi + Sway
+Display Management   : Kanshi (systemd user service)
 Shell                : Zsh (Zinit)
 Terminals            : Ghostty / Kitty / Alacritty / WezTerm
 Terminal Multiplexer : Tmux
@@ -64,29 +64,55 @@ Install SwayOSD, power-profiles-daemon, GNOME Keyring, KDE Connect, Awww, UWSM, 
 git clone git@github.com:alpererdogan8/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
-# Install all packages using Stow (creates symlinks)
+# Link every package using Stow (creates symlinks)
 ./install.sh
 
-# Install specific packages
+# Link specific packages
 ./install.sh sway git ghostty
 
 # Relink packages after adding or removing files
 ./install.sh --relink sway waybar
-
-# List installation status
-./install.sh --list
-
-# Check link state only: no output, exit 0 when everything is linked
-./install.sh --is-linked
 
 # Remove links
 ./install.sh --remove sway
 
 # Preview without making changes
 ./install.sh --dry-run
+
+# Show the available options
+./install.sh --help
 ```
 
 The `ly` package targets `/etc/ly` and is installed with `sudo` by the installer. The runtime configurations are expected at their Stow targets, such as `~/.config/sway/config`; they do not require the repository to remain at `~/dotfiles`.
+
+### Checking link state
+
+`./install.sh` never copies files. Each package is a Stow package whose contents are symlinked into place, so a change in the repository is live immediately. The risk is the opposite one: a file added to the repository that was never linked.
+
+```bash
+# Table of every package, its target and its link state
+./install.sh --list
+
+# Check only: no output when everything is linked
+./install.sh --is-linked && echo "all linked"
+```
+
+`--is-linked` is the form to use in scripts and commit hooks. It prints nothing on success and exits 0. On failure it writes what is wrong to stderr and exits 1, or exits 2 if the checker itself cannot run. A package counts as linked only when every one of its tracked files is in place; a single unlinked file is reported.
+
+The same check is available directly as `stow-status.sh`, which takes `--brief` for the table without per-file details and `--quiet` for the silent form.
+
+## Session Services
+
+Kanshi is managed by systemd rather than by `sway/config`, and its unit lives in this repository at `systemd/user/kanshi.service`. It overrides the unit shipped by the package, because `~/.config/systemd/user` has a higher systemd load priority than `/usr/lib/systemd/user`.
+
+```bash
+./install.sh systemd
+systemctl --user daemon-reload
+systemctl --user restart kanshi.service
+systemctl --user status kanshi.service
+```
+
+Output profiles stay in `kanshi/config`, reached through the Stow link at `~/.config/kanshi/config`.
 
 ## Local Secrets
 
