@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR="$HOME/Pictures/wallpapers-2/"
+DIR="$HOME/Pictures/wallpapers/"
 
 PICS=($(ls $DIR | grep -E ".jpg|.jpeg|.png|.webp|.gif"))
 RANDOM_PICS=${PICS[RANDOM % ${#PICS[@]}]}
