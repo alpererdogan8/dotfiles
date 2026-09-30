@@ -1,0 +1,54 @@
+# playerctld.service — MPRIS media control daemon
+#
+# Installed from dotfiles via: ./install.sh systemd
+#
+# MPRIS media keys need playerctld. It acts as a single proxy in front of
+# every MPRIS player, which is what makes XF86AudioPlay/Pause/Next/Prev work:
+# without it, playerctl cannot decide which of the several players on the bus
+# the key press was meant for, and the command silently does nothing
+# (playerctl exits 0 either way, so the failure is invisible).
+#
+# ── Why this unit exists ──────────────────────────────────────────────────────
+# playerctld ships no unit on Fedora. It is only registered as a D-Bus service
+# at /usr/share/dbus-1/services/org.mpris.MediaPlayer2.playerctld.service,
+# which means systemd never manages it: the process appears as a transient
+# `dbus-:1.2-org.mpris.MediaPlayer2.playerctld@N.service` unit and disappears
+# with the session. Owning it here gives it a real unit, restart policy and
+# boot ordering.
+#
+# ── Coexistence with D-Bus activation ─────────────────────────────────────────
+# playerctl also registers this same bus name for D-Bus activation
+# (/usr/share/dbus-1/services/org.mpris.MediaPlayer2.playerctld.service), so
+# both paths can try to start the daemon. That is survivable but it is not free:
+# the second one to arrive exits with "could not acquire bus name: playerctld is
+# already running" and status=1. So the two states matter:
+#
+#   * Once this unit is up, D-Bus activation never fires — activation only
+#     happens when the name has no owner, and it does have one. Verified by
+#     requesting the name again with the daemon running: PID unchanged.
+#   * If D-Bus activation gets there first (the state before this unit was
+#     enabled, when a media key press started it), `systemctl --user start`
+#     fails the same way. Restart=on-failure then loops. Clear the stray
+#     process before enabling this unit.
+#
+# The point of owning it here is to remove that ordering question: the daemon
+# is up at session start instead of on the first media key press. For the same
+# reason `playerctld` must not also be started from sway/config.
+
+[Unit]
+Description=Playerctl daemon (MPRIS media control proxy)
+Documentation=man:playerctl(1)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecCondition=/bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+ExecStart=/usr/bin/playerctld
+# There is no media player at session start and that is fine; the daemon
+# tracks players as they appear. Restart only on failure so a crash is
+# recovered but a clean exit is not fought with.
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
