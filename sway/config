@@ -42,7 +42,6 @@ exec uwsm app -- /usr/bin/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
-exec uwsm app -- playerctld daemon
 # exec uwsm app -- $HOME/.local/bin/autotiling-rs
 # exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
