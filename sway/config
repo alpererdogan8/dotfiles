@@ -42,6 +42,7 @@ exec uwsm app -- /usr/bin/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
+exec uwsm app -- playerctld daemon
 # exec uwsm app -- $HOME/.local/bin/autotiling-rs
 # exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
@@ -262,22 +263,6 @@ bindsym $mod+Ctrl+c move position center
 # Toggle gaps on current workspace
 # Original default: no default binding
 bindsym $mod+g gaps inner current toggle 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ### Fedora Sway layered config.d
 # Files in ~/.config/sway/config.d/ override same-named files in
