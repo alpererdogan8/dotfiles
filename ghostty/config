@@ -12,9 +12,9 @@ window-padding-x = 8
 window-padding-y = 8
 window-step-resize = true
 # Primary
-# theme = Hybrid
+theme = Hybrid
 
-theme = Kanagawa Wave
+# theme = Kanagawa Wave
 
 #theme = Sunset Drive
 #theme = Horizon
@@ -29,7 +29,8 @@ confirm-close-surface = false
 cursor-style-blink = true
 
 
-keybind = ctrl+plus=increase_font_size:1
-keybind = ctrl+equal=increase_font_size:1
-keybind = ctrl+minus=decrease_font_size:1
+# keybind = ctrl+plus=increase_font_size:1
+# keybind = ctrl+equal=increase_font_size:1
+keybind = ctrl+shift+4=increase_font_size:1
+# keybind = ctrl+minus=decrease_font_size:1
 keybind = ctrl+0=reset_font_size
