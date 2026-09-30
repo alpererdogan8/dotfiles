@@ -103,16 +103,22 @@ The same check is available directly as `stow-status.sh`, which takes `--brief` 
 
 ## Session Services
 
-Kanshi is managed by systemd rather than by `sway/config`, and its unit lives in this repository at `systemd/user/kanshi.service`. It overrides the unit shipped by the package, because `~/.config/systemd/user` has a higher systemd load priority than `/usr/lib/systemd/user`.
+Session daemons are managed by systemd rather than by `sway/config`, and their units live in this repository under `systemd/user/`. `~/.config/systemd/user` has a higher systemd load priority than `/usr/lib/systemd/user`, so a unit here overrides the one shipped by the package — this is why `kanshi.service` carries its own copy.
 
 ```bash
 ./install.sh systemd
 systemctl --user daemon-reload
-systemctl --user restart kanshi.service
-systemctl --user status kanshi.service
+systemctl --user restart kanshi.service playerctld.service
+systemctl --user status kanshi.service playerctld.service
 ```
 
 Output profiles stay in `kanshi/config`, reached through the Stow link at `~/.config/kanshi/config`.
+
+`playerctld.service` is the MPRIS proxy behind the media keys. It ships no unit on Fedora, only a D-Bus activation file, which means systemd never really manages it — see the comments in the unit for the details. One consequence is worth knowing when enabling it: if the daemon was already started by D-Bus activation (which happens the first time a media key is pressed), clear the stray process first, or `systemctl --user start` fails with `could not acquire bus name` and `Restart=on-failure` loops.
+
+```bash
+pkill playerctld && systemctl --user start playerctld.service
+```
 
 ## Local Secrets
 
