@@ -1,5 +1,11 @@
 export SSH_AUTH_SOCK="$HOME/.bitwarden-ssh-agent.sock"
 export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
+
+# Single source of truth for TERMINAL. uwsm's env-preloader injects this file
+# into the systemd user manager, so it reaches every shell and GUI app in the
+# session. Consumers: waybar's on-click commands (`$TERMINAL --title=...`).
+# Do NOT re-declare it in zsh/zsh/configs/env.zsh — that would be a second
+# place to forget when switching terminal emulators.
 export TERMINAL=ghostty
 
 #export QT_QPA_PLATFORMTHEME=qt6ct

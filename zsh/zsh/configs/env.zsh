@@ -1,7 +1,12 @@
 export ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 export EDITOR=nvim
 export VISUAL=nvim
-export TERMINAL=ghostty
+
+# NOTE: TERMINAL is deliberately NOT set here. It has a single source of
+# truth in dotfiles/uwsm/env, which uwsm's env-preloader injects into the
+# systemd user manager at session start — so every shell and every GUI app
+# launched in the session already inherits it. Duplicating it here would only
+# create a second place to forget when switching terminal emulators.
 
 export PATH="$HOME/.local/share/fnm:$PATH"
 
