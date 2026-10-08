@@ -157,7 +157,7 @@
                 ]
             },
             "scroll-step": 1,
-            "on-click": "bash -c \"$TERMINAL --title=btop-float -e wiremix\"",
+            "on-click": "bash -c \"$TERMINAL --title=wiremix-float -e wiremix\"",
             "ignored-sinks": [
                 "Easy Effects Sink"
             ]
@@ -180,7 +180,7 @@
                 "󰤨"
             ],
             "max-length": 50,
-            "on-click": "bash -c \"$TERMINAL --gtk-single-instance=false --title=impala-float -e $HOME/.cargo/bin/impala\""
+            "on-click": "bash -c \"$TERMINAL --title=impala-float -e $HOME/.cargo/bin/impala-nm\""
         },
         // ── Notifications ───────────────────────────────────────────────────────
         "custom/battery-watt": {
@@ -382,7 +382,7 @@
                 ]
             },
             "scroll-step": 1,
-            "on-click": "bash -c \"$TERMINAL --title=btop-float -e wiremix\"",
+            "on-click": "bash -c \"$TERMINAL --title=wiremix-float -e wiremix\"",
             "ignored-sinks": [
                 "Easy Effects Sink"
             ]
@@ -405,7 +405,7 @@
                 "󰤨"
             ],
             "max-length": 50,
-            "on-click": "bash -c \"$TERMINAL --gtk-single-instance=false --title=impala-float -e $HOME/.cargo/bin/impala\""
+            "on-click": "bash -c \"$TERMINAL --title=impala-float -e $HOME/.cargo/bin/impala-nm\""
         },
         // ── Battery ───────────────────────────────────────────────────────
         "battery": {
