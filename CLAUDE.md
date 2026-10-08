@@ -53,12 +53,17 @@ The `ly` package targets `/etc/ly` and is installed with `sudo`. All other packa
 
 The repository uses GNU Stow. A package is a top-level directory whose contents mirror paths below its target.
 
-| Package | Target |
-|---|---|
-| `alacritty`, `fastfetch`, `ghostty`, `kanshi`, `kitty`, `nvim`, `rofi`, `sway`, `swaylock`, `swaync`, `swayosd`, `systemd`, `tmux`, `uwsm`, `waybar`, `yazi` | `~/.config/<package>` |
-| `starship` | `~/.config` |
-| `bash`, `git`, `local-bin`, `vscode`, `zsh` | `$HOME` |
-| `ly` | `/etc/ly` |
+**The set of packages is discovered, not registered.** Any top-level directory is a package, and the convention is that it deploys to `~/.config/<name>`. Creating a directory in the repository is the whole of the work — `./install.sh <name>`, `./install.sh` and `./install.sh --list` all pick it up with no edit to any script. A registry would have been the alternative, and it fails in a specific way: a new package that nobody remembered to add is not an error, it is simply never installed and never reported as missing.
+
+`packages.conf` at the repository root holds the exceptions and the shared helpers, and is sourced by both `install.sh` and `stow-status.sh` so the installer and the checker cannot disagree about the set. Directories whose name starts with a dot are not packages — stow skips those unless run with `--dotfiles`, so a target for one could never be honoured.
+
+The overrides, all of which are packages whose contents mirror a path that is not `~/.config/<name>`:
+
+| Package | Target | Why |
+|---|---|---|
+| `starship` | `~/.config` | `starship.toml` is read from `~/.config/starship.toml` |
+| `bash`, `git`, `local-bin`, `vscode`, `zsh` | `$HOME` | they mirror paths below `$HOME` itself (`.bashrc`, `.gitconfig`, `.local/bin/*`) |
+| `ly` | `/etc/ly` | system package, installed with sudo |
 
 Examples:
 
@@ -68,6 +73,7 @@ Examples:
 - `local-bin/.local/bin/display-mode` → `~/.local/bin/display-mode`
 - `systemd/user/kanshi.service` → `~/.config/systemd/user/kanshi.service`
 - `starship/starship.toml` → `~/.config/starship.toml`
+- `wezterm/wezterm.lua` → `~/.config/wezterm/wezterm.lua` (no override needed)
 
 Runtime configuration paths should use installed Stow targets such as `~/.config/...`; they should not depend on the repository being located at `~/dotfiles`.
 
@@ -82,7 +88,7 @@ Monitor profiles:
 - `mirror`: both outputs are enabled; the workspace assignment command uses HDMI for the shared workspace set.
 - `laptop`: eDP only; workspaces 1–10 are assigned to eDP.
 
-The output names are hardware-specific and currently assume `HDMI-A-1` and `eDP-1`. The display-mode switcher is `~/.local/bin/display-mode`. Workspace assignments are synchronized by `~/.local/bin/kanshi-workspace-assign` during manual profile changes and Waybar output events.
+The output names are hardware-specific and currently assume `HDMI-A-1` and `eDP-1`. The display-mode switcher is `~/.local/bin/display-mode`. Workspace assignments are synchronized by `~/.config/sway/scripts/kanshi-workspace-assign` during manual profile changes and Waybar output events.
 
 Waybar selects its configuration from the active Kanshi profile and active outputs:
 
@@ -176,9 +182,22 @@ There is currently no single cross-application theme source. Changing a theme re
 
 ## Local Scripts
 
-`local-bin/.local/bin/` contains session helpers such as display-mode selection, workspace movement, screenshots, wallpapers, health checks, and the webapp launcher. Scripts should use quoted arguments and safe shell-escaped generated commands.
+`local-bin/.local/bin/` contains session helpers that are not sway-specific: display-mode selection, clipboard history, the rofi launcher, wallpapers, volume control, health checks, and the webapp launcher. Workspace and output scripts live in `sway/scripts/` instead, because they talk to sway over IPC and are only ever called from sway bindings, Waybar's output handler, or `display-mode`. Scripts should use quoted arguments and safe shell-escaped generated commands.
 
-`stow-status.sh` reports the link state of every package. It is the single implementation behind both `./install.sh --list` and `./install.sh --is-linked`; `install.sh` only forwards to it and propagates its exit status, so there is one definition of "linked" rather than two that can disagree. It reads the `TARGET` map out of `install.sh`, so it needs no changes when a package is added or retargeted, and it locates the repository from the path `install.sh` passes it, or by resolving its own symlink when run directly. `--brief` prints the table and summary only, `--quiet` prints nothing and reports through the exit status. It checks every file in a package rather than only the first, so a single unlinked file is no longer hidden. Two classes of file are excluded from the link count: paths ignored by `.gitignore` (local artifacts such as `node_modules`, `__pycache__`, `.zcompdump`, `zsh_history`) and the basenames GNU Stow never deploys (`README*`, `LICENSE*`, `LICENCE*`, `COPYING*`, `.git*`). Because Stow sometimes links a whole directory, a file reached through a linked parent directory counts as linked even though it is a real file. The script exits non-zero when any package is not fully linked.
+`stow-status.sh` reports the link state of every package. It is the single implementation behind both `./install.sh --list` and `./install.sh --is-linked`; `install.sh` only forwards to it and propagates its exit status, so there is one definition of "linked" rather than two that can disagree. It sources `packages.conf` — the same file `install.sh` sources, and never `install.sh` itself, which would run the installer — and builds the same map from the same discovery, so the two cannot drift. It locates the repository from the path `install.sh` passes it, or by resolving its own symlink when run directly. `--brief` prints the table and summary only, `--quiet` prints nothing and reports through the exit status. It checks every file in a package rather than only the first, so a single unlinked file is no longer hidden. Because Stow sometimes links a whole directory, a file reached through a linked parent directory counts as linked even though it is a real file. The script exits non-zero when any package is not fully linked.
+
+A `conflict` is a real file where the link belongs, not a broken symlink. Stow refuses to touch such a package at all ("existing target is not owned by stow"), so the fix is to remove the file and re-run the installer rather than to pass `--relink`.
+
+Two classes of file are excluded from the link count. The first is paths ignored by `.gitignore` (local artifacts such as `node_modules`, `__pycache__`, `.zcompdump`, `zsh_history`). The second is files GNU Stow itself would not deploy. That second class follows stow's real algorithm rather than a name list, because the two disagree in ways that change the answer:
+
+- A pattern containing `/` is tested as `(^|/)(pattern)(/|$)` against `/`+the path relative to the package root. A pattern without `/` is tested as `^(pattern)$` against the basename only. So `^/README.*` skips `README.md` at the package root but **not** `sub/README.md`, while `.gitignore` is skipped at any depth. `LICENCE` is not in stow's list, only `LICENSE`.
+- The test runs on directories as well as files, and an ignored directory is never descended into, so a file is ignored when it or any ancestor inside the package matches.
+- Patterns are Perl regular expressions, not globs, and a comment needs whitespace in front of its `#` — which is why `\.#.+` (emacs lock files) survives as a pattern instead of being cut short at the `#`.
+- An ignore file *replaces* the built-in list rather than extending it. Stow reads it from the package directory and then from `~/.stow-global-ignore`, never from the repository root; a `.stow-local-ignore` at the repo root looks effective and does nothing, so its presence is reported as a warning.
+
+Note that a folded directory link defeats the ignore list entirely: once Stow links `themes/` as one directory, everything inside it is deployed whatever the list says.
+
+The report ends with a package inventory. Because the set is discovered, no directory can hide from the table above; what the inventory states instead is the two ways the inventory itself can be wrong. An `OVERRIDE_TARGET` entry naming a directory that does not exist is the one that bites: discovery walks directories, so a typo there produces no package at all and the override is silently inert, leaving the package to deploy to the convention target instead of the intended one. The inventory lists those, along with the dot-directories, so the package count can be read correctly. Reporting only — neither affects the exit status.
 
 An absolute symlink into the repository is reported as `absolute`, not `linked`. Stow only ever creates relative links and compares the raw link text, so a hand-made absolute link makes it abort the entire package with "existing target is not owned by stow". Resolving the link would hide this, which is why the raw target is checked. Fix it by removing the link and re-running the installer; `--relink` does not work here because the unstaging step fails the same way:
 
@@ -192,12 +211,37 @@ rm ~/.config/rofi/launcher.rasi
 After changing dotfiles, run the available checks:
 
 ```bash
-bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.sh
+bash -n install.sh packages.conf local-bin/.local/bin/* sway/scripts/* waybar/scripts/*.sh swaync/scripts/*.sh
 zsh -n zsh/zsh/configs/*.zsh
 sway -C -c sway/config
 systemd-analyze verify systemd/user/battery-notify.service systemd/user/battery-notify.timer
 ./install.sh --dry-run
 ./install.sh --is-linked
 ```
+
+`stow-status.sh` also carries a behavioural contract that a syntax check cannot
+catch: its ignore rules have to agree with what GNU Stow actually does, and the
+two drift silently. The way to check that is differential — build a fixture
+package full of awkward names, ask `stow -nv --no-folding` which files it would
+link, and confirm the script agrees on every one of them:
+
+```bash
+T=$(mktemp -d); mkdir -p "$T/repo/pkg/sub/deep" "$T/target" "$T/home"
+cd "$T/repo/pkg"
+touch README.md README LICENSE LICENCE COPYING .gitignore .gitconfig \
+      config.conf RCS CVS 'file,v' '.notes~' '.#lock' '#auto#'
+touch sub/README.md sub/COPYING sub/.gitignore sub/deep/README.md
+cd "$T/repo"
+
+HOME="$T/home" stow -nv --no-folding -d . -t "$T/target" pkg \
+  | grep '^LINK:' | sed 's/^LINK: //; s/ =>.*//' | sort
+```
+
+Use `--no-folding`: with the default folder folding Stow links a whole
+directory and never looks inside, which hides every ignore rule that applies to
+its contents. Nine scenarios are worth keeping green — defaults, a
+package-local list, a global list, comment and escape handling, regex patterns,
+a segment pattern that collides with a directory name, a path pattern pointing
+at a nested directory, and blank input lines.
 
 Waybar JSONC files should be checked with the Waybar parser when a graphical Waybar restart is available. The repository does not currently include a CI test suite.

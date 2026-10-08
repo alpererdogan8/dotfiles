@@ -101,6 +101,49 @@ The `ly` package targets `/etc/ly` and is installed with `sudo` by the installer
 
 The same check is available directly as `stow-status.sh`, which takes `--brief` for the table without per-file details and `--quiet` for the silent form.
 
+## Adding a new application
+
+Any top-level directory in this repository is a Stow package, and by convention it deploys to `~/.config/<name>`. Creating the directory is the whole job — there is no registry to update:
+
+```bash
+mkdir -p fuzzel && cp /path/to/fuzzel.conf fuzzel/fuzzel.conf
+./install.sh fuzzel          # → ~/.config/fuzzel/fuzzel.conf
+./install.sh --list         # fuzzel is already in the table
+```
+
+Packages that do not fit the convention — because their contents mirror a path below `$HOME` rather than their own directory — are the only ones listed in `packages.conf`, which `install.sh` and `stow-status.sh` both source:
+
+```bash
+declare -A OVERRIDE_TARGET=(
+  [starship]="$HOME/.config"
+  [bash]="$HOME"
+  [git]="$HOME"
+  [zsh]="$HOME"
+  [vscode]="$HOME"
+  ['local-bin']="$HOME"
+  [ly]="/etc/ly"           # and in SUDO_PACKAGES
+)
+```
+
+Directories whose name starts with a dot are not packages; Stow skips them unless it is run with `--dotfiles`.
+
+`./install.sh --list` ends with an inventory stating the two ways the set can be wrong without that showing up in the table: an override naming a directory that does not exist (the entry is then silently inert, and the package deploys to the convention target instead), and the dot-directories, so the package count can be read correctly.
+
+```
+Package inventory
+  24 packages, all discovered from the repository — a new directory is installable with no edit
+  convention: ~/.config/<name>   overrides in packages.conf:
+    bash git local-bin ly starship vscode zsh
+  Dot-directories, not stow packages (stow skips them by design):
+    .agents (1 files)
+```
+
+A `conflict` in the table means a real file sits where the link belongs — for example `~/.config/wezterm` was set up by hand rather than linked. Stow refuses to touch such a package, so remove the directory and re-run the installer:
+
+```bash
+rm -rf ~/.config/wezterm && ./install.sh wezterm
+```
+
 ## Session Services
 
 Session daemons are managed by systemd rather than by `sway/config`, and their units live in this repository under `systemd/user/`. `~/.config/systemd/user` has a higher systemd load priority than `/usr/lib/systemd/user`, so a unit here overrides the one shipped by the package — this is why `kanshi.service` carries its own copy.
@@ -139,7 +182,7 @@ There is no single cross-application theme source in this repository. Terminal, 
 After changing dotfiles, run:
 
 ```bash
-bash -n install.sh local-bin/.local/bin/* waybar/scripts/*.sh swaync/scripts/*.sh
+bash -n install.sh packages.conf local-bin/.local/bin/* sway/scripts/* waybar/scripts/*.sh swaync/scripts/*.sh
 zsh -n zsh/zsh/configs/*.zsh
 sway -C -c sway/config
 ./install.sh --dry-run
