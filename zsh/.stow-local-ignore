@@ -1,0 +1,15 @@
+# Stow must not deploy these from the zsh package, which targets $HOME rather
+# than a directory of its own.
+#
+# The pnpm artifacts come from running pnpm inside zsh/; .gitignore keeps them
+# out of Git, but stow does not read .gitignore and would try to link them into
+# $HOME, where they collide with the real ones. node_modules also holds only pnpm
+# state files, so there is nothing in it worth deploying.
+^/node_modules
+^/package\.json$
+^/pnpm-lock\.yaml$
+
+# Documentation for this package. It belongs in the repository, but a copy in
+# $HOME is just clutter.
+^/CHEATSHEET\.md$
+^/INSTALL\.md$
