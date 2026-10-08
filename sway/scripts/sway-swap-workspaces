@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+# sway-swap-workspaces — swap the windows of the two workspaces shown on the two
+# active outputs.
+#
+# The workspaces stay put: ws 1-5 keep living on the external monitor, ws 6-10 on
+# the laptop panel, exactly as `workspace <n> output <output>` and kanshi assign
+# them. Only the windows inside the two visible workspaces change screens.
+#
+# ---------------------------------------------------------------------------
+# How sway actually moves a window, and what that forces this script to do
+#
+# cmd_move() resolves the destination like this (sway/commands/move.c):
+#
+#     struct sway_container *dst = seat_get_focus_inactive_tiling(seat, ws);
+#     destination = dst ? &dst->node : &ws->node;
+#
+# and container_move_to_workspace() then does:
+#
+#     if (workspace_is_empty(workspace) && container->pending.children) {
+#         workspace_unwrap_children(workspace, container);
+#     } else {
+#         workspace_add_tiling(workspace, container);
+#     }
+#
+# Reading those two together:
+#
+#   * the destination of `move container to workspace N` is the *focused window*
+#     of N, not N itself;
+#   * if N is empty and the moving window carries children, those children are
+#     unwrapped into N — a split arrives as separate top-level windows;
+#   * if N is empty and the window has no children, the new window becomes the
+#     focused one, so the *next* window moved there is nested under it.
+#
+# Neither branch is what a swap wants, and both get worse with more windows: the
+# first window lands cleanly and every later one piles up under it, which is
+# exactly the "everything ends up in a mess" symptom.
+#
+# So this script never relies on a plain `move container to workspace` for the
+# real destination. It moves each window out of the way first, and only then
+# places it — see the ordering below.
+#
+# `move container to output` is not used at all: its destination goes through
+# output_get_active_workspace(), which returns output->workspaces->items[0]
+# whenever the focus sits on the other output, so it aims at the wrong
+# workspace and drops the window from the tree while still answering success.
+# ---------------------------------------------------------------------------
+set -euo pipefail
+
+dry_run=false
+if [[ ${1:-} == "--dry-run" ]]; then
+    dry_run=true
+fi
+
+outputs=$(swaymsg -t get_outputs -r)
+tree=$(swaymsg -t get_tree -r)
+
+# Only enabled outputs that actually show a workspace take part.
+mapfile -t active < <(
+    jq -r '.[] | select(.active and .current_workspace != null) | .name' <<<"$outputs"
+)
+
+if (( ${#active[@]} != 2 )); then
+    echo "sway-swap-workspaces: expected 2 active outputs, found ${#active[@]}" >&2
+    exit 1
+fi
+
+focused=$(jq -r '.[] | select(.active and .current_workspace != null and .focused) | .name' <<<"$outputs")
+if [[ -z $focused ]]; then
+    echo "sway-swap-workspaces: no focused output" >&2
+    exit 1
+fi
+other=${active[0]}
+[[ $other == "$focused" ]] && other=${active[1]}
+
+# Only the workspace each output currently shows. An output also owns its hidden
+# workspaces, and their windows must not be touched.
+ws_focused=$(jq -r --arg out "$focused" '.[] | select(.name == $out) | .current_workspace' <<<"$outputs")
+ws_other=$(jq -r --arg out "$other" '.[] | select(.name == $out) | .current_workspace' <<<"$outputs")
+
+for out in "$focused" "$other"; do
+    [[ $out =~ ^[A-Za-z0-9._-]+$ ]] || {
+        echo "sway-swap-workspaces: unsupported output name '$out'" >&2
+        exit 1
+    }
+done
+for ws in "$ws_focused" "$ws_other"; do
+    [[ $ws =~ ^[A-Za-z0-9:_.-]+$ ]] || {
+        echo "sway-swap-workspaces: unsupported workspace name '$ws'" >&2
+        exit 1
+    }
+done
+
+# Top-level containers of one workspace: tiled children plus floating ones. A
+# split is a container tree, so moving its root moves the whole subtree.
+#
+# Real windows are identified by geometry, not by pid: sway reports pid, name
+# and app_id as null for windows it has no view metadata for, and those are
+# still visible windows. Filtering on pid dropped them and made the swap refuse
+# to run. Only a zero-sized rect marks a container as not-a-window.
+#
+# Sticky containers are skipped: they are shown on every workspace regardless of
+# the one that owns them, so they never leave the source screen.
+#
+# Global-fullscreen containers (fullscreen_mode 1) are listed too, tagged, and
+# dropped out of fullscreen for the duration of the move — sway refuses to move
+# them while they are global. They are put back afterwards.
+#
+# The JSON tree repeats each container's subtree under "focus", so this walks the
+# explicit output -> workspace -> children path rather than using `..`.
+workspace_con_ids() {
+    jq -r --arg out "$1" --arg ws "$2" '
+        [ .nodes[] | select(.type == "output" and .name == $out) ]
+        | .[0] // empty
+        | .nodes[]
+        | select(.type == "workspace" and .name == $ws)
+        | (.nodes[]?, .floating_nodes[]?)
+        | select(. != null)
+        | select((.rect.width // 0) > 0 and (.rect.height // 0) > 0)
+        | select((.sticky // false) == false)
+        | if (.fullscreen_mode // 0) == 1 then "fs \(.id)" else "plain \(.id)" end
+    ' <<<"$tree"
+}
+
+con_workspace_of() {
+    swaymsg -t get_tree -r | jq -r --argjson id "$1" '
+        [ .nodes[]
+          | select(.type == "output" and .name != "__i3")
+          | .nodes[]
+          | select(.type == "workspace")
+          | . as $ws
+          | ($ws.nodes[]?, $ws.floating_nodes[]?)
+          | select(.id? == $id)
+          | $ws.name ]
+        | .[0] // "detached"
+    '
+}
+
+# How many real windows a workspace currently holds.
+con_count() {
+    swaymsg -t get_tree -r | jq -r --arg ws "$1" '
+        [ .nodes[]
+          | select(.type == "output" and .name != "__i3")
+          | .nodes[]
+          | select(.type == "workspace" and .name == $ws)
+          | (.nodes[]?, .floating_nodes[]?)
+          | select(. != null)
+          | select((.rect.width // 0) > 0 and (.rect.height // 0) > 0) ]
+        | length
+    '
+}
+
+# A workspace to hold both sides while the real destinations are emptied.
+staging="__swap_$$"
+
+mapfile -t entries_focused < <(workspace_con_ids "$focused" "$ws_focused")
+mapfile -t entries_other < <(workspace_con_ids "$other" "$ws_other")
+
+# Split the "kind id" entries into plain ids and the global-fullscreen ones.
+ids_focused=(); fs_focused=()
+for e in "${entries_focused[@]}"; do
+    if [[ ${e%% *} == fs ]]; then fs_focused+=("${e##* }"); else ids_focused+=("${e##* }"); fi
+done
+ids_other=(); fs_other=()
+for e in "${entries_other[@]}"; do
+    if [[ ${e%% *} == fs ]]; then fs_other+=("${e##* }"); else ids_other+=("${e##* }"); fi
+done
+
+# A swap has to be mutual: moving only one side would drain a screen into the
+# other and leave the next keypress nothing to bring back.
+if (( ${#entries_focused[@]} == 0 || ${#entries_other[@]} == 0 )); then
+    if (( ${#entries_focused[@]} == 0 && ${#entries_other[@]} == 0 )); then
+        exit 0
+    fi
+    empty_out=$focused; empty_ws=$ws_focused
+    if (( ${#entries_other[@]} == 0 )); then
+        empty_out=$other; empty_ws=$ws_other
+    fi
+    echo "sway-swap-workspaces: $empty_out/$empty_ws has no windows, nothing to swap" >&2
+    exit 1
+fi
+
+# Move one container and confirm it arrived. If it did not, leave it in the
+# staging workspace rather than dropping it and losing the window.
+move_verified() {
+    local id=$1 target=$2
+    swaymsg "[con_id=$id] move container to workspace $target" >/dev/null
+    local where
+    where=$(con_workspace_of "$id")
+    if [[ $where != "$target" ]]; then
+        echo "sway-swap-workspaces: con $id did not reach $target (stuck on '$where')" >&2
+        return 1
+    fi
+    return 0
+}
+
+if $dry_run; then
+    printf '# %s/%s  ->  %s/%s\n' "$focused" "$ws_focused" "$other" "$ws_other"
+    printf '# staging workspace: %s\n' "$staging"
+    printf '# 1) leave global fullscreen so the windows can be moved\n'
+    for id in "${fs_focused[@]}" "${fs_other[@]}"; do printf '[con_id=%s] fullscreen disable\n' "$id"; done
+    printf '# 2) park the focused side in the staging workspace\n'
+    for id in "${ids_focused[@]}"; do printf '[con_id=%s] move container to workspace %s\n' "$id" "$staging"; done
+    printf '# 3) park the other side there too, so both targets are empty\n'
+    for id in "${ids_other[@]}"; do printf '[con_id=%s] move container to workspace %s\n' "$id" "$staging"; done
+    printf '# 4) place each side into its new, empty workspace\n'
+    for id in "${ids_other[@]}"; do printf '[con_id=%s] move container to workspace %s\n' "$id" "$ws_focused"; done
+    for id in "${ids_focused[@]}"; do printf '[con_id=%s] move container to workspace %s\n' "$id" "$ws_other"; done
+    printf '# 5) restore global fullscreen, leave focus where the key was pressed\n'
+    for id in "${fs_focused[@]}" "${fs_other[@]}"; do printf '[con_id=%s] fullscreen enable global\n' "$id"; done
+    printf '[focus output %s]\n' "$focused"
+    exit 0
+fi
+
+fail=0
+
+# 1) A global-fullscreen window cannot be moved at all, so drop it out of
+#    fullscreen first and restore it at the end.
+for id in "${fs_focused[@]}" "${fs_other[@]}"; do
+    swaymsg "[con_id=$id] fullscreen disable" >/dev/null
+done
+
+# 2) Park both sides in one staging workspace, so that both real destinations end
+#    up empty at the moment the windows come back. Going through a single
+#    workspace is what keeps the two sides apart: each window is moved by id,
+#    so its position in the staging list does not decide where it lands.
+for id in "${ids_focused[@]}"; do
+    move_verified "$id" "$staging" || fail=1
+done
+for id in "${ids_other[@]}"; do
+    move_verified "$id" "$staging" || fail=1
+done
+
+# 3) Place each side into its new workspace.
+for id in "${ids_other[@]}"; do
+    move_verified "$id" "$ws_focused" || fail=1
+done
+for id in "${ids_focused[@]}"; do
+    move_verified "$id" "$ws_other" || fail=1
+done
+
+# 4) Restore global fullscreen.
+for id in "${fs_focused[@]}" "${fs_other[@]}"; do
+    swaymsg "[con_id=$id] fullscreen enable global" >/dev/null
+done
+
+# The staging workspace is empty now. It is deliberately *not* focused: sway
+# refuses to reap a workspace that currently holds the focus
+# (workspace_consider_destroy), so focusing it to clean it up would leave a
+# stray __swap_* entry in the bar. Leaving focus alone lets sway reap it on the
+# next workspace change, which is what happens right below.
+#
+# Only if windows are still stuck there is it worth surfacing, since that means
+# the swap did not fully complete.
+if [[ $(con_count "$staging") != 0 ]]; then
+    echo "sway-swap-workspaces: staging workspace $staging still holds windows" >&2
+fi
+
+# Focus goes back to the output the key was pressed on, whose workspace never
+# changed.
+swaymsg "focus output $focused" >/dev/null
+
+if (( fail )); then
+    echo "sway-swap-workspaces: swap finished with errors, see messages above" >&2
+    exit 1
+fi

@@ -7,7 +7,7 @@ fi
 
 W="$HOME/.config/waybar"
 S="$HOME/.config/waybar/style.css"
-ASSIGN="$HOME/.local/bin/kanshi-workspace-assign"
+ASSIGN="$HOME/.config/sway/scripts/kanshi-workspace-assign"
 
 assign_workspaces() {
     local profile
