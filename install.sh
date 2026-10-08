@@ -55,35 +55,41 @@ for arg in "$@"; do
   esac
 done
 
-# TARGET: repo/package/file.conf → TARGET/file.conf
-# e.g. dotfiles/sway/config → ~/.config/sway/config
-declare -A TARGET=(
-  [alacritty]="$HOME/.config/alacritty"
-  [kitty]="$HOME/.config/kitty"
-  [fastfetch]="$HOME/.config/fastfetch"
-  [ghostty]="$HOME/.config/ghostty"
-  [nvim]="$HOME/.config/nvim"
-  [rofi]="$HOME/.config/rofi"
-  [sway]="$HOME/.config/sway"
-  [kanshi]="$HOME/.config/kanshi"
-  [swaync]="$HOME/.config/swaync"
-  [systemd]="$HOME/.config/systemd"
-  [swayosd]="$HOME/.config/swayosd"
-  [swaylock]="$HOME/.config/swaylock"
-  [tmux]="$HOME/.config/tmux"
-  [uwsm]="$HOME/.config/uwsm"
-  [waybar]="$HOME/.config/waybar"
-  [starship]="$HOME/.config"
-  [bash]="$HOME"
-  [git]="$HOME"
-  [zsh]="$HOME"
-  [vscode]="$HOME"
-  ['local-bin']="$HOME"
-  [ly]="/etc/ly"
-  [yazi]="$HOME/.config/yazi"
-)
+# ── Package inventory ───────────────────────────────────────────────────────
+# Which directories are packages, and where each one goes, lives in
+# packages.conf next to this script. It is sourced rather than reimplemented
+# here so that install.sh and stow-status.sh cannot disagree about the set.
+#
+# The map is derived from the repository on every run instead of being written
+# out: a top-level directory is a package, and the convention puts it in
+# ~/.config/<name>. Only the packages that do not follow that convention need an
+# entry in OVERRIDE_TARGET. Adding a directory to the repository is therefore
+# enough to make it installable — there is no registry to update, and no way for
+# a new package to be quietly left out of ./install.sh.
+#
+#   source: packages.conf  →  OVERRIDE_TARGET, SUDO_PACKAGES,
+#                            package_target, package_list, package_pairs
+#   result: TARGET[pkg] = absolute target directory
+#            repo/<pkg>/file.conf  →  TARGET[pkg]/file.conf
+#            e.g. dotfiles/sway/config → ~/.config/sway/config
+if [[ ! -r "$DOTFILES_DIR/packages.conf" ]]; then
+  echo -e "${RED}packages.conf not found: $DOTFILES_DIR/packages.conf${RESET}"
+  exit 2
+fi
+# shellcheck source=packages.conf
+source "$DOTFILES_DIR/packages.conf"
 
-SUDO_PACKAGES=(ly)
+declare -A TARGET=()
+while IFS=$'\t' read -r _pkg _target; do
+  [[ -n "$_pkg" ]] || continue
+  TARGET["$_pkg"]="$_target"
+done < <(package_pairs "$DOTFILES_DIR")
+unset _pkg _target
+
+if [[ "${#TARGET[@]}" -eq 0 ]]; then
+  echo -e "${RED}No packages found in $DOTFILES_DIR${RESET}"
+  exit 2
+fi
 
 log_ok() { echo -e "${GREEN}[OK]${RESET}    $*"; }
 log_warn() { echo -e "${YELLOW}[WARN]${RESET}  $*"; }
@@ -192,7 +198,12 @@ total=0
 skipped=0
 for pkg in "${PACKAGES[@]}"; do
   if [[ -z "${TARGET[$pkg]+_}" ]]; then
+    # Every top-level directory is a package, so this means the name is not a
+    # directory in the repository at all. Say which of the two it is rather than
+    # leaving it to be guessed.
     log_error "Undefined package: '$pkg'"
+    echo -e "${DIM}  No $pkg/ directory in $DOTFILES_DIR. Available packages:${RESET}"
+    printf '%s' "${!TARGET[@]}" | sort | tr '\n' ' '; echo
     ERRORS=$((ERRORS + 1))
     continue
   fi
