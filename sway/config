@@ -1,22 +1,21 @@
 # Default config for sway
 #
 # Read `man 5 sway` for a complete reference.
-
 ### Variables
 set $mod Mod4
 set $term ghostty +new-window
-# Focused application launcher — supports handoffs such as Alt+V → clipboard.
+# Focused launcher — supports handoffs such as Alt+V → clipboard.
 set $menu ~/.local/bin/rofi-launcher
 set $fileManager nautilus
 
 ### Output configuration
-# Output enable/disable and resolution are managed by kanshi (~/.config/kanshi/config).
-# kanshi automatically switches to eDP-1 when HDMI-A-1 is unplugged.
+# Output enable/disable, mode and position are managed by kanshi
+# (~/.config/kanshi/config), which also reacts to monitor hotplug.
 # output * bg /usr/share/backgrounds/default-dark.jxl fill
 #output * bg $HOME/Pictures/abstract_a_black_and_white_picture_of_mountains_and_trees.png fill
 
 ### Borders and gaps
-# Single consistent border style everywhere — prevents layout shift on focus change
+# Same border style focused and unfocused, so nothing shifts on focus change
 smart_borders off
 hide_edge_borders none
 
@@ -36,8 +35,6 @@ client.focused   #7c8b9a #7c8b9a #1e1e1e #7c8b9a #7c8b9a
 client.unfocused #55606b #2b2b2b #8b98a5 #55606b #55606b
 
 ### Autostart
-# kanshi: dynamic output manager — handles monitor hotplug (HDMI <-> eDP-1).
-# Started as a systemd user service, not from here. Unit: systemd/user/kanshi.service
 exec uwsm app -- /usr/bin/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
@@ -45,19 +42,21 @@ exec uwsm app -- awww-daemon
 # exec uwsm app -- $HOME/.local/bin/autotiling-rs
 # exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
-# cliphist: clipboard history daemon — stores entries as clipboard changes
+# cliphist stores an entry on every clipboard change
 exec wl-paste --watch cliphist store
 
-# gnome-keyring: --start forks and exits immediately, must not be wrapped
-# with uwsm app --. pkcs11+secrets come from Fedora's systemd user socket
-# service; this exec only adds the ssh component.
+# --start forks and exits at once, so it must not be wrapped in `uwsm app --`.
+# Only the ssh component is added here; pkcs11/secrets come from Fedora's
+# systemd user socket service.
 exec "gnome-keyring-daemon --start --components=pkcs11,secrets,ssh"
 
 ### Idle configuration
-# Managed by /usr/share/sway/config.d/20-swayidle.conf
-# To customize: create ~/.config/sway/config.d/20-swayidle.conf
+# Handled by /usr/share/sway/config.d/20-swayidle.conf.
+# Override with ~/.config/sway/config.d/20-swayidle.conf.
 
 ### Input configuration
+# sway has no wildcard for input identifiers and ignores a mismatch silently,
+# so re-check with: swaymsg -t get_inputs | jq -r '.[]|select(.type=="touchpad")|.identifier'
 input "2:7:SynPS/2_Synaptics_TouchPad" {
     accel_profile "adaptive"
     dwt enabled
@@ -98,7 +97,7 @@ bindgesture swipe:4:down kill
     bindsym $mod+r exec uwsm app -- vicinae toggle
 
     bindsym $mod+l exec loginctl lock-session
-    # wallpa er script manages its own child processes
+    # wallpaper script manages its own child processes
     bindsym $mod+shift+w exec $HOME/.local/bin/wallpaper_cycle.sh
 
     bindsym $mod+n exec swaync-client -R && swaync-client -rs && swaync-client -t -sw
@@ -111,14 +110,15 @@ bindgesture swipe:4:down kill
 
     floating_modifier $mod normal
 
-    bindsym $mod+Shift+c reload
+    # kanshi reload is needed because reload alone resets the outputs to sway's
+    # side-by-side default. `switch` is a no-op when the profile is already active.
+    bindsym $mod+Shift+c exec 'swaymsg reload; kanshictl reload'
     # swaynag is a short-lived dialog — no uwsm app needed
     bindsym $mod+Shift+m exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 #
 # Moving around:
 #
-    # Arrow keys only; vim h/j/k/l intentionally disabled
-    # ($mod+l = lock session, $mod+j = layout toggle)
+    # Arrow keys only; vim h/j/k/l are taken by lock (l) and layout toggle (j)
     bindsym $mod+Left  focus left
     bindsym $mod+Down  focus down
     bindsym $mod+Up    focus up
@@ -143,8 +143,8 @@ bindgesture swipe:4:down kill
     workspace 9 output eDP-1
     workspace 10 output eDP-1
 
-    # focus floating: when scratchpad is visible (sticky+floating), re-focus it
-    # after workspace switch; when scratchpad is hidden, this is a silent no-op.
+    # `focus floating` re-focuses a visible sticky scratchpad, and is a no-op
+    # when the scratchpad is hidden.
     bindsym $mod+1 workspace number 1; focus floating
     bindsym $mod+2 workspace number 2; focus floating
     bindsym $mod+3 workspace number 3; focus floating
@@ -169,10 +169,13 @@ bindgesture swipe:4:down kill
 
     bindsym alt+Right workspace next_on_output; focus floating
     bindsym alt+Left  workspace prev_on_output; focus floating
-    # Move container to next/prev *numbered* workspace (including empty ones) and follow.
-    # Uses ~/.local/bin/sway-move-workspace to step ±1 regardless of active state.
-    bindsym alt+shift+Right exec ~/.local/bin/sway-move-workspace next
-    bindsym alt+shift+Left  exec ~/.local/bin/sway-move-workspace prev
+    # Step to the next/prev *numbered* workspace, empty ones included, and follow.
+    bindsym alt+shift+Right exec ~/.config/sway/scripts/sway-move-workspace next
+    bindsym alt+shift+Left  exec ~/.config/sway/scripts/sway-move-workspace prev
+
+    # Swap the windows of the two visible workspaces between the monitors.
+    # Workspaces stay pinned to their output; only their contents change screen.
+    bindsym $mod+Shift+space exec ~/.config/sway/scripts/sway-swap-workspaces
 #
 # Layout:
 #
@@ -212,60 +215,39 @@ bindswitch --locked lid:off exec swaymsg output eDP-1 enable
 
 
 
-### Advanced Sway features - test bindings
+### Advanced bindings
 
-# Focus child container
-# Original default: no default binding
+# Focus a child container
 bindsym $mod+Shift+a focus child
 
-
-# Explicit vertical split
-# Original default: $mod+v
-# Your $mod+v is used for floating toggle
+# Vertical split
 bindsym $mod+Shift+b splitv
 
-
 # Stacking layout
-# Original default: $mod+s
-# Your $mod+s is used for scratchpad show
 bindsym $mod+Ctrl+f layout stacking
 
-
-# Go back to the previously focused workspace
-# Original default: no default binding
+# Return to the previously focused workspace
 bindsym Alt+Tab workspace back_and_forth
 
-
-# Focus another output / monitor
-# Original default: no default binding
+# Focus a different output
 bindsym $mod+Ctrl+Left  focus output left
 bindsym $mod+Ctrl+Right focus output right
 
-
-# Move focused container to another output / monitor
-# Original default: no default binding
+# Move the focused container to a different output
 bindsym $mod+Ctrl+Shift+Left  move container to output left
 bindsym $mod+Ctrl+Shift+Right move container to output right
 
-
-# Move entire current workspace to another output / monitor
-# Original default: no default binding
+# Move the whole workspace to a different output
 bindsym $mod+Ctrl+Alt+Left  move workspace to output left
 bindsym $mod+Ctrl+Alt+Right move workspace to output right
 
-
-# Center focused floating window
-# Original default: no default binding
+# Center the focused floating window
 bindsym $mod+Ctrl+c move position center
 
-
-# Toggle gaps on current workspace
-# Original default: no default binding
+# Toggle gaps on the current workspace
 bindsym $mod+g gaps inner current toggle 0
 
 ### Fedora Sway layered config.d
-# Files in ~/.config/sway/config.d/ override same-named files in
+# Later paths win, so ~/.config/sway/config.d/ overrides same-named files in
 # /etc/sway/config.d/ and /usr/share/sway/config.d/.
-# Example — disable the default bar:
-#   echo -n > ~/.config/sway/config.d/90-bar.conf
 include '$(/usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf")'
