@@ -28,6 +28,7 @@
             "8": "8",
             "9": "9",
             "10": "10",
+            "__swap": "",
             "focused": "<span foreground='#fff'>󱓻</span>",
             "default": "●",
             "urgent": "<span foreground='#ff0000'>󱓻</span>"

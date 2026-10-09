@@ -57,6 +57,15 @@ button {
     min-width: 10px;
 }
 
+/* Transient swap workspace (rename-through-temp in sway-swap-workspaces):
+   its label is already "" via format-icons, this collapses the button itself. */
+#workspaces button#sway-workspace-__swap {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    font-size: 0;
+}
+
 #workspaces button.empty {
     background: rgba(0, 0, 0, 0.2);
 }
