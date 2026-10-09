@@ -12,14 +12,14 @@ window-padding-x = 8
 window-padding-y = 8
 window-step-resize = true
 # Primary
-# theme = Hybrid
+theme = Hybrid
 # theme= Floraverse
 # theme = Kanagawa Wave
 
 # theme = Sunset Drive
 #theme = Horizon
 
-theme = Hurtado
+# theme = Hurtado
 
 # palette = 0=#d0d0d0
 # palette = 8=#d0d0d0
