@@ -122,16 +122,25 @@ stow_package() {
   "$DRY_RUN" && action="[DRY] $action"
   echo -e "\n${BOLD}${action}:${RESET} ${CYAN}${pkg}${RESET} → ${target}"
 
+  # Stow rejects a target that does not exist, so the directory is created here
+  # when it is missing. A package whose every file its .stow-local-ignore
+  # excludes has nothing to link, and the directory would be left behind empty;
+  # created_target tracks that so it can be removed again afterwards.
+  local created_target=false
   if [[ ! -d "$target" ]]; then
     if "$DRY_RUN"; then
-      log_warn "Target does not exist: $target"
-    else
-      if is_sudo_pkg "$pkg"; then
-        sudo mkdir -p "$target"
-      else
-        mkdir -p "$target"
-      fi
+      # A dry run cannot create the directory, and stow would fail on it, so
+      # the call is skipped rather than reported as a failure.
+      log_warn "Target does not exist and would be created: $target"
+      log_ok "$pkg has nothing to preview (would create its target)"
+      return 0
     fi
+    if is_sudo_pkg "$pkg"; then
+      sudo mkdir -p "$target"
+    else
+      mkdir -p "$target"
+    fi
+    created_target=true
   fi
 
   local rc=0
@@ -149,6 +158,13 @@ stow_package() {
   if [[ $rc -ne 0 ]]; then
     log_error "$pkg stow error (exit: $rc)"
     return $rc
+  fi
+
+  # Nothing was linked, so the directory this function created is not wanted.
+  if "$created_target" && [[ -d "$target" ]] && [[ -z "$(ls -A "$target" 2>/dev/null)" ]]; then
+    rmdir "$target" 2>/dev/null \
+      && log_warn "Nothing to link for $pkg; removed the empty $target" \
+      || log_warn "Nothing to link for $pkg; $target is empty but was left in place"
   fi
 
   log_ok "$pkg done"
