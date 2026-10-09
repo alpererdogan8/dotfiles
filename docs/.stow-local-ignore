@@ -1,0 +1,10 @@
+# docs/ is documentation, not configuration.
+#
+# Every top-level directory in this repository is a Stow package and deploys to
+# ~/.config/<name>, so without this file `./install.sh` would create
+# ~/.config/docs and link the documentation into it.
+#
+# An ignore file replaces stow's built-in list rather than extending it, so the
+# patterns that matter here are written out. Each one is matched against the
+# whole file name, so ".*" is everything.
+.*

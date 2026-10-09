@@ -1,192 +1,91 @@
 # dotfiles
 
-This repository contains the configuration files and scripts for a Fedora, Arch, or Debian-based Wayland setup. It uses GNU Stow and targets Sway with Waybar, Kanshi, SwayNC, Zsh, and Neovim.
+Wayland desktop configuration for Fedora (primary), with Arch and Debian notes. Managed with [GNU Stow](https://www.gnu.org/software/stow/): every top-level directory is a package that is symlinked into place.
 
-```text
-Distribution         : Fedora
-Window Manager       : Sway
-Status Bar           : Waybar
-Display Management   : Kanshi (systemd user service)
-Shell                : Zsh (Zinit)
-Terminals            : Ghostty / Kitty / Alacritty / WezTerm
-Terminal Multiplexer : Tmux
-Editor               : Neovim (LazyVim)
-Notifications        : SwayNotificationCenter
-File Manager         : Yazi
-App Launcher         : Rofi
-```
+<!-- ![screenshot](docs/screenshot.png) -->
 
-## Installation
+| Component | Choice |
+| --- | --- |
+| Compositor / bar | Sway, Waybar |
+| Display profiles | Kanshi (systemd user service) |
+| Notifications / launcher | SwayNC, Rofi |
+| Shell / prompt | Zsh (Zinit), Starship |
+| Terminals | Ghostty, Kitty, Alacritty, WezTerm |
+| Editor / multiplexer / files | Neovim (LazyVim), Tmux, Yazi |
 
-### Prerequisites
-
-The repository has a primary Fedora setup and documented Arch Linux and Debian/Ubuntu variants.
-
-#### Fedora
+## Install
 
 ```bash
-sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
-  sway waybar swaylock rofi yazi tmux neovim starship btop \
-  grim slurp wl-clipboard cliphist kanshi jq
-```
-
-#### Arch Linux
-
-```bash
-sudo pacman -S stow git zsh fzf ripgrep fd eza bat zoxide \
-  sway waybar swaylock rofi ghostty yazi tmux neovim starship btop \
-  grim slurp wl-clipboard cliphist kanshi jq
-```
-
-If `yay` is available, install SwayNC and other packages unavailable in the enabled repositories through the AUR:
-
-```bash
-yay -S swaync
-```
-
-#### Debian / Ubuntu
-
-```bash
-sudo apt install stow git zsh fzf ripgrep fd-find bat zoxide \
-  sway waybar swaylock rofi tmux neovim btop grim slurp \
-  wl-clipboard kanshi jq
-```
-
-Install optional packages such as `eza`, `cliphist`, `ghostty`, `yazi`, `starship`, `swaync`, and `wezterm` from the distribution repositories, an AUR-equivalent source, or their official installers when they are not packaged for the release.
-
-#### Optional session tools
-
-Install SwayOSD, power-profiles-daemon, GNOME Keyring, KDE Connect, Awww, UWSM, and other tools used by session scripts separately when needed. The configuration guards optional tools where possible.
-
-### Setup
-
-```bash
-git clone git@github.com:alpererdogan8/dotfiles.git ~/dotfiles
+git clone https://github.com/alpererdogan8/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
-# Link every package using Stow (creates symlinks)
+sudo dnf install stow git zsh fzf ripgrep fd-find eza bat zoxide \
+  sway waybar swaylock rofi yazi tmux neovim starship btop \
+  grim slurp wl-clipboard cliphist kanshi jq \
+  uwsm playerctl gnome-keyring SwayNotificationCenter kde-connect awww
+
 ./install.sh
-
-# Link specific packages
-./install.sh sway git ghostty
-
-# Relink packages after adding or removing files
-./install.sh --relink sway waybar
-
-# Remove links
-./install.sh --remove sway
-
-# Preview without making changes
-./install.sh --dry-run
-
-# Show the available options
-./install.sh --help
 ```
 
-The `ly` package targets `/etc/ly` and is installed with `sudo` by the installer. The runtime configurations are expected at their Stow targets, such as `~/.config/sway/config`; they do not require the repository to remain at `~/dotfiles`.
+`ghostty`, `wezterm` and `vicinae` are not in every repository. SwayOSD on Fedora comes from the COPR `erikreider/swayosd`, and Arch and Debian/Ubuntu package lists are in [docs/install.md](docs/install.md).
 
-### Checking link state
-
-`./install.sh` never copies files. Each package is a Stow package whose contents are symlinked into place, so a change in the repository is live immediately. The risk is the opposite one: a file added to the repository that was never linked.
+## Usage
 
 ```bash
-# Table of every package, its target and its link state
-./install.sh --list
-
-# Check only: no output when everything is linked
-./install.sh --is-linked && echo "all linked"
+./install.sh                 # link every package
+./install.sh sway zsh        # link specific packages
+./install.sh --relink sway   # pick up added or removed files
+./install.sh --remove sway   # unlink
+./install.sh --dry-run       # preview, change nothing
+./install.sh --list          # link state of every package
+./install.sh --is-linked     # silent check; exits 1 on problems (scripts, hooks)
 ```
 
-`--is-linked` is the form to use in scripts and commit hooks. It prints nothing on success and exits 0. On failure it writes what is wrong to stderr and exits 1, or exits 2 if the checker itself cannot run. A package counts as linked only when every one of its tracked files is in place; a single unlinked file is reported.
+Files are symlinked, never copied, so edits in the repository are live immediately. A `conflict` in `--list` means a real file sits where the link belongs: remove it and re-run the installer. The `ly` package targets `/etc/ly` and is installed with `sudo`.
 
-The same check is available directly as `stow-status.sh`, which takes `--brief` for the table without per-file details and `--quiet` for the silent form.
+## Adding an application
 
-## Adding a new application
-
-Any top-level directory in this repository is a Stow package, and by convention it deploys to `~/.config/<name>`. Creating the directory is the whole job — there is no registry to update:
+A new top-level directory is a package and deploys to `~/.config/<name>` by default. Only packages that mirror a path below `$HOME` are listed in `packages.conf`. Dot-directories are not packages.
 
 ```bash
-mkdir -p fuzzel && cp /path/to/fuzzel.conf fuzzel/fuzzel.conf
-./install.sh fuzzel          # → ~/.config/fuzzel/fuzzel.conf
-./install.sh --list         # fuzzel is already in the table
+mkdir -p fuzzel && cp fuzzel.conf fuzzel/
+./install.sh fuzzel
 ```
 
-Packages that do not fit the convention — because their contents mirror a path below `$HOME` rather than their own directory — are the only ones listed in `packages.conf`, which `install.sh` and `stow-status.sh` both source:
+## Session services
 
-```bash
-declare -A OVERRIDE_TARGET=(
-  [starship]="$HOME/.config"
-  [bash]="$HOME"
-  [git]="$HOME"
-  [zsh]="$HOME"
-  [vscode]="$HOME"
-  ['local-bin']="$HOME"
-  [ly]="/etc/ly"           # and in SUDO_PACKAGES
-)
-```
-
-Directories whose name starts with a dot are not packages; Stow skips them unless it is run with `--dotfiles`.
-
-`./install.sh --list` ends with an inventory stating the two ways the set can be wrong without that showing up in the table: an override naming a directory that does not exist (the entry is then silently inert, and the package deploys to the convention target instead), and the dot-directories, so the package count can be read correctly.
-
-```
-Package inventory
-  24 packages, all discovered from the repository — a new directory is installable with no edit
-  convention: ~/.config/<name>   overrides in packages.conf:
-    bash git local-bin ly starship vscode zsh
-  Dot-directories, not stow packages (stow skips them by design):
-    .agents (1 files)
-```
-
-A `conflict` in the table means a real file sits where the link belongs — for example `~/.config/wezterm` was set up by hand rather than linked. Stow refuses to touch such a package, so remove the directory and re-run the installer:
-
-```bash
-rm -rf ~/.config/wezterm && ./install.sh wezterm
-```
-
-## Session Services
-
-Session daemons are managed by systemd rather than by `sway/config`, and their units live in this repository under `systemd/user/`. `~/.config/systemd/user` has a higher systemd load priority than `/usr/lib/systemd/user`, so a unit here overrides the one shipped by the package — this is why `kanshi.service` carries its own copy.
+Daemons such as Kanshi run as systemd user units from `systemd/user/`, which override the vendor units.
 
 ```bash
 ./install.sh systemd
 systemctl --user daemon-reload
-systemctl --user restart kanshi.service playerctld.service
-systemctl --user status kanshi.service playerctld.service
+systemctl --user restart kanshi.service
 ```
 
-Output profiles stay in `kanshi/config`, reached through the Stow link at `~/.config/kanshi/config`.
-
-`playerctld.service` is the MPRIS proxy behind the media keys. It ships no unit on Fedora, only a D-Bus activation file, which means systemd never really manages it — see the comments in the unit for the details. One consequence is worth knowing when enabling it: if the daemon was already started by D-Bus activation (which happens the first time a media key is pressed), clear the stray process first, or `systemctl --user start` fails with `could not acquire bus name` and `Restart=on-failure` loops.
+Brightness keys silently do nothing unless you are in the `video` group (re-login required):
 
 ```bash
-pkill playerctld && systemctl --user start playerctld.service
+sudo usermod -a -G video $USER
 ```
 
-## Local Secrets
+More notes (SwayOSD bindings, `playerctld`): [docs/session-services.md](docs/session-services.md).
 
-Secrets are not tracked by Git. Create `~/zsh/configs/local.zsh` for secrets loaded by the Zsh configuration:
+## Secrets
+
+Secrets are never tracked. Put them in `~/zsh/configs/local.zsh`:
 
 ```zsh
 export EXAMPLE_API_KEY=your_key_here
 ```
 
-The loader also accepts the legacy `~/.config/zsh/local.zsh` location. Local files should remain untracked.
-
 ## Themes
 
-There is no single cross-application theme source in this repository. Terminal, tmux, Ghostty, Neovim, Yazi, Starship, and FZF currently use independent palettes. Theme changes should be made per application instead of assuming the old Sunset Drive documentation applies everywhere.
+There is no shared theme source; palettes are set per application.
 
-## Validation
+## Development
 
-After changing dotfiles, run:
+Conventions and the full validation checklist are in [CLAUDE.md](CLAUDE.md). Quick check:
 
 ```bash
-bash -n install.sh packages.conf local-bin/.local/bin/* sway/scripts/* waybar/scripts/*.sh swaync/scripts/*.sh
-zsh -n zsh/zsh/configs/*.zsh
-sway -C -c sway/config
-./install.sh --dry-run
-./install.sh --is-linked
+./install.sh --dry-run && ./install.sh --is-linked
 ```
-
-Waybar JSONC files should be checked with a Waybar reload in a graphical session. The repository does not currently include a CI test suite.
