@@ -116,7 +116,7 @@
             "interval": 5,
             "format": "󰍛",
             "max-length": 10,
-            "on-click": "bash -c \"$TERMINAL --title=btop-float -e btop\"",
+            "on-click": "$HOME/.config/waybar/scripts/float-term btop-float btop",
             "tooltip": true
         },
         // ── Power Profiles ───────────────────────────────────────────────────────
@@ -140,7 +140,7 @@
             "format-no-controller": "",
             "tooltip-format": "Devices connected: {num_connections}",
             "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-            "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c '$HOME/.cargo/bin/bluetui'\""
+            "on-click": "$HOME/.config/waybar/scripts/float-term bluetui-float $HOME/.cargo/bin/bluetui"
         },
         // ── Audio ───────────────────────────────────────────────────────
         "pulseaudio": {
@@ -159,7 +159,7 @@
                 ]
             },
             "scroll-step": 1,
-            "on-click": "bash -c \"$TERMINAL --title=wiremix-float -e wiremix\"",
+            "on-click": "$HOME/.config/waybar/scripts/float-term wiremix-float wiremix",
             "ignored-sinks": [
                 "Easy Effects Sink"
             ]
@@ -182,7 +182,7 @@
                 "󰤨"
             ],
             "max-length": 50,
-            "on-click": "bash -c \"$TERMINAL --title=impala-float -e $HOME/.cargo/bin/impala-nm\""
+            "on-click": "$HOME/.config/waybar/scripts/float-term impala-float $HOME/.cargo/bin/impala-nm"
         },
         // ── Notifications ───────────────────────────────────────────────────────
         "custom/battery-watt": {
@@ -333,7 +333,7 @@
             "interval": 5,
             "format": "󰍛",
             "max-length": 10,
-            "on-click": "bash -c \"$TERMINAL --title=btop-float -e btop\"",
+            "on-click": "$HOME/.config/waybar/scripts/float-term btop-float btop",
             "tooltip": true
         },
         "memory": {
@@ -367,7 +367,7 @@
             "format-no-controller": "",
             "tooltip-format": "Devices connected: {num_connections}",
             "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-            "on-click": "bash -c \"$TERMINAL --title=bluetui-float -e bash -c '$HOME/.cargo/bin/bluetui'\""
+            "on-click": "$HOME/.config/waybar/scripts/float-term bluetui-float $HOME/.cargo/bin/bluetui"
         },
         // ── Audio ───────────────────────────────────────────────────────
         "pulseaudio#edp": {
@@ -386,7 +386,7 @@
                 ]
             },
             "scroll-step": 1,
-            "on-click": "bash -c \"$TERMINAL --title=wiremix-float -e wiremix\"",
+            "on-click": "$HOME/.config/waybar/scripts/float-term wiremix-float wiremix",
             "ignored-sinks": [
                 "Easy Effects Sink"
             ]
@@ -409,7 +409,7 @@
                 "󰤨"
             ],
             "max-length": 50,
-            "on-click": "bash -c \"$TERMINAL --title=impala-float -e $HOME/.cargo/bin/impala-nm\""
+            "on-click": "$HOME/.config/waybar/scripts/float-term impala-float $HOME/.cargo/bin/impala-nm"
         },
         // ── Battery ───────────────────────────────────────────────────────
         "battery": {
