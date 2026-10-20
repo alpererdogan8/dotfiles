@@ -9,6 +9,11 @@ W="$HOME/.config/waybar"
 S="$HOME/.config/waybar/style.css"
 ASSIGN="$HOME/.config/sway/scripts/kanshi-workspace-assign"
 
+# Wayland-only session: pin GTK to the wayland backend so a stale
+# DISPLAY in the spawning environment (e.g. waybar restarts launched
+# from other shells) can never make the bar die on "cannot open :0".
+export GDK_BACKEND=wayland
+
 assign_workspaces() {
     local profile
     profile=$(kanshictl status 2>/dev/null | awk '/Current profile:/ {print $3}')
