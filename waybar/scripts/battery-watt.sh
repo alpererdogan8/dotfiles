@@ -84,16 +84,14 @@ elif [[ "$raw_status" == "Charging" ]]; then
   class="charging"
 elif [[ "$raw_status" == "Not charging" && "$online" == "1" ]]; then
   class="plugged"
-elif (( cap <= 39 )); then
+elif (( cap < 20 )); then
   class="critical"
-elif (( cap <= 59 )); then
-  class="warning"
-elif (( cap <= 69 )); then
+elif (( cap < 30 )); then
   class="yellow"
-elif (( cap <= 79 )); then
-  class="normal"
 else
-  class="high"
+  # 30-100% discharging: plain white (style.css colors .critical and
+  # .yellow only, so no rule needed for this token).
+  class="ok"
 fi
 
 # Prints watts (one decimal) or nothing when there is not enough data yet.

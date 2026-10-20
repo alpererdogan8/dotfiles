@@ -2,12 +2,10 @@
 @define-color bg #000000;
 @define-color fg #ffffff;
 @define-color fg-muted rgba(174, 174, 174, 1);
-@define-color col-warning rgba(255, 145, 32, 0.95);
 @define-color col-yellow rgba(255, 214, 48, 0.95);
-@define-color col-high rgba(90, 170, 255, 0.95);
 @define-color col-critical rgba(255, 70, 70, 0.95);
 @define-color col-charging rgba(140, 210, 140, 0.90);
-@define-color col-plugged rgba(100, 180, 255, 0.95);
+@define-color col-full rgba(100, 180, 255, 0.95);
 @define-color col-attention #eb4d4b;
 
 /* ── Base ─────────────────────────────────────────────────────────── */
@@ -136,40 +134,25 @@ button {
     background-color: @col-attention;
 }
 
-/* ── Battery ──────────────────────────────────────────────────────── */
-#battery.high:not(.charging),
-#custom-battery-watt.high:not(.charging) {
-    color: @col-high;
-}
-
-#battery.full:not(.charging),
-#custom-battery-watt.full:not(.charging) {
-    color: @col-charging;
-}
-
-#battery.yellow:not(.charging),
-#custom-battery-watt.yellow:not(.charging) {
-    color: @col-yellow;
-}
-
-#battery.warning:not(.charging),
-#custom-battery-watt.warning:not(.charging) {
-    color: @col-warning;
-}
-
-#battery.critical:not(.charging),
-#custom-battery-watt.critical:not(.charging) {
+/* ── Battery ────────────────────────────────────────────────────────
+   Classes come from battery-watt.sh (native #battery is not on the bar):
+   critical <20% red · yellow 20-29% · ok ≥30% default white (no rule needed) ·
+   charging green · full blue. "plugged" (cable holder, Not charging state)
+   is deliberately left uncolored: it stays white. */
+#custom-battery-watt.critical {
     color: @col-critical;
 }
 
-#battery.charging,
+#custom-battery-watt.yellow {
+    color: @col-yellow;
+}
+
 #custom-battery-watt.charging {
     color: @col-charging;
 }
 
-#battery.plugged,
-#custom-battery-watt.plugged {
-    color: @col-plugged;
+#custom-battery-watt.full {
+    color: @col-full;
 }
 
 /* ── Temperature ──────────────────────────────────────────────────── */
