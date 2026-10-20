@@ -111,11 +111,24 @@ button {
     color: @fg;
 }
 
-#cpu,
-#bluetooth,
+/* ── Icon size ────────────────────────────────────────────────────── */
 #battery,
+#bluetooth,
 #custom-battery-watt,
-#pulseaudio {
+#pulseaudio,
+#network,
+#custom-swaync-open-button,
+#custom-wrap,
+#memory,
+#custom-temperature {
+    font-size: 13.5px;
+}
+
+#power-profiles-daemon {
+    font-size: 12px;
+}
+
+#cpu {
     font-size: 15px;
 }
 
