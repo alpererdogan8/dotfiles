@@ -31,25 +31,25 @@ sw() {
     HDMI_ACTIVE=$(swaymsg -t get_outputs 2>/dev/null | jq 'map(select(.name == "HDMI-A-1" and .active == true)) | length')
 
     if [[ "$HDMI_ACTIVE" == "0" ]]; then
-        waybar -c "$W/config-laptop.jsonc" -s "$S" &
+        waybar -c "$W/config-laptop.jsonc" -s "$S" 9>&- &
         return
     fi
 
     case "$PROFILE" in
         "extend")
-            waybar -c "$W/config-extend.jsonc" -s "$S" &
+            waybar -c "$W/config-extend.jsonc" -s "$S" 9>&- &
             ;;
         "extended" | "mirror")
-            waybar -c "$W/config-extended.jsonc" -s "$S" &
+            waybar -c "$W/config-extended.jsonc" -s "$S" 9>&- &
             ;;
         "laptop")
-            waybar -c "$W/config-laptop.jsonc" -s "$S" &
+            waybar -c "$W/config-laptop.jsonc" -s "$S" 9>&- &
             ;;
         *)
             if [[ "$HDMI_ACTIVE" =~ ^[1-9][0-9]*$ ]]; then
-                waybar -c "$W/config-extended.jsonc" -s "$S" &
+                waybar -c "$W/config-extended.jsonc" -s "$S" 9>&- &
             else
-                waybar -c "$W/config-laptop.jsonc" -s "$S" &
+                waybar -c "$W/config-laptop.jsonc" -s "$S" 9>&- &
             fi
             ;;
     esac
@@ -74,6 +74,6 @@ schedule_restart() {
 }
 
 # Reload on output changes to handle hotplugging
-swaymsg -t subscribe -m '["output"]' 2>/dev/null | while read -r _; do
+swaymsg -t subscribe -m '["output"]' 9>&- 2>/dev/null | while read -r _; do
     schedule_restart
 done
