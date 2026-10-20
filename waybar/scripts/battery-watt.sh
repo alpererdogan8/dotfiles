@@ -54,15 +54,30 @@ for d in /sys/class/power_supply/*; do
   fi
 done
 
-idx=$((cap / 10))
-(( idx > 9 )) && idx=9
-(( idx < 0 )) && idx=0
-# Font Awesome battery glyphs as raw UTF-8 bytes (works in any locale)
-icons=($'\xef\x89\x84' $'\xef\x89\x84' $'\xef\x89\x83' $'\xef\x89\x83' $'\xef\x89\x83' $'\xef\x89\x83' $'\xef\x89\x82' $'\xef\x89\x81' $'\xef\x89\x81' $'\xef\x89\x81')
-icon="${icons[$idx]}"
+# Nearest 10% step: MDI has one glyph per level, so every bin gets its own
+# icon. Rounded rather than floored to keep each icon within +-5% of truth
+# (floor showed 20-59% as a single quarter-empty glyph).
+idx=$(( (cap + 5) / 10 ))
+(( idx < 1 ))  && idx=1
+(( idx > 10 )) && idx=10
+# Material Design Icons battery series (JetBrainsMono Nerd Font, nf-md-*),
+# raw UTF-8 bytes (works in any locale). nf-md codepoints: U+F0000 + MDI cp.
+icons=(
+  $'\xf3\xb0\x81\xba'  # nf-md-battery_10  U+F007A  (0-14%)
+  $'\xf3\xb0\x81\xbb'  # nf-md-battery_20  U+F007B  (15-24%)
+  $'\xf3\xb0\x81\xbc'  # nf-md-battery_30  U+F007C  (25-34%)
+  $'\xf3\xb0\x81\xbd'  # nf-md-battery_40  U+F007D  (35-44%)
+  $'\xf3\xb0\x81\xbe'  # nf-md-battery_50  U+F007E  (45-54%)
+  $'\xf3\xb0\x81\xbf'  # nf-md-battery_60  U+F007F  (55-64%)
+  $'\xf3\xb0\x82\x80'  # nf-md-battery_70  U+F0080  (65-74%)
+  $'\xf3\xb0\x82\x81'  # nf-md-battery_80  U+F0081  (75-84%)
+  $'\xf3\xb0\x82\x82'  # nf-md-battery_90  U+F0082  (85-94%)
+  $'\xf3\xb0\x81\xb9'  # nf-md-battery     U+F0079  (95-100%)
+)
+icon="${icons[idx - 1]}"
 
 if [[ "$raw_status" == "Full" || ( "$raw_status" == "Charging" && "$cap" -eq 100 ) ]]; then
-  icon=$'\xef\x89\x80'
+  icon=$'\xf3\xb0\x81\xb9'  # nf-md-battery  U+F0079
   class="full"
 elif [[ "$raw_status" == "Charging" ]]; then
   icon="${icon}󱐋"
