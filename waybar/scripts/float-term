@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+# float-term — Floating terminal wrapper for Waybar on-click actions.
+#
+# Usage:
+#   float-term [options] <window-title> <command> [argument...]
+#
+# Options:
+#   -t, --theme NAME   Theme to use (default: FLOAT_TERM_THEME or
+#                      "Everforest Light Med")
+#   -h, --help         Show this help
+#
+# Example:
+#   float-term btop-float btop
+#   float-term --theme "Everforest Dark Hard" bluetui-float "$HOME/.cargo/bin/bluetui"
+#
+# Note: <window-title> must match the for_window rules in
+# sway/config.d/50-waybar-float-windows.conf.
+#
+# Theme priority:
+#   1. Value passed via --theme / -t
+#   2. float-term.theme file next to this script (read on every run)
+#   3. FLOAT_TERM_THEME environment variable
+#   4. Everforest Light Med
+#
+# Theme support is currently Ghostty-only. Other terminals are detected and
+# launched with the correct syntax, but the theme flag is not applied to them.
+
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+THEME_FILE="${FLOAT_TERM_THEME_FILE:-$SCRIPT_DIR/float-term.theme}"
+
+DEFAULT_THEME="${FLOAT_TERM_THEME:-Everforest Light Med}"
+
+usage() {
+    cat <<'EOF'
+usage: float-term [options] <window-title> <command> [argument...]
+
+options:
+  -t, --theme NAME   Theme to use (default: FLOAT_TERM_THEME or
+                     "Everforest Light Med")
+  -h, --help         Show this help
+
+example:
+  float-term btop-float btop
+  float-term --theme "Everforest Dark Hard" bluetui-float "$HOME/.cargo/bin/bluetui"
+EOF
+}
+
+# ── Parse options ──────────────────────────────────────────────────────────
+theme=$DEFAULT_THEME
+theme_override=""
+
+while (( $# )); do
+    case $1 in
+        -t|--theme)
+            [[ $# -ge 2 ]] || { echo "float-term: --theme requires a value" >&2; exit 2; }
+            theme=$2; theme_override=1; shift 2 ;;
+        --theme=*)
+            theme=${1#*=}; theme_override=1; shift ;;
+        -h|--help)
+            usage; exit 0 ;;
+        --)
+            shift; break ;;
+        -*)
+            echo "float-term: unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+        *)
+            break ;;
+    esac
+done
+
+# ── Theme file ─────────────────────────────────────────────────────────────
+# If --theme was not given, read from the file next to this script. The file
+# is re-read on every run, so changes take effect on the next click.
+if [[ -z $theme_override && -r $THEME_FILE ]]; then
+    file_theme=$(
+        sed -e 's/#.*//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$THEME_FILE" \
+            | grep -m1 -v '^$' || true
+    )
+    if [[ -n $file_theme ]]; then
+        theme=$file_theme
+    fi
+fi
+
+(( $# >= 2 )) || { usage >&2; exit 2; }
+
+title=$1
+shift
+
+# ── Find the terminal ──────────────────────────────────────────────────────
+detect_terminal() {
+    local cand desktop
+
+    # 1) Explicit override
+    if [[ -n ${FLOAT_TERM_TERMINAL:-} ]]; then
+        command -v "$FLOAT_TERM_TERMINAL" 2>/dev/null && return 0
+    fi
+
+    # 2) System-registered default terminal
+    if command -v xdg-mime >/dev/null 2>&1; then
+        desktop=$(xdg-mime query default x-scheme-handler/terminal 2>/dev/null || true)
+        if [[ -n $desktop ]]; then
+            case ${desktop,,} in
+                *ghostty*)        command -v ghostty        && return 0 ;;
+                *kitty*)          command -v kitty          && return 0 ;;
+                *alacritty*)      command -v alacritty      && return 0 ;;
+                *wezterm*)        command -v wezterm        && return 0 ;;
+                *foot*)           command -v foot           && return 0 ;;
+                *konsole*)        command -v konsole        && return 0 ;;
+                *gnome*terminal*) command -v gnome-terminal && return 0 ;;
+                *xfce4*terminal*) command -v xfce4-terminal && return 0 ;;
+            esac
+        fi
+    fi
+
+    # 3) Session variable
+    if [[ -n ${TERMINAL:-} ]] && command -v "$TERMINAL" >/dev/null 2>&1; then
+        command -v "$TERMINAL"
+        return 0
+    fi
+
+    # 4) Installed known terminals
+    for cand in ghostty kitty alacritty foot wezterm konsole \
+                gnome-terminal xfce4-terminal mate-terminal lxterminal \
+                tilix terminator st urxvt xterm; do
+        command -v "$cand" >/dev/null 2>&1 && { command -v "$cand"; return 0; }
+    done
+
+    return 1
+}
+
+TERM_BIN=$(detect_terminal) || {
+    echo "float-term: no known terminal found on the system" >&2
+    exit 1
+}
+
+# ── Build the correct syntax for the terminal ──────────────────────────────
+# Each terminal uses different flags for the title and command. Theme is
+# currently applied only on Ghostty.
+case ${TERM_BIN##*/} in
+    ghostty)
+        exec "$TERM_BIN" --theme="$theme" --title="$title" -e "$@"
+        ;;
+    kitty)
+        # kitty has no -e; the command is passed directly. Theme support TBD.
+        exec "$TERM_BIN" -T "$title" "$@"
+        ;;
+    alacritty)
+        exec "$TERM_BIN" --title "$title" -e "$@"
+        ;;
+    foot)
+        exec "$TERM_BIN" --title="$title" "$@"
+        ;;
+    wezterm)
+        exec "$TERM_BIN" start -- "$@"
+        ;;
+    konsole)
+        exec "$TERM_BIN" --title "$title" -e "$@"
+        ;;
+    gnome-terminal)
+        exec "$TERM_BIN" --title="$title" -- "$@"
+        ;;
+    *)
+        # Unknown terminal: use the most common convention.
+        exec "$TERM_BIN" -e "$@"
+        ;;
+esac
