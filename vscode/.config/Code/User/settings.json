@@ -286,7 +286,8 @@
   "editor.inlayHints.fontFamily": "Ioskeley Mono",
   "editor.inlineSuggest.fontFamily": "Ioskeley Mono",
   "chat.editor.fontFamily": "Ioskeley Mono",
-  "chat.viewSessions.orientation": "stacked",
   "terminal.integrated.gpuAcceleration": "on",
   "workbench.colorTheme": "bird",
+  "chat.viewSessions.orientation": "stacked",
+  "chat.tips.enabled": false,
 }
