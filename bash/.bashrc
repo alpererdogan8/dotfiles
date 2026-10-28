@@ -25,3 +25,7 @@ export PATH="$PATH:$HOME/.lmstudio/bin"
 # Added by Antigravity CLI installer
 export PATH="/home/polymath/.local/bin:$PATH"
 
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/home/polymath/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
