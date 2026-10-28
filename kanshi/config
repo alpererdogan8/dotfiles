@@ -28,7 +28,8 @@ profile extended {
     output HDMI-A-1 enable mode 1920x1080@120Hz position 0,0 scale 1
     exec swaymsg output HDMI-A-1 subpixel rgb
     # output eDP-1 enable position 1920,120
-    output eDP-1 enable position 400,1080
+    # output eDP-1 enable position 400,1080
+    output eDP-1 enable mode 1366x768 position -1366,450 scale 1
     exec swaymsg output eDP-1 subpixel rgb
 }
 
