@@ -110,9 +110,14 @@ bindgesture swipe:4:down kill
 
     floating_modifier $mod normal
 
-    # kanshi reload is needed because reload alone resets the outputs to sway's
-    # side-by-side default. `switch` is a no-op when the profile is already active.
-    bindsym $mod+Shift+c exec 'swaymsg reload; kanshictl reload'
+    # A reload wipes runtime output state (mode and position are kanshi-owned;
+    # no output directives live in this config), so reloading is two steps:
+    # sway first, then re-apply kanshi once sway has settled. Back-to-back,
+    # kanshictl loses the race with the still-pending reload transaction and
+    # the screens stay at sway's 60Hz side-by-side default. The helper also
+    # repairs kanshi's IPC socket if a stray `kanshi` instance stole it —
+    # `kanshi` is a daemon, not a reload command.
+    bindsym $mod+Shift+c exec '$HOME/.config/sway/scripts/reload-display'
     # swaynag is a short-lived dialog — no uwsm app needed
     bindsym $mod+Shift+m exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 #

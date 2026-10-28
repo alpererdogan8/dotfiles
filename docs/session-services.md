@@ -14,10 +14,26 @@ Two behaviours are worth knowing before changing it:
 
 - **Reload resets the layout.** A Sway config reload re-applies the output
   configuration, and this repository declares no `output` directives, so the
-  monitors fall back to Sway's own default: side by side. The stacked layout is
-  state Kanshi pushed. The reload binding therefore re-applies Kanshi as well.
+  monitors fall back to Sway's own default: 60Hz side by side. The stacked or
+  extended layout is state Kanshi pushed, and Kanshi does not recover on its
+  own: an immediate `kanshictl reload` after `swaymsg reload` loses the race,
+  its commit lands while sway's reload transaction is still in flight, gets
+  rejected and the screens stay at the default. The `$mod+Shift+c` binding runs
+  `sway/scripts/reload-display`, which waits one second so sway has settled,
+  then re-applies Kanshi. Only reloads through the binding re-apply Kanshi; a
+  bare `swaymsg reload` from a terminal still drops the layout until the next
+  Kanshi trigger.
 - **`kanshictl switch` is a no-op** when the profile is already active, which is
   the normal case. `kanshictl reload` is the one that re-applies.
+- **Never run bare `kanshi`.** It is a daemon, not a reload command. A second
+  instance (for example `kanshi reload`) unlinks and rebinds
+  `$XDG_RUNTIME_DIR/fr.emersion.kanshi.$WAYLAND_DISPLAY`, orphaning the
+  systemd-managed daemon. Afterwards `kanshictl` either prints `Couldn't
+  connect to kanshi` or silently talks to the stray instance, and reloading
+  appears to do nothing. Check with `ss -xlp | grep kanshi`: exactly one
+  listener should be listed, owned by the main PID of `kanshi.service`. The
+  `$mod+Shift+c` helper detects this state and restarts the service, so the
+  binding recovers on its own.
 
 `exec` lines in a profile run without a shell, split on whitespace, with
 quoting discarded. Use `exec swaymsg ...` directly and rely on `SWAYSOCK`

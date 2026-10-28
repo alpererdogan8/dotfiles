@@ -1,0 +1,54 @@
+#!/bin/sh
+# Reload the Sway config and re-apply the active Kanshi output profile.
+#
+# `kanshi` is a daemon, not a reload command. Starting it again (for example
+# typing `kanshi reload` in a terminal) makes the new instance unlink and
+# rebind Kanshi's IPC socket
+# ($XDG_RUNTIME_DIR/fr.emersion.kanshi.$WAYLAND_DISPLAY), orphaning the
+# systemd-managed daemon. After that every `kanshictl` either fails with
+# "Couldn't connect to kanshi" or silently talks to the stray instance, and a
+# Sway reload leaves the outputs at its 60Hz side-by-side default.
+#
+# Detect that state and let systemd restart its own daemon so the socket is
+# reclaimed. In the healthy case, just re-apply the active profile.
+
+set -u
+
+swaymsg reload || exit 1
+# Give Sway's own reload transaction time to settle; a `kanshictl` commit that
+# lands while it is still in flight is rejected and never retried.
+sleep 1
+
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+display=${WAYLAND_DISPLAY:-}
+if [ -z "$display" ]; then
+	display=$(systemctl --user show-environment 2>/dev/null \
+		| sed -n 's/^WAYLAND_DISPLAY=//p')
+fi
+sock="$runtime_dir/fr.emersion.kanshi.$display"
+
+main_pid=$(systemctl --user show -p MainPID --value kanshi.service 2>/dev/null)
+listener_pids=$(ss -xlpH 2>/dev/null \
+	| grep -F -- "$sock" \
+	| sed -n 's/.*pid=\([0-9][0-9]*\).*/\1/p' \
+	| sort -u)
+
+restart=0
+if [ -z "$main_pid" ] || [ "$main_pid" = 0 ] || [ -z "$listener_pids" ]; then
+	# Daemon dead, or alive but no longer owning the socket path.
+	restart=1
+fi
+
+for pid in $listener_pids; do
+	if [ "$pid" != "$main_pid" ]; then
+		# Stray instance (usually a manually started `kanshi`): drop it.
+		kill "$pid" 2>/dev/null || true
+		restart=1
+	fi
+done
+
+if [ "$restart" -eq 1 ]; then
+	systemctl --user restart kanshi.service
+else
+	kanshictl reload
+fi

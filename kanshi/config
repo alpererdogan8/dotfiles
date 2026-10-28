@@ -9,7 +9,12 @@
 # for manual switching. Because they share the same connected-output set,
 # kanshi cannot pick between them automatically. Switch manually with:
 #   kanshictl switch <profile-name>
-# or use Super+Shift+D to open the display-mode rofi picker.
+# or use Super+Shift+P to open the display-mode rofi picker.
+#
+# `kanshi` itself is a daemon: starting it a second time (e.g. `kanshi reload`)
+# unlinks and rebinds its IPC socket, orphaning the systemd service and
+# breaking every later `kanshictl` call. Reload with `kanshictl reload` (or
+# `systemctl --user reload kanshi`); the Super+Shift+C binding does that.
 
 # Subpixel ordering is not expressible as an `output` directive, so it is set
 # with `exec`. These call swaymsg directly: kanshi runs as a systemd user
