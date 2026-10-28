@@ -18,7 +18,7 @@ gb() {
             | sort \
             | fzf --ansi --tac \
                   --header "Current: $(git rev-parse --abbrev-ref HEAD)" \
-                  --preview-window 'right:60%' \
+                  --preview-window 'right:50%:border-left' \
                   --preview 'git log --oneline --graph --date=short --color=always \
                       --pretty="format:%C(auto)%cd %h%d %s" \
                       $(sed s/^..// <<< {} | cut -d" " -f1) 2>/dev/null | head -50' \
@@ -42,7 +42,7 @@ gl() {
         --graph \
         --color=always \
     | fzf --ansi --no-sort --reverse \
-          --preview-window 'right:60%' \
+          --preview-window 'right:50%:border-left' \
           --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | head -1 \
               | xargs git show --color=always 2>/dev/null | head -200') || return
     [[ -n "$selection" ]] || return
@@ -62,7 +62,7 @@ gt() {
 
     local tag
     tag=$(git tag --sort -version:refname \
-    | fzf --preview-window 'right:60%' \
+    | fzf --preview-window 'right:50%:border-left' \
           --preview 'git show --color=always {} 2>/dev/null | head -200') || return
     [[ -n "$tag" ]] && git show --color=always "$tag"
 }

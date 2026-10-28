@@ -8,8 +8,10 @@ if command -v starship > /dev/null; then
 fi
 
 if command -v fzf > /dev/null; then
+    # Ctrl+F also gets the cd-widget (fzf --zsh binds only ^T/^R/Alt+C and only
+    # its own three keymaps) — bind it in insert and normal vi-mode maps.
     zinit wait"0" lucid id-as"fzf-keybinds" for \
-        atload'source <(fzf --zsh)' \
+        atload'source <(fzf --zsh); bindkey -M viins "^F" fzf-cd-widget; bindkey -M vicmd "^F" fzf-cd-widget' \
         zdharma-continuum/null
 fi
 

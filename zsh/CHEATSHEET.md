@@ -10,13 +10,17 @@
 | `j` / `k` (normal mode) | Navigate history in vi-mode |
 | `Ctrl+R` | Fuzzy reverse history search with fzf |
 | `Ctrl+T` | Select file with fzf (bat preview) |
-| `Ctrl+F` | Change directory (lsd preview) |
-| `Alt+C` | Jump to directory with fzf (lsd tree preview) |
+| `Alt+C` / `Ctrl+F` | Browse directories with fzf (lsd tree preview) |
 | `Tab` | Interactive completion with fzf-tab |
 | `Tab Tab` | Navigate completion menu |
+| `cmd **<Tab>` | fzf native completion trigger (e.g. `git add **`) |
 | `Esc` | Switch to vi-mode normal mode |
 | `i` | Switch to vi-mode insert mode |
 | `v` (normal mode) | Edit command in `$EDITOR` |
+
+> Keybindings are loaded by zinit turbo — they become active ~1s after your
+> first keypress in a fresh shell. The fzf palette is theme-independent
+> (dark gray + muted orange) and renders identically in any terminal scheme.
 
 ---
 
