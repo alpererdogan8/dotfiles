@@ -46,7 +46,7 @@
    ============================================================================= */
 .control-center {
   background: @cc-bg;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 0;
   margin: 0;
 }
@@ -343,7 +343,7 @@
   font-weight: 600;
   padding: 10px 16px;
   margin: 0;
-  border-radius: 0;
+  border-radius: 6px;
   border: transparent;
 }
 
@@ -406,8 +406,8 @@
   font-size: 1rem;
   padding: 10px;
   margin: 0;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
 /* Reset flowbox child container styling */
