@@ -16,5 +16,3 @@ if [[ -n "$ZSH_PROFILE" ]]; then
     zprof
 fi
 
-# opencode
-export PATH=/home/polymath/.opencode/bin:$PATH

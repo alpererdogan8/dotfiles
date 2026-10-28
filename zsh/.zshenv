@@ -1,7 +1,8 @@
 export ZDOTDIR=$HOME/zsh/configs
 
 export PATH="$HOME/.local/bin:$PATH"
-export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="$HOME/.local/share/pnpm"
-export NVM_DIR="$HOME/.nvm"
-export PATH="$BUN_INSTALL/bin:$PNPM_HOME/bin:$PATH"
+export PATH="$PNPM_HOME/bin:$PATH"
+
+# opencode CLI
+[[ -d "$HOME/.opencode/bin" ]] && export PATH="$HOME/.opencode/bin:$PATH"
