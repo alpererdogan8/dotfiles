@@ -172,6 +172,21 @@ bindgesture swipe:4:down kill
     bindsym $mod+Shift+9 move container to workspace number 9; workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10; workspace number 10
 
+    # Reachability shortcut: the 6–0 digit keys are hard to hit, so ws 6–10
+    # are also reachable as Super+Alt+1–5.
+    bindsym $mod+alt+1 workspace number 6; focus floating
+    bindsym $mod+alt+2 workspace number 7; focus floating
+    bindsym $mod+alt+3 workspace number 8; focus floating
+    bindsym $mod+alt+4 workspace number 9; focus floating
+    bindsym $mod+alt+5 workspace number 10; focus floating
+
+    # With Shift: move the focused window to ws 6–10 and follow, same as $mod+Shift+6–0.
+    bindsym $mod+alt+Shift+1 move container to workspace number 6; workspace number 6
+    bindsym $mod+alt+Shift+2 move container to workspace number 7; workspace number 7
+    bindsym $mod+alt+Shift+3 move container to workspace number 8; workspace number 8
+    bindsym $mod+alt+Shift+4 move container to workspace number 9; workspace number 9
+    bindsym $mod+alt+Shift+5 move container to workspace number 10; workspace number 10
+
     bindsym alt+Right workspace next_on_output; focus floating
     bindsym alt+Left  workspace prev_on_output; focus floating
     # Step to the next/prev *numbered* workspace, empty ones included, and follow.
