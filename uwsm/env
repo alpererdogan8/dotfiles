@@ -1,5 +1,5 @@
 export SSH_AUTH_SOCK="$HOME/.bitwarden-ssh-agent.sock"
-export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
+# export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 
 # Single source of truth for TERMINAL. uwsm's env-preloader injects this file
 # into the systemd user manager, so it reaches every shell and GUI app in the

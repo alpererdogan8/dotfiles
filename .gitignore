@@ -49,12 +49,6 @@ local-bin/.local/bin/*.old
 local-bin/.local/bin/agy
 local-bin/.local/bin/herdr
 
-# zsh node dependencies
-zsh/node_modules/
-zsh/package.json
-zsh/pnpm-lock.yaml
-vscode/.config/Code/SharedStorage
-
 # SELinux local policies
 *.pp
 *.te
