@@ -12,18 +12,23 @@ window-padding-x = 8
 window-padding-y = 8
 window-step-resize = true
 # Primary
-theme = Hybrid
+# theme = Hybrid
 # theme= Floraverse
 # theme = Kanagawa Wave
-
-# theme = Sunset Drive
-#theme = Horizon
-
+# theme = Black Metal (Khold)
+# theme = Black Metal (Venom)
+# theme = GraphiteOrange
+# theme = Horizon
+# theme = Glacier
 # theme = Hurtado
+# theme = Jellybeans
+theme = Sunset Drive
+# theme = Kanso Zen
 
-# palette = 0=#d0d0d0
-# palette = 8=#d0d0d0
-quit-after-last-window-closed = false
+# theme = IC Orange PPL
+# # palette = 0=#d0d0d0
+# # palette = 8=#d0d0d0
+# quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 5m
 confirm-close-surface = false
 cursor-style-blink = true

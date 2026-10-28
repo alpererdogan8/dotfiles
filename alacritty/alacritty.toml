@@ -1,7 +1,7 @@
 [general]
 import = [
-    "~/.config/alacritty/themes/hybrid.toml"
-    # "~/.config/alacritty/themes/sunset-drive.toml"
+    # "~/.config/alacritty/themes/hybrid.toml"
+    "~/.config/alacritty/themes/sunset-drive.toml"
     # "~/.config/alacritty/themes/horizon.toml"
     # "~/.config/alacritty/themes/hurtado.toml"
     # "~/.config/alacritty/themes/everforest-dark.toml"
