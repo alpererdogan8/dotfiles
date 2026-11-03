@@ -275,8 +275,8 @@ bindsym $mod+Ctrl+Alt+Right move workspace to output right
 # Center the focused floating window
 bindsym $mod+Ctrl+c move position center
 
-# Toggle gaps on the current workspace
-bindsym $mod+g gaps inner current toggle 0
+# Toggle gaps on the current workspace (3 ↔ 0)
+bindsym $mod+g gaps inner current toggle 3
 
 ### Fedora Sway layered config.d
 # Later paths win, so ~/.config/sway/config.d/ overrides same-named files in
