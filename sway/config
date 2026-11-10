@@ -29,6 +29,11 @@ default_floating_border pixel 2
 for_window [app_id="^.*"] border pixel 2
 for_window [class="^.*"] border pixel 2
 
+# Vicinae runs as a regular floating window (layer-shell is disabled in its
+# settings). Sticky keeps it on screen across workspace switches, and focus
+# makes sure it takes the keyboard whenever it is shown.
+for_window [app_id="vicinae"] sticky enable, focus
+
 gaps inner 3
 smart_gaps on
 
@@ -44,6 +49,7 @@ exec uwsm app -- /usr/bin/kdeconnectd
 exec uwsm app -- kdeconnect-indicator
 exec uwsm app -- swayosd-server
 exec uwsm app -- awww-daemon
+exec uwsm app -s b -- vicinae server
 # exec uwsm app -- $HOME/.local/bin/autotiling-rs
 # exec_always uwsm app -- $HOME/.local/bin/autotiling-rs
 
@@ -99,15 +105,15 @@ bindgesture swipe:4:down kill
     # display-mode: pick kanshi output profile via rofi (extend/extended/mirror/laptop)
     bindsym $mod+Shift+p exec ~/.local/bin/display-mode
     bindsym $mod+e exec uwsm app -- $fileManager
-    bindsym $mod+r exec uwsm app -- vicinae toggle
+    bindsym $mod+r exec vicinae toggle
 
     bindsym $mod+l exec loginctl lock-session
     # wallpaper script manages its own child processes
     bindsym $mod+shift+w exec $HOME/.local/bin/wallpaper_cycle.sh
 
     bindsym $mod+n exec swaync-client -R && swaync-client -rs && swaync-client -t -sw
-    # bindsym alt+v exec uwsm app -- vicinae vicinae://launch/clipboard/history
-    bindsym alt+v exec ~/.local/bin/clipboard-menu
+    bindsym alt+v exec uwsm app -- vicinae vicinae://launch/clipboard/history
+    # bindsym alt+v exec ~/.local/bin/clipboard-menu
     bindsym $mod+ctrl+s exec grim -g "$(slurp)" - | wl-copy -t image/png
 
     # bindsym alt+Tab exec uwsm app -- snappy-switcher next --mod alt
