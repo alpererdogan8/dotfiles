@@ -22,10 +22,20 @@ window-step-resize = true
 # theme = Glacier
 # theme = Hurtado
 # theme = Jellybeans
-theme = Sunset Drive
+# theme = Sunset Drive
 # theme = Kanso Zen
-
 # theme = IC Orange PPL
+
+
+# --- For Laptop Screen ---
+# theme = Analyzed Dark
+
+theme = Aurora Drift
+# theme = Aura
+
+
+
+
 # # palette = 0=#d0d0d0
 # # palette = 8=#d0d0d0
 # quit-after-last-window-closed = false
