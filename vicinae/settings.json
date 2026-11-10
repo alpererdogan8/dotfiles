@@ -1,0 +1,72 @@
+// This configuration is merged with the default vicinae configuration file, which you can obtain by running the `vicinae config default` command.
+// Every item defined in this file takes precedence over the values defined in the default config or any other imported file.
+//
+// You can make manual edits to this file, however you should keep in mind that this file may be written to by vicinae when a configuration change is made through the GUI.
+// When that happens, any custom comments or formatting will be lost.
+//
+// If you want to maintain a configuration file with your own comments and formatting, you should create a separate file and add it to the 'imports' array.
+//
+// Learn more about configuration at https://docs.vicinae.com/config
+
+{
+   "$schema": "https://vicinae.com/schemas/config.json",
+   "close_on_focus_loss": true,
+   "consider_preedit": true,
+   "pop_to_root_on_close": true,
+   "activate_on_single_click": true,
+   "wrap_navigation": true,
+   "encrypt_sensitive_data": true,
+   "escape_key_behavior": "close_window",
+   "font": {
+      "rendering": "native",
+      "normal": {
+         "family": "IoskeleyMono Nerd Font SemiBold",
+         "size": 10.5
+      }
+   },
+   "theme": {
+      "dark": {
+         "name": "vicinae-dark",
+         "icon_theme": "Breeze Dark"
+      }
+   },
+   "telemetry": {
+      "system_info": false
+   },
+   "launcher_window": {
+      "rounding": 0,
+      "opacity": 1,
+      "client_side_decorations": {
+         "enabled": false,
+         "border_width": 0,
+         "shadow_size": 1
+      },
+      "compact_mode": {
+         "enabled": true
+      },
+      "floating_status_bar": false,
+      "layer_shell": {
+         "layer": "overlay",
+         "keyboard_interactivity": "on_demand",
+         "enabled": false
+      }
+   },
+   "favorites": [
+      "applications:helium",
+      "clipboard:history"
+   ],
+   "providers": {
+      "applications": {
+         "preferences": {
+            "defaultAction": "focus",
+            "launchPrefix": "uwsm app --",
+            "paths": []
+         }
+      },
+      "calculator": {
+         "preferences": {
+            "backend": "numen"
+         }
+      }
+   }
+}
